@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Componente E : Alert Box</title>
+  </head>
+  <body>
+    <h1>Componente E : ALlert Box</h1>
+
+    <button onclick="">Mostrar exito</button>
+    <button>Mostrar Error</button>
+    <button>Mostrar Aviso</button>
+    <script>
+      class AlertBox {
+        constructor(type, message) {
+          this.type = type;
+          this.message = message;
+
+          this.element = document.createElement("div");
+          this.element.className = "alert ${type}";
+          this.element.textContent = message;
+          this.element.style.display = "none";
+        }
+
+        show() {
+          this.element.style.display = "block";
+          setTimeout(() => {
+            this.element.style.display = "none";
+          }, 2500);
+        }
+        render(container) {
+          container.appendChild(this.element);
+        }
+      }
+    </script>
+  </body>
+</html>
