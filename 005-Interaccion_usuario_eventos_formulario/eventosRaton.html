@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventos de ratón con clases CSS</title>
+    <style>
+        #box {
+            width: 300px;
+            height: 150px;
+
+            /* En lugar de border: 2px solid black; */
+            border-width: 2px;
+            border-style: solid;
+            border-color: black; /* color por defecto */
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            margin-bottom: 20px;
+        }
+
+        /* Clases de estado */
+        #box.border-blue { border-color: blue; }
+        #box.border-red  { border-color: red; }
+    </style>
+</head>
+<body>
+
+<h1>Eventos de ratón con addEventListener y CSS</h1>
+
+<div id="box">Interactúa con este área</div>
+
+<p id="info">Evento detectado: ninguno</p>
+
+<button id="boton">Haz Click Aqui</button>
+
+
+<script>
+const box = document.getElementById("box");
+const info = document.getElementById("info");
+
+box.addEventListener("click", function () {
+    info.textContent = "Evento detectado: click";
+});
+
+box.addEventListener("dblclick", function () {
+    info.textContent = "Evento detectado: doble click";
+});
+
+box.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+    info.textContent = "Evento detectado: click derecho (contextmenu)";
+});
+
+box.addEventListener("mouseenter", function () {
+    box.classList.remove("border-red");
+    box.classList.add("border-blue");
+    info.textContent = "Evento detectado: ratón entra en el área";
+});
+
+box.addEventListener("mouseleave", function () {
+    box.classList.remove("border-blue");
+    box.classList.add("border-red");
+    info.textContent = "Evento detectado: ratón sale del área";
+});
+
+box.addEventListener("mousemove", function (event) {
+    info.textContent =
+        "Evento detectado: movimiento del ratón (" +
+        event.offsetX + ", " + event.offsetY + ")";
+});
+
+box.addEventListener("mousedown", function(event){
+    info.textContent= "Activo mousedown";
+})
+box.addEventListener("mouseup", function(){
+    info.textContent = "Activo mouseuo";
+})
+
+const boton = document.getElementById("boton");
+
+function removeClick(){
+    alert("evento click removido de la caja")
+    boton.removeEventListener("click", )
+}
+
+
+   
+/*document.getElementById("btnRemove").addEventListener("click", function () {
+    btnAction.removeEventListener("click", manejarClick);
+    alert("Evento eliminado");*/
+
+/* Añadir un nuevo boton que active o desactive los eventos de ratón mousemove y click del area :
+    - Comprueba el estado de un boolean "eventos activos"
+    - Si esta es true hace removeEventListener
+    - Si esta a false hace addeventListener
+    - Cambia de estado el valor de "eventosActivos"
+
+    Añadir los eventos de ratòn mousedown y mouseup
+    Extra :  añadir a una list todos los eventos introducidos (en vez de que se muestre solamente el ùltimo )
+
+    Extra : añadir un contador der veces que se ha detectado cada evento y que se muestren en el mensaje 
+
+    Extra :añadir un botòn que añada y elimine un evento en especifico por cada tipo de evento.
+    */
+
+</script>
+
+</body>
+</html>
+
+<!--
+Mosuse up y down para arrastrar cosas usando booleanos
+
+-->
