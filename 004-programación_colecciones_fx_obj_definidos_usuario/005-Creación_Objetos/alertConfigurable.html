@@ -8,9 +8,12 @@
   <body>
     <h1>Componente E : ALlert Box</h1>
 
-    <button onclick="">Mostrar exito</button>
-    <button>Mostrar Error</button>
-    <button>Mostrar Aviso</button>
+    <button onclick="alertSucces.show()">Mostrar exito</button>
+    <button onclick="alertError.show()">Mostrar Error</button>
+    <button onclick="alertWarning.show()">Mostrar Aviso</button>
+
+    <div id="app"></div>
+
     <script>
       class AlertBox {
         constructor(type, message) {
@@ -33,6 +36,18 @@
           container.appendChild(this.element);
         }
       }
+
+      const alertSucces = new AlertBox(
+        "succes",
+        "Operación completada con exito ",
+      );
+      const alertError = new AlertBox("error", "Ha Ocurrido un Error");
+      const alertWarning = new AlertBox("warning", "Aviso Importante");
+
+      const app = document.getElementById("app");
+      alertSucces.render(app);
+      alertError.render(app);
+      alertWarning.render(app);
     </script>
   </body>
 </html>
