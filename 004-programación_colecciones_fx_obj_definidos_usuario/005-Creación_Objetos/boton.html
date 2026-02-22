@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boton Personalizado</title>
+  </head>
+  <body>
+    <h1>Componente B : Boton personalizado</h1>
+    <div id="app"></div>
+    <button id="taggle">Activar/Desactivar Boton</button><br />
+    <script>
+      const app = document.getElementById("app");
+      class MyButton {
+        constructor(text) {
+          this.enabled = true;
+
+          this.button = document.createElement("button");
+          this.button.className = "myButton";
+          this.button.textContent = text;
+
+          this.button.onclick = () => {
+            if (this.enable) alert("¡botón pulsado!");
+          };
+        }
+        disable() {
+          this.enabled = false;
+          this.button.classList.add("disabled");
+        }
+
+        enable() {
+          this.enable = true;
+          this.button.classList.remove("disabled");
+        }
+
+        render(container) {
+          container.appendChild(this.button);
+        }
+      }
+
+      const btn = new MyButton("Haz click");
+      btn.render(app);
+    </script>
+  </body>
+</html>
