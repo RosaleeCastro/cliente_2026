@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Boton Personalizado</title>
+    <style>
+    .myButton {
+        padding: 10px 20px;
+        font-size: 18px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .myButton.disabled {
+        background: gray !important;
+        cursor: not-allowed;
+    }
+</style>
   </head>
   <body>
     <h1>Componente B : Boton personalizado</h1>
