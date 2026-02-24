@@ -12,6 +12,7 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin: 5px;
       }
 
       .myButton.disabled {
@@ -25,44 +26,48 @@
 
     <div id="app"></div>
 
-    <button id="toggle">Activar/Desactivar Botón</button>
-
     <script>
       class MyButton {
         constructor(text) {
           this.enabled = true;
 
+          // Crear 2 botones
           this.button = document.createElement("button");
           this.button.className = "myButton";
-          this.button.textContent = text;
+          this.button.textContent = text + " A";
 
+          this.button2 = document.createElement("button");
+          this.button2.className = "myButton";
+          this.button2.textContent = text + " B";
+
+          // Eventos correctos
           this.button.onclick = () => {
-            if (this.enabled) alert("¡Botón pulsado!");
+            this.disable(this.button);
+            this.enable(this.button2);
+          };
+
+          this.button2.onclick = () => {
+            this.disable(this.button2);
+            this.enable(this.button);
           };
         }
 
-        disable() {
-          this.enabled = false;
-          this.button.classList.add("disabled");
+        disable(boton) {
+          boton.classList.add("disabled");
         }
 
-        enable() {
-          this.enabled = true;
-          this.button.classList.remove("disabled");
+        enable(boton) {
+          boton.classList.remove("disabled");
         }
 
         render(container) {
           container.appendChild(this.button);
+          container.appendChild(this.button2);
         }
       }
 
       const btn = new MyButton("Haz clic");
       btn.render(document.getElementById("app"));
-
-      document.getElementById("toggle").onclick = () => {
-        if (btn.enabled) btn.disable();
-        else btn.enable();
-      };
     </script>
   </body>
 </html>
