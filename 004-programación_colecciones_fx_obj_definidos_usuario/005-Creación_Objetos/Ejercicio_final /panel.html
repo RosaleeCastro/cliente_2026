@@ -2,20 +2,13 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Pestañas Simples sin Map</title>
-
+    <title>Pestañas Simples Corregidas</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         background: #f5f5f5;
         padding: 20px;
       }
-
-      /* Botones de pestañas */
-      .tabs {
-        margin-bottom: 20px;
-      }
-
       .tab-buttons button {
         padding: 10px;
         margin-right: 5px;
@@ -24,24 +17,29 @@
         border: 1px solid #777;
         border-radius: 5px;
       }
-
-      .tab-buttons button:hover {
-        background: #ccc;
-      }
-
-      /* Secciones */
       .tab-section {
         display: none;
         background: white;
         padding: 20px;
         border-radius: 5px;
         border: 1px solid #333;
+        margin-top: 10px;
+      }
+
+      /* Clase que faltaba */
+      .disabled {
+        opacity: 0.3;
+        pointer-events: none;
+      }
+      .myButton {
+        margin: 5px;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid blue;
       }
     </style>
   </head>
   <body>
-    <h1>Pestañas con JavaScript</h1>
-
     <div id="tabsContainer"></div>
 
     <section id="inicio" class="tab-section">
@@ -62,9 +60,6 @@
     <script>
       class MyButton {
         constructor(text) {
-          this.enabled = true;
-
-          // Crear 2 botones
           this.button = document.createElement("button");
           this.button.className = "myButton";
           this.button.textContent = text + " A";
@@ -72,25 +67,20 @@
           this.button2 = document.createElement("button");
           this.button2.className = "myButton";
           this.button2.textContent = text + " B";
+          this.button2.classList.add("disabled"); // Empezar con B desactivado
 
-          // Eventos correctos
           this.button.onclick = () => {
-            this.disable(this.button);
-            this.enable(this.button2);
+            this.toggle(this.button, this.button2);
           };
 
           this.button2.onclick = () => {
-            this.disable(this.button2);
-            this.enable(this.button);
+            this.toggle(this.button2, this.button);
           };
         }
 
-        disable(boton) {
-          boton.classList.add("disabled");
-        }
-
-        enable(boton) {
-          boton.classList.remove("disabled");
+        toggle(btnOff, btnOn) {
+          btnOff.classList.add("disabled");
+          btnOn.classList.remove("disabled");
         }
 
         render(container) {
@@ -103,17 +93,13 @@
         constructor(tabNames, sectionIds) {
           this.tabNames = tabNames;
           this.sectionIds = sectionIds;
-
           this.container = document.createElement("div");
-          this.container.className = "tabs";
-
           this.btnArea = document.createElement("div");
           this.btnArea.className = "tab-buttons";
-
           this.container.appendChild(this.btnArea);
 
           this.createButtons();
-          this.showTab(0); // Mostrar primera pestaña
+          this.showTab(0);
         }
 
         createButtons() {
@@ -126,57 +112,44 @@
         }
 
         showTab(index) {
-          // Ocultar todas las secciones
           document
             .querySelectorAll(".tab-section")
             .forEach((sec) => (sec.style.display = "none"));
-
           const sectionId = this.sectionIds[index];
           const section = document.getElementById(sectionId);
-
-          section.style.display = "block";
-
-          // Inicializar contenido específico
-          this.initInici(sectionId);
+          if (section) {
+            section.style.display = "block";
+            this.initSection(sectionId); // Llama al selector de lógica
+          }
         }
 
         initSection(sectionId) {
-          if (sectionId == "inicio") {
-            this.initInicio();
-          }
-          if (sectionId == "productos") {
-            this.initProductos();
-          }
-          if (sectionId == "contacto") {
-            this.initContacto();
-          }
+          if (sectionId === "inicio") this.initInicio();
+          // Aquí podrías añadir this.initProductos() si lo creas más adelante
         }
 
-        initInici() {
+        initInicio() {
           const section = document.getElementById("inicio");
-
-          //evitar duplicados
           if (section.querySelector(".myButton")) return;
 
-          const boton = new MyButton("Alternar");
-          boton.render(section);
+          const botonesAlternos = new MyButton("Modo");
+          botonesAlternos.render(section);
 
           const alertBtn = document.createElement("button");
-          alertBtn.textContent = "Mostrar mensaje";
-          alertBtn.onclick = () => alert("Bienvenido al sistema");
-
+          alertBtn.textContent = "Mensaje";
+          alertBtn.onclick = () => alert("Hola!");
           section.appendChild(alertBtn);
         }
+
         render(container) {
           container.appendChild(this.container);
         }
       }
 
       const myTabs = new Tabs(
-        ["Inicio", "Productos", "Contacto"], // Nombres visibles
-        ["inicio", "productos", "contacto"], // IDs de las secciones
+        ["Inicio", "Productos", "Contacto"],
+        ["inicio", "productos", "contacto"],
       );
-
       myTabs.render(document.getElementById("tabsContainer"));
     </script>
   </body>
