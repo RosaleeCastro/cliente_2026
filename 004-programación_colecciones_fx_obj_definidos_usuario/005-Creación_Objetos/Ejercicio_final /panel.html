@@ -84,7 +84,7 @@
         <div class="modal">
           <h2>Titulo del modal</h2>
           <label for="producto">Ingresa el nombre del producto </label>
-          <input type="text" id="producto" />
+          <input type="text" id="inputProducto" />
           <div id="btnareas"></div>
         </div>
       </div>
@@ -134,7 +134,7 @@
           //Configurar título dinámico
           this.element.querySelector("h2").textContent = titulo;
           this.btnArea = this.element.querySelector("#btnareas");
-          this.input = this.element.querySelector("#producto");
+          this.input = this.element.querySelector("#inputProducto");
         }
         //Método para añadir botones personalizados
 
@@ -146,10 +146,11 @@
           //2. Le da un color según si es una acción principal(Guardar) o secundaria (Cancelar)
           btn.style.background = isPrimary ? "#4CAF50" : "#f44336";
           btn.style.color = "white";
+
           // 3. Define qué pasa al hacer click
           btn.onclick = () => {
             callback(this.input.value);
-            this.close;
+            this.close();
           };
           this.btnArea.appendChild(btn);
         }
@@ -217,6 +218,66 @@
 
         initProductos() {
           const sectionPro = document.getElementById("productos");
+
+          //1. Limpiar la sección para evitar duplicados al cambiar de pestaña
+          sectionPro.innerHTML = "<h2>Productos</h2>";
+
+          //2.Crear contenedor de lista y llenarlo
+          const listaContainer = document.createElement("div");
+
+          productos.forEach((producto) => {
+            const productoTag = document.createElement("p");
+            productoTag.textContent = ". " + producto;
+            listaContainer.appendChild(productoTag);
+          });
+          sectionPro.appendChild(listaContainer);
+
+          //3. Boton Agregar Producto
+
+          const btnAdd = document.createElement("button");
+          btnAdd.textContent = "Agregar Producto";
+
+          btnAdd.onclick = () => {
+            const modalAddProducto = new Modal("Nuevo Producto");
+            modalAddProducto.addButton(
+              "Guardar",
+              (valor) => {
+                if (valor.trim() !== "") {
+                  productos.push(valor); //Agregamos al array global
+                  this.initProductos(); // refrescamos la vista
+                  alert("Producto agregado");
+                }
+              },
+              true,
+            );
+
+            modalAddProducto.addButton("Cancelar", () => {}); // solo cierra
+            modalAddProducto.open();
+          };
+
+          //4. Boton "Eliminar todos"
+
+          const btnDelete = document.createElement("button");
+          btnDelete.textContent = "Eliminar todos";
+          btnDelete.style.marginLeft = "10px";
+          btnDelete.onclick(() => {
+            const m = new Modal("¿Deseas Eliminar todos?");
+            m.addButton(
+              "Si, eliminar",
+              () => {
+                productos.length = 0; // vacia el array de productos;
+                this.initProductos(); // refreseca la lineas
+                alert("Productos Eliminados");
+              },
+              true,
+            );
+            m.addButton("No", () => {});
+            m.open();
+          });
+          //5. Inserción final : Meter los botones en la sección
+          sectionPro.appendChild(btnAdd);
+          sectionPro.appendChild(btnDelete);
+
           productos.forEach((producto, index) => {
             const paragrah = document.createElement("p");
             paragrah.textContent = producto;
