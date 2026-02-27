@@ -81,16 +81,18 @@ Mostrar alert("Productos eliminados")
 
 Al entrar a la pestaña, se mostrará un formulario con los siguientes campos:
 
-Nombre (Input texto)
+Nombre (Input texto) ok
 
-Dirección (Input texto)
+Dirección (Input texto) ok
 
-Teléfono (Input tel/número)
+Teléfono (Input tel/número)ok
 
-Correo (Input email)
+Correo (Input email) ok
 
 Un botón al final: "Validar y Guardar Datos".
 
+
+************************************************
 2. Proceso de Confirmación (El Modal):
 
 Al pulsar el botón, se abrirá el Modal que ya tenemos construido.

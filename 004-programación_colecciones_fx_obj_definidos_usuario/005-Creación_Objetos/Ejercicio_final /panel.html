@@ -97,6 +97,12 @@
 
     <script>
       const productos = ["Colacao", "Leche"];
+      const datosContacto = {
+        nombre: "",
+        direccion: "",
+        telefono: "",
+        correo: "",
+      };
 
       class MyButton {
         constructor(text) {
@@ -206,6 +212,7 @@
         initSection(sectionId) {
           if (sectionId === "inicio") this.initInicio();
           if (sectionId == "productos") this.initProductos();
+          if (sectionId == "contacto") this.initContacto();
           // Aquí podrías añadir this.initProductos() si lo creas más adelante
         }
 
@@ -322,6 +329,140 @@
           //5. Inserción final : Meter los botones en la sección
           sectionPro.appendChild(btnAdd);
           sectionPro.appendChild(btnDelete);
+        }
+
+        initContacto() {
+          const sectionContacto = document.getElementById("contacto");
+
+          //1. Limpiar para evitar duplicados
+          sectionContacto.innerHTML = "<h2>Formulario de Contacto</h2>";
+
+          //2.Crear el contenedor para el formulario
+
+          const formContainer = document.createElement("div");
+          formContainer.style.display = "flex";
+          formContainer.style.flexDirection = "column";
+          formContainer.style.gap = "10px";
+          formContainer.style.maxWidth = "300px";
+
+          // 3. fX Para crear campos rápidamente
+          const crearGrupoCampo = (textoLabel, id) => {
+            const contenedorFila = document.createElement("div");
+            contenedorFila.style.display = "flex";
+            contenedorFila.style.flexDirection = "column";
+
+            const label = document.createElement("label");
+            label.textContent = textoLabel;
+            label.style.fontWeight = "bold";
+            label.style.marginBottom = "5px";
+            label.setAttribute("for", id);
+
+            const input = document.createElement("input");
+
+            input.id = id;
+            input.style.padding = "10px";
+            input.placeholder = "Escribe aquí ...";
+
+            //metemos label e input en su propio div
+
+            contenedorFila.appendChild(label);
+            contenedorFila.appendChild(input);
+
+            return contenedorFila; // Retorna el conjunto  completo
+          };
+
+          //4. Instanciar los campos
+
+          const grupoNombre = crearGrupoCampo(
+            "Nombre Completo : ",
+            "conNombre",
+          );
+          const grupotDir = crearGrupoCampo("Dirección : ", "conDir");
+          const grupoTel = crearGrupoCampo("Telefono : ", "conTel");
+          const grupoEmail = crearGrupoCampo(
+            "Correo Electronico : ",
+            "conEmail",
+          );
+
+          //5. Botón de envío
+
+          const btnValidar = document.createElement("button");
+          btnValidar.textContent = "Validar y Guardar Datos";
+
+          btnValidar.style.padding = "12px";
+          btnValidar.style.backgroundColor = "#007BFF";
+          btnValidar.style.color = "white";
+          btnValidar.style.border = "none";
+          btnValidar.style.borderRadius = "4px";
+          btnValidar.style.cursor = "pointer";
+
+          //Lógica del boton (Conexión con el modal)
+          btnValidar.onclick = () => {
+            //1. capturar los valores actuales de los inputs
+            const nombre = document.getElementById("conNombre").value;
+            const telefono = document.getElementById("conTel").value;
+            const direccion = document.getElementById("conDir").value;
+            const email = document.getElementById("conEmail").value;
+
+            // 2. Validar que no esten Vacios
+            if (!nombre | !direccion | !telefono | !email) {
+              alert("Porfavor, completa todos los campos");
+              return;
+            }
+
+            //Crear el msj de resumen para el modal
+            const resumen = `
+            Nombre   : ${nombre}
+            Telefono : ${telefono}
+            Direccion : ${direccion}
+            Email     : ${email}`;
+
+            //4 Insertar al Modal
+
+            const modalContacto = new Modal("Confirmación de datos");
+
+            // 5. Comfigurar el Modal
+
+            modalContacto.input.style.display = "none"; //oculta el input
+            modalContacto.productoLabel.innerText = resumen; // muestra el resumen en label
+            modalContacto.productoLabel.style.whiteSpace = "pre-line"; // Para que se respete los saltos de linea.
+            //6. Boton Confirmar
+            modalContacto.addButton(
+              "Confirmar",
+              () => {
+                //Aqui de podria guardar el el onjeto global datos de contacto
+                alert("Información guardada localmente");
+
+                //Limpia el formulario de la pestaña
+
+                document.getElementById("conNombre").value = "";
+                document.getElementById("conDir").value = "";
+                document.getElementById("conTel").value = "";
+                document.getElementById("conEmail").value = "";
+              },
+              true,
+            );
+
+            //7. Boton "Corregir"
+            modalContacto.addButton("Corregir", () => {});
+            // LA no hace nada se ejecuta el close()
+            //8. Mostrar el modal
+
+            modalContacto.open();
+
+            console.log("Validando datos");
+          };
+
+          //6. Insertamos al DOM
+
+          formContainer.append(
+            grupoNombre,
+            grupotDir,
+            grupoTel,
+            grupoEmail,
+            btnValidar,
+          );
+          sectionContacto.appendChild(formContainer);
         }
 
         render(container) {
