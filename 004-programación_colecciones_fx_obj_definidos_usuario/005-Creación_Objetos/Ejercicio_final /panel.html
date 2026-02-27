@@ -59,6 +59,9 @@
         display: flex;
         gap: 10px;
       }
+      .tab-section div:hover {
+        background-color: #f9f9f9;
+      }
     </style>
   </head>
   <body>
@@ -83,7 +86,9 @@
       <div class="overlay">
         <div class="modal">
           <h2>Titulo del modal</h2>
-          <label for="producto">Ingresa el nombre del producto </label>
+          <label for="producto" class="productoLabel"
+            >Ingresa el nombre del producto
+          </label>
           <input type="text" id="inputProducto" />
           <div id="btnareas"></div>
         </div>
@@ -135,6 +140,7 @@
           this.element.querySelector("h2").textContent = titulo;
           this.btnArea = this.element.querySelector("#btnareas");
           this.input = this.element.querySelector("#inputProducto");
+          this.productoLabel = this.element.querySelector(".productoLabel");
         }
         //Método para añadir botones personalizados
 
@@ -220,15 +226,52 @@
           const sectionPro = document.getElementById("productos");
 
           //1. Limpiar la sección para evitar duplicados al cambiar de pestaña
-          sectionPro.innerHTML = "<h2>Productos</h2>";
+          sectionPro.innerHTML = "<h2>Productos nuevos</h2>";
 
           //2.Crear contenedor de lista y llenarlo
           const listaContainer = document.createElement("div");
+          listaContainer.style.marginBottom = "20px";
 
-          productos.forEach((producto) => {
-            const productoTag = document.createElement("p");
-            productoTag.textContent = ". " + producto;
-            listaContainer.appendChild(productoTag);
+          productos.forEach((producto, index) => {
+            //creamos el contenedor de la fila
+            const productoFila = document.createElement("div");
+            productoFila.style.display = "flex";
+            productoFila.style.alignItems = "center";
+            productoFila.style.marginBottom = "5px";
+
+            //Creamos el texto del producto
+            const productoTexto = document.createElement("span");
+            productoTexto.textContent = "• " + producto;
+            productoTexto.style.flexGrow = "1"; // Empuja el botón al final
+
+            //Creamos el "tachito"
+            const btnIndividualDelete = document.createElement("button");
+            btnIndividualDelete.textContent = "🗑️";
+            btnIndividualDelete.style.cursor = "pointer";
+            btnIndividualDelete.style.marginLeft = "10px";
+
+            //Lógica de la eliminación Individual
+
+            btnIndividualDelete.onclick = () => {
+              const modalIndivDelete = new Modal("¿Eliminar producto?");
+              modalIndivDelete.input.style.display = "none"; // no mostrar el input
+              modalIndivDelete.productoLabel.textContent = `¿Seguro que quieres borrar ? ${producto}`;
+
+              modalIndivDelete.addButton(
+                "Eliminar",
+                () => {
+                  productos.splice(index, 1); // Borra el elemento en esa posición
+                  this.initProductos();
+                },
+                true,
+              );
+              modalIndivDelete.addButton("Cancelar", () => {});
+              modalIndivDelete.open();
+            };
+
+            productoFila.appendChild(productoTexto);
+            productoFila.appendChild(btnIndividualDelete);
+            listaContainer.appendChild(productoFila);
           });
           sectionPro.appendChild(listaContainer);
 
@@ -260,8 +303,10 @@
           const btnDelete = document.createElement("button");
           btnDelete.textContent = "Eliminar todos";
           btnDelete.style.marginLeft = "10px";
-          btnDelete.onclick(() => {
+          btnDelete.onclick = () => {
             const m = new Modal("¿Deseas Eliminar todos?");
+            m.input.style.display = "none";
+            m.productoLabel.style.display = "none";
             m.addButton(
               "Si, eliminar",
               () => {
@@ -273,16 +318,10 @@
             );
             m.addButton("No", () => {});
             m.open();
-          });
+          };
           //5. Inserción final : Meter los botones en la sección
           sectionPro.appendChild(btnAdd);
           sectionPro.appendChild(btnDelete);
-
-          productos.forEach((producto, index) => {
-            const paragrah = document.createElement("p");
-            paragrah.textContent = producto;
-            this.sectionPro.appendChild(paragrah);
-          });
         }
 
         render(container) {
