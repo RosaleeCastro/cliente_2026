@@ -1,0 +1,12 @@
+A partir de los ejemplos de código encontrados en la sección de objetos tema, desarrolla una pequeña interfaz con las siguientes características:
+
+La aplicación es un contador de años que te avisa de cuando puedes salir de fiesta.
+Tiene que estar dividida en 3 pestañas independientes.
+La primera pestaña tiene que tener un contador para el registro de años
+La segunda pestaña tendrá un botón que generará una alerta.
+Si el valor del contador de la primera pestaña (la edad) está entre 0 y 14, generará una alerta de "error" con el mensaje "Todavía eres muy pequeño".
+Si la edad está entre 15 y 17, generará una alerta de "warning" con el mensaje "Ya te queda poco para ser mayor de edad".
+Si la edad es 18 o más generará una alerta de "success" con el mensaje "Ya puedes salir de fiesta".
+La tercera pestaña tendrá un botón para salir de fiesta.
+Cuando puedas pulsar el botón (solo cuando tengas mas de 18), este generará un modal con una invitación para salir de fiesta.
+Se deben de entregar capturas de pantalla con el resultado obtenido, así como la el archivo resultado del ejercicio.
