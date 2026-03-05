@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Formulario desarrollador</title>
+
+    <style>
+      /* ========================================= */
+      /* ESTILOS BÁSICOS DEL FORMULARIO            */
+      /* ========================================= */
+
+      body {
+        font-family: Arial, sans-serif;
+        padding: 24px;
+      }
+
+      fieldset {
+        margin-top: 20px;
+        padding: 15px;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      /* bloque estudio oculto inicialmente */
+
+      #bloqueEstudio {
+        display: none;
+      }
+
+      /* estilo simple para errores */
+
+      .error {
+        color: red;
+        font-size: 13px;
+      }
+
+      input.errorCampo,
+      select.errorCampo {
+        border: 2px solid red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Formulario de desarrollador</h2>
+
+    <form id="formDesarrollador">
+      <!-- ========================================= -->
+      <!-- INFORMACIÓN PERSONAL                      -->
+      <!-- ========================================= -->
+
+      <fieldset>
+        <legend>Información personal</legend>
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" maxlength="80" />
+
+        <label for="apellido">Apellido</label>
+        <input type="text" id="apellido" name="apellido" maxlength="120" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" maxlength="150" />
+
+        <label for="ciudad">Ciudad</label>
+        <input type="text" id="ciudad" name="ciudad" maxlength="80" />
+
+        <label for="pais">País</label>
+        <input type="text" id="pais" name="pais" maxlength="80" />
+
+        <label for="fecha_nacimiento">Fecha nacimiento</label>
+        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" />
+      </fieldset>
+
+      <!-- ========================================= -->
+      <!-- INFORMACIÓN LABORAL                       -->
+      <!-- ========================================= -->
+
+      <fieldset>
+        <legend>Información laboral</legend>
+
+        <label>
+          <input type="checkbox" id="activo" name="activo" />
+          Desarrollador activo
+        </label>
+
+        <label for="fecha_alta">Fecha alta</label>
+        <input type="date" id="fecha_alta" name="fecha_alta" />
+
+        <!-- BLOQUE QUE CONTIENE EL SELECT DE ESTUDIO -->
+
+        <div id="bloqueEstudio">
+          <label for="id_estudio">Estudio</label>
+
+          <select id="id_estudio" name="id_estudio">
+            <option value="">Seleccione estudio</option>
+            <option value="1">Larian Studios</option>
+            <option value="2">FromSoftware</option>
+            <option value="3">CD Projekt Red</option>
+            <option value="4">Supergiant Games</option>
+            <option value="5">Mojang Studios</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <button type="submit">Enviar</button>
+      <button type="reset">Limpiar</button>
+    </form>
+
+    <script>
+      /* ===================================================== */
+      /* VARIABLES GLOBALES                                    */
+      /* ===================================================== */
+
+      const form = document.getElementById("formDesarrollador");
+
+      const activo = document.getElementById("activo");
+      const bloqueEstudio = document.getElementById("bloqueEstudio");
+      const selectEstudio = document.getElementById("id_estudio");
+
+      /* ===================================================== */
+      /* FUNCIÓN: mostrarOcultarEstudio                        */
+      /* ===================================================== */
+      /*
+Esta función controla si el campo "estudio" debe mostrarse
+o no dependiendo del estado del checkbox "activo".
+*/
+
+      function mostrarOcultarEstudio() {
+        if (activo.checked) {
+          /* si está marcado mostramos el bloque */
+
+          bloqueEstudio.style.display = "block";
+        } else {
+          /* si no está marcado ocultamos */
+
+          bloqueEstudio.style.display = "none";
+
+          /* limpiamos el valor del select */
+
+          selectEstudio.value = "";
+        }
+      }
+
+      /* ===================================================== */
+      /* FUNCIÓN: limpiarErrores                               */
+      /* ===================================================== */
+      /*
+Esta función elimina todos los mensajes de error
+y restaura el estado visual del formulario.
+*/
+
+      function limpiarErrores() {
+        const errores = document.querySelectorAll(".error");
+
+        errores.forEach(function (e) {
+          e.remove();
+        });
+
+        const camposError = document.querySelectorAll(".errorCampo");
+
+        camposError.forEach(function (c) {
+          c.classList.remove("errorCampo");
+        });
+      }
+
+      /* ===================================================== */
+      /* FUNCIÓN: ponerError                                   */
+      /* ===================================================== */
+      /*
+Esta función añade un mensaje de error debajo del campo
+y aplica un borde rojo al input o select.
+*/
+
+      function ponerError(campo, mensaje) {
+        campo.classList.add("errorCampo");
+
+        const span = document.createElement("span");
+
+        span.className = "error";
+
+        span.textContent = mensaje;
+
+        campo.parentNode.appendChild(span);
+      }
+
+      /* ===================================================== */
+      /* FUNCIÓN: calcularEdad                                 */
+      /* ===================================================== */
+      /*
+Calcula la edad en años a partir de una fecha
+de nacimiento recibida como parámetro.
+*/
+
+      function calcularEdad(fechaNacimiento) {
+        const hoy = new Date();
+        const nacimiento = new Date(fechaNacimiento);
+
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+          edad--;
+        }
+
+        return edad;
+      }
+
+      /* ===================================================== */
+      /* FUNCIÓN PRINCIPAL: validarFormulario                  */
+      /* ===================================================== */
+      /*
+Aquí se ejecutan TODAS las validaciones del formulario.
+Si alguna falla se cancela el envío.
+*/
+
+      function validarFormulario(event) {
+        event.preventDefault();
+
+        limpiarErrores();
+
+        let hayErrores = false;
+
+        /* ============================= */
+        /* VALIDAR NOMBRE                */
+        /* ============================= */
+
+        const nombre = document.getElementById("nombre");
+
+        if (nombre.value.trim() === "") {
+          ponerError(nombre, "El nombre es obligatorio");
+          hayErrores = true;
+        }
+
+        /* ============================= */
+        /* VALIDAR APELLIDO              */
+        /* ============================= */
+
+        const apellido = document.getElementById("apellido");
+
+        if (apellido.value.trim() === "") {
+          ponerError(apellido, "El apellido es obligatorio");
+          hayErrores = true;
+        }
+
+        /* ============================= */
+        /* VALIDAR EMAIL                 */
+        /* ============================= */
+
+        const email = document.getElementById("email");
+
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!regexEmail.test(email.value)) {
+          ponerError(email, "Debe introducir un email válido");
+          hayErrores = true;
+        }
+
+        /* ============================= */
+        /* VALIDAR CIUDAD                */
+        /* ============================= */
+
+        const ciudad = document.getElementById("ciudad");
+
+        if (ciudad.value.trim() === "") {
+          ponerError(ciudad, "La ciudad es obligatoria");
+          hayErrores = true;
+        }
+
+        /* ============================= */
+        /* VALIDAR PAIS                  */
+        /* ============================= */
+
+        const pais = document.getElementById("pais");
+
+        if (pais.value.trim() === "") {
+          ponerError(pais, "El país es obligatorio");
+          hayErrores = true;
+        }
+
+        /* ============================= */
+        /* VALIDAR FECHA NACIMIENTO      */
+        /* ============================= */
+
+        const fechaNacimiento = document.getElementById("fecha_nacimiento");
+
+        if (fechaNacimiento.value === "") {
+          ponerError(fechaNacimiento, "Debe indicar fecha de nacimiento");
+          hayErrores = true;
+        } else {
+          const edad = calcularEdad(fechaNacimiento.value);
+
+          if (edad < 18) {
+            ponerError(fechaNacimiento, "Debe ser mayor de 18 años");
+            hayErrores = true;
+          }
+        }
+
+        /* ============================= */
+        /* VALIDAR FECHA ALTA            */
+        /* ============================= */
+
+        const fechaAlta = document.getElementById("fecha_alta");
+
+        if (fechaAlta.value === "") {
+          ponerError(fechaAlta, "Debe indicar fecha de alta");
+          hayErrores = true;
+        } else {
+          const hoy = new Date();
+          const alta = new Date(fechaAlta.value);
+
+          if (alta > hoy) {
+            ponerError(fechaAlta, "La fecha de alta no puede ser futura");
+            hayErrores = true;
+          }
+        }
+
+        /* ============================= */
+        /* VALIDAR ESTUDIO SI ACTIVO     */
+        /* ============================= */
+
+        if (activo.checked) {
+          if (selectEstudio.value === "") {
+            ponerError(selectEstudio, "Debe seleccionar un estudio");
+            hayErrores = true;
+          }
+        }
+
+        /* ============================= */
+        /* RESULTADO FINAL               */
+        /* ============================= */
+
+        if (!hayErrores) {
+          alert("Formulario enviado correctamente");
+
+          form.submit();
+        }
+      }
+
+      /* ===================================================== */
+      /* EVENTOS                                               */
+      /* ===================================================== */
+
+      /* checkbox activo cambia */
+
+      activo.addEventListener("change", mostrarOcultarEstudio);
+
+      /* validar al enviar */
+
+      form.addEventListener("submit", validarFormulario);
+
+      /* estado inicial al cargar */
+
+      window.addEventListener("load", function () {
+        mostrarOcultarEstudio();
+      });
+    </script>
+  </body>
+</html>
