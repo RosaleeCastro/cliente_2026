@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Modificación de apariencia y comportamiento</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        padding: 30px;
+      }
+
+      label {
+        display: block;
+        margin-top: 12px;
+      }
+
+      .error {
+        border: 2px solid red;
+        background-color: #ffe6e6;
+      }
+
+      .correcto {
+        border: 2px solid green;
+      }
+
+      .oculto {
+        display: none;
+      }
+
+      #contador {
+        font-size: 12px;
+        color: gray;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Formulario dinámico</h2>
+
+    <form id="formulario">
+      <!-- NOMBRE -->
+      <label>
+        Nombre (solo letras):
+        <input type="text" id="nombre" />
+      </label>
+
+      <!-- EDAD -->
+      <label>
+        Edad:
+        <input type="number" id="edad" />
+      </label>
+
+      <!-- COMENTARIOS -->
+      <label>
+        Comentarios (máx 100 caracteres):
+        <textarea id="comentarios"></textarea>
+        <div id="contador">0 / 100</div>
+        <div id="resumen" class="oculto">prueba</div>
+      </label>
+
+      <!-- CHECKBOX -->
+      <label>
+        <input type="checkbox" id="empresaCheck" />
+        Soy empresa
+      </label>
+
+      <!-- CAMPO EMPRESA -->
+      <div id="campoEmpresa" class="oculto">
+        <label>
+          CIF:
+          <input type="text" id="cif" disabled />
+        </label>
+      </div>
+
+      <br />
+      <button type="button">Enviar</button>
+    </form>
+
+    <script>
+      window.onload = function () {
+        // Establecer foco automático
+        document.getElementById("nombre").focus();
+
+        const nombre = document.getElementById("nombre");
+        const edad = document.getElementById("edad");
+        const comentarios = document.getElementById("comentarios");
+        const contador = document.getElementById("contador");
+        const empresaCheck = document.getElementById("empresaCheck");
+        const campoEmpresa = document.getElementById("campoEmpresa");
+        const cif = document.getElementById("cif");
+        const resumen = document.getElementById("resumen");
+
+        // Restringir caracteres (solo letras en nombre)
+        nombre.addEventListener("input", function () {
+          this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, "");
+        });
+
+        // Cambio dinámico de estilo según edad
+        edad.addEventListener("input", function () {
+          if (this.value < 18) {
+            this.classList.remove("correcto");
+            this.classList.add("error");
+          } else {
+            this.classList.remove("error");
+            this.classList.add("correcto");
+          }
+        });
+
+        // Limitar caracteres y mostrar contador
+        comentarios.addEventListener("input", function () {
+          if (this.value.length > 100) {
+            this.value = this.value.substring(0, 100);
+          }
+          resumen.textContent = this.value;
+          resumen.classList.remove("oculto");
+          contador.textContent = this.value.length + " / 100";
+        });
+
+        // Mostrar / ocultar y habilitar / deshabilitar
+        empresaCheck.addEventListener("change", function () {
+          if (this.checked) {
+            campoEmpresa.classList.remove("oculto");
+            cif.disabled = false;
+            cif.focus();
+          } else {
+            campoEmpresa.classList.add("oculto");
+            cif.disabled = true;
+            cif.value = "";
+          }
+        });
+      };
+    </script>
+  </body>
+</html>
