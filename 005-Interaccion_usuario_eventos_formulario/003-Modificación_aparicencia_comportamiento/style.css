@@ -1,0 +1,134 @@
+/* =========================
+   ESTILO GENERAL DE PÁGINA
+   ========================= */
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #f5ecff, #ffe6f3);
+  padding: 40px;
+  color: #3b2b4a;
+}
+
+/* =========================
+   CONTENEDOR DEL FORMULARIO
+   ========================= */
+
+form {
+  background: white;
+  max-width: 500px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(90, 40, 120, 0.15);
+}
+
+/* =========================
+   TITULOS
+   ========================= */
+
+h2 {
+  color: #7a2fa6;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   LABELS
+   ========================= */
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #5a3c6d;
+}
+
+/* =========================
+   INPUTS Y TEXTAREA
+   ========================= */
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #d6b3ff;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+/* efecto al seleccionar campo */
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #c94fff;
+  box-shadow: 0 0 5px rgba(201, 79, 255, 0.3);
+}
+
+/* =========================
+   BOTÓN
+   ========================= */
+
+button {
+  margin-top: 25px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #b84dff, #ff66cc);
+  border: none;
+  color: white;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* efecto hover */
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(160, 70, 200, 0.25);
+}
+
+/* =========================
+   ESTADOS DE VALIDACIÓN
+   ========================= */
+
+.error {
+  border: 2px solid #ff4d88;
+  background-color: #ffe6f0;
+}
+
+.correcto {
+  border: 2px solid #9b59b6;
+  background-color: #f5ecff;
+}
+
+/* =========================
+   ELEMENTOS OCULTOS
+   ========================= */
+
+.oculto {
+  display: none;
+}
+
+/* =========================
+   CONTADOR DE CARACTERES
+   ========================= */
+
+#contador {
+  font-size: 12px;
+  color: #8c6ca8;
+  margin-top: 4px;
+}
+
+/* =========================
+   RESUMEN DE TEXTO
+   ========================= */
+
+#resumen {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6a4b80;
+  background: #f9f2ff;
+  padding: 8px;
+  border-radius: 5px;
+}

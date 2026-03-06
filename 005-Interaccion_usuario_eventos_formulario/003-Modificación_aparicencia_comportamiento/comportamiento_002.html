@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Modificación de apariencia y comportamiento</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        padding: 30px;
+      }
+
+      label {
+        display: block;
+        margin-top: 12px;
+      }
+
+      .error {
+        border: 2px solid red;
+        background-color: #ffe6e6;
+      }
+
+      .correcto {
+        border: 2px solid green;
+      }
+
+      .oculto {
+        display: none;
+      }
+
+      #contador {
+        font-size: 12px;
+        color: gray;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Formulario dinámico</h2>
+
+    <form id="formulario">
+      <!-- NOMBRE -->
+      <label>
+        Nombre (solo letras):
+        <input type="text" id="nombre" />
+      </label>
+
+      <!-- EDAD -->
+      <label>
+        Edad:
+        <input type="number" id="edad" />
+      </label>
+
+      <!-- COMENTARIOS -->
+      <label>
+        Comentarios (máx 100 caracteres):
+        <textarea id="comentarios"></textarea>
+        <div id="contador">0 / 100</div>
+        <div id="resumen" class="oculto">prueba</div>
+      </label>
+
+      <!-- CHECKBOX -->
+      <label>
+        <input type="checkbox" id="empresaCheck" />
+        Soy empresa
+      </label>
+
+      <!-- CAMPO EMPRESA -->
+      <div id="campoEmpresa" class="oculto">
+        <label>
+          CIF:
+          <input type="text" id="cif" disabled />
+        </label>
+      </div>
+
+      <br />
+      <button type="button" id="enviar">Enviar</button>
+    </form>
+
+    <script>
+      /*
+    window.onload
+    │---Referencias del los elementos del Dom
+    │--Configuracion Inicial
+    │--Eventos
+    │--Evento Principal
+    ├── validarFormulario()
+    ├── guardarDatos()
+    ├── resetFormulario()
+    │
+    └── evento enviar → usa las 3 funciones
+      */
+
+      window.onload = function () {
+        //---------------------------------------------//
+        //---------1.REFERENCIAS A ELEMENTOS DEL DOM----//
+        //---------------------------------------------//
+        const formulario = document.getElementById("formulario");
+        const nombre = document.getElementById("nombre");
+        const edad = document.getElementById("edad");
+        const comentarios = document.getElementById("comentarios");
+        const contador = document.getElementById("contador");
+        const empresaCheck = document.getElementById("empresaCheck");
+        const campoEmpresa = document.getElementById("campoEmpresa");
+        const cif = document.getElementById("cif");
+        const resumen = document.getElementById("resumen");
+        const enviar = document.getElementById("enviar");
+
+        //---------------------------------------------//
+        //----------2.Configuración Inicial  ----------//
+        //---------------------------------------------//
+        // Establecer foco automático cuando la pagina se carge
+
+        nombre.focus();
+
+        //---------------------------------------------//
+        //----------3.Eventos  ----------//
+        //---------------------------------------------//
+
+        // SOLO PERMITIR LETRAS EN EL NOMBRE
+        nombre.addEventListener("input", function () {
+          this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, "");
+        });
+
+        // VALIDACION VISUAL DE EDAD
+        edad.addEventListener("input", function () {
+          if (this.value < 18) {
+            this.classList.remove("correcto");
+            this.classList.add("error");
+          } else {
+            this.classList.remove("error");
+            this.classList.add("correcto");
+          }
+        });
+
+        // CONTADOR DE CARACTERES DE COMENTARIO CON LIMITE DE 100
+        comentarios.addEventListener("input", function () {
+          if (this.value.length > 100) {
+            this.value = this.value.substring(0, 100);
+          }
+          resumen.textContent = this.value;
+          resumen.classList.remove("oculto");
+          contador.textContent = this.value.length + " / 100";
+        });
+
+        // Mostrar / ocultar y habilitar / deshabilitar
+        empresaCheck.addEventListener("change", function () {
+          if (this.checked) {
+            campoEmpresa.classList.remove("oculto");
+            cif.disabled = false;
+            cif.focus();
+          } else {
+            campoEmpresa.classList.add("oculto");
+            cif.disabled = true;
+            cif.value = "";
+          }
+        });
+
+        //---------------------------------------------//
+        //----------4. EVENTO PRINCIPAL DE ENVIAR -----//
+        //---------------------------------------------//
+
+        //Guardar las variables y resetear el formulario
+        enviar.addEventListener("click", function () {
+          // 1 validar formulario
+          if (!validarFormulario()) {
+            alert("Por favor revisa los campos del formulario");
+            return;
+          }
+
+          // 2 obtener datos
+          const datos = obtenerDatos();
+
+          // 3 guardar datos
+          guardarDatos(datos);
+
+          // 4 resetear formulario
+          resetFormulario();
+
+          alert("Datos guardados correctamente");
+        });
+      };
+
+      /*=================================================
+      FUNCIONES MODULARES (MICROSERVICIOS)
+      ================================================= */
+
+      //---------VALIDAR FORMULARIO-------------------//
+      function validarFormulario() {
+        if (nombre.value.trim() == "") return false;
+        if (edad.value === "" || edad.value < 18) return false;
+        if (empresaCheck.checked && cif.value.trim() === "") return false;
+
+        return true;
+      }
+
+      //---------OBTENER DATOS DEL FORMULARIO-------------------//
+      function obtenerDatos() {
+        return {
+          nombre: nombre.value,
+          edad: edad.value,
+          comentarios: comentarios.value,
+          empresa: empresaCheck.checked,
+          cif: cif.value,
+        };
+
+        // ===============================
+        // GUARDAR DATOS EN LOCALSTORAGE
+        // ===============================
+
+        function guardarDatos(datos) {
+          let registros = JSON.parse(localStorage.getItem("registros")) || [];
+
+          registros.push(datos);
+
+          localStorage.setItem("registros", JSON.stringify(registros));
+
+          console.log("Registros guardados:", registros);
+        }
+
+        // ===============================
+        // RESETEAR FORMULARIO
+        // ===============================
+
+        function resetFormulario() {
+          formulario.reset();
+
+          edad.classList.remove("error", "correcto");
+
+          campoEmpresa.classList.add("oculto");
+          cif.disabled = true;
+
+          contador.textContent = "0 / 100";
+          resumen.classList.add("oculto");
+
+          nombre.focus();
+        }
+      }
+    </script>
+  </body>
+</html>
