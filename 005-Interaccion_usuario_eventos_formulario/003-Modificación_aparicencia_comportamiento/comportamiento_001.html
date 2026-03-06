@@ -74,14 +74,15 @@
       </div>
 
       <br />
-      <button type="button">Enviar</button>
+      <button type="button" id="enviar">Enviar</button>
     </form>
 
     <script>
       window.onload = function () {
-        // Establecer foco automático
-        document.getElementById("nombre").focus();
-
+        //---------------------------------------------//
+        //----------Selección de Elementos----------//
+        //---------------------------------------------//
+        const formulario = document.getElementById("formulario");
         const nombre = document.getElementById("nombre");
         const edad = document.getElementById("edad");
         const comentarios = document.getElementById("comentarios");
@@ -90,6 +91,18 @@
         const campoEmpresa = document.getElementById("campoEmpresa");
         const cif = document.getElementById("cif");
         const resumen = document.getElementById("resumen");
+        const enviar = document.getElementById("enviar");
+
+        //---------------------------------------------//
+        //----------Configuración Inicial  ----------//
+        //---------------------------------------------//
+        // Establecer foco automático cuando la pagina se carge
+
+        nombre.focus();
+
+        //---------------------------------------------//
+        //----------Eventos  ----------//
+        //---------------------------------------------//
 
         // Restringir caracteres (solo letras en nombre)
         nombre.addEventListener("input", function () {
@@ -128,6 +141,47 @@
             cif.disabled = true;
             cif.value = "";
           }
+        });
+
+        //Guardar las variables y resetear el formulario
+        enviar.addEventListener("click", function () {
+          const datosForm = {
+            nombre: nombre.value,
+            edad: edad.value,
+            comentarios: comentarios.value,
+            empresa: empresaCheck.checked,
+            cif: cif.value,
+          };
+          //Obtener datos guardados previmanente
+
+          let registros = JSON.parse(localStorage.getItem("registros")) || [];
+
+          //añadir los datos obtenidos
+          registros.push(datosForm);
+
+          //Guardar en Local Storage
+
+          localStorage.setItem("registros", JSON.stringify(registros));
+
+          console.log("Datos Guardados", registros);
+
+          //Resetear el formulario
+
+          formulario.reset();
+
+          //limpiar estilos visuales
+          edad.classList.remove("correcto", "erro");
+
+          //ocultar campos opcionales
+          campoEmpresa.classList.add("oculto");
+
+          //Restear el contador de texarea
+          comentarios.textContent = "0/100";
+          resumen.classList.add("oculto");
+
+          // Volver a poner el foco
+
+          nombre.focus();
         });
       };
     </script>
