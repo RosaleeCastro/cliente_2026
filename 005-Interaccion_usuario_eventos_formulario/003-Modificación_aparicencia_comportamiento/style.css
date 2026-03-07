@@ -135,3 +135,30 @@ button:hover {
   padding: 8px;
   border-radius: 5px;
 }
+
+/* =========================
+   Tabla 
+   ========================= */
+
+table {
+  margin-top: 30px;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 600px;
+  background: white;
+}
+
+th {
+  background: #f3e6ff;
+  color: #6a3c8a;
+  padding: 10px;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #faf5ff;
+}
