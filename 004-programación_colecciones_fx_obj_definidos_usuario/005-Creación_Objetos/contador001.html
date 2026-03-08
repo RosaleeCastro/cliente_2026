@@ -28,45 +28,45 @@
   <body>
     <h1>Componente A: Contador</h1>
 
-    <!-- Contenedor donde se renderiza el componente -->
     <div id="app"></div>
 
     <script>
       /* =====================================
    COMPONENTE CONTADOR
-   =====================================
-
-   Este componente crea un contador
-   que puede:
-
-   - incrementar el valor
-   - resetear el valor
-
-   Además genera su propio HTML
-   usando JavaScript.
-*/
+   ===================================== */
 
       class Counter {
         /* =========================
-       1. CONSTRUCTOR
-       =========================
-       Inicializa el estado del componente
-       y crea la estructura del DOM
-    */
+       CONSTRUCTOR
+       ========================= */
 
-        constructor() {
-          /* Estado interno del contador */
-          this.value = 0;
+        constructor(initialValue = 0) {
+          /* Estado del contador */
 
-          /* =========================
-           CREACIÓN DE ELEMENTOS
-           ========================= */
+          this.value = initialValue;
 
+          /* Creación del DOM del componente */
+
+          this.createStructure();
+
+          /* Asignación de eventos */
+
+          this.bindEvents();
+
+          /* Render inicial */
+
+          this.updateDisplay();
+        }
+
+        /* =========================
+       CREACIÓN DE ESTRUCTURA
+       ========================= */
+
+        createStructure() {
           this.element = document.createElement("div");
           this.element.className = "counter";
 
           this.display = document.createElement("p");
-          this.display.textContent = this.value;
 
           this.btnInc = document.createElement("button");
           this.btnInc.textContent = "Incrementar";
@@ -74,43 +74,45 @@
           this.btnReset = document.createElement("button");
           this.btnReset.textContent = "Resetear";
 
-          /* =========================
-           EVENTOS
-           ========================= */
+          this.element.append(this.display, this.btnInc, this.btnReset);
+        }
 
+        /* =========================
+       EVENTOS
+       ========================= */
+
+        bindEvents() {
           this.btnInc.onclick = () => this.increment();
 
           this.btnReset.onclick = () => this.reset();
+        }
 
-          /* =========================
-           ESTRUCTURA DEL COMPONENTE
-           ========================= */
+        /* =========================
+       ACTUALIZAR PANTALLA
+       ========================= */
 
-          this.element.append(this.display, this.btnInc, this.btnReset);
+        updateDisplay() {
+          this.display.textContent = this.value;
         }
 
         /* =========================
        MICROSERVICIOS
        ========================= */
 
-        /* Incrementa el valor del contador */
-
         increment() {
           this.value++;
 
-          this.display.textContent = this.value;
+          this.updateDisplay();
         }
-
-        /* Reinicia el contador */
 
         reset() {
           this.value = 0;
 
-          this.display.textContent = this.value;
+          this.updateDisplay();
         }
 
         /* =========================
-       RENDERIZADO DEL COMPONENTE
+       RENDERIZADO
        ========================= */
 
         render(container) {
@@ -122,15 +124,9 @@
    INICIALIZACIÓN DE LA APLICACIÓN
    ===================================== */
 
-      /* Captura del contenedor principal */
-
       const app = document.getElementById("app");
 
-      /* Creación del componente */
-
       const counter = new Counter();
-
-      /* Renderizado del contador */
 
       counter.render(app);
     </script>
