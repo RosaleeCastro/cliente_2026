@@ -1,9 +1,287 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Permidos de Fiesta</title>
+    <title>Permisos de Fiesta</title>
+
+    <style>
+      /* =========================
+   1. ESTILOS GENERALES
+   ========================= */
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        padding: 20px;
+      }
+
+      /* =========================
+   2. ESTILOS DEL COMPONENTE
+   ========================= */
+      .tabs {
+        margin-bottom: 20px;
+      }
+
+      .tab-buttons button {
+        padding: 10px;
+        margin-right: 5px;
+        cursor: pointer;
+        background: #ddd;
+        border: 1px solid #777;
+        border-radius: 5px;
+        transition: background 0.2s;
+      }
+
+      .tab-buttons button:hover {
+        background: #ccc;
+      }
+
+      .tab-buttons button.active {
+        background: #a36ff0;
+        color: white;
+      }
+
+      .tab-section {
+        display: none;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid #333;
+      }
+
+      .counter {
+        margin-top: 10px;
+      }
+      .counter button {
+        margin-right: 5px;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .modal-content .close {
+        margin-top: 10px;
+      }
+    </style>
   </head>
-  <body></body>
+
+  <body>
+    <h1>Datos para ir de Fiesta</h1>
+
+    <div id="tabsContainer"></div>
+
+    <!-- =========================
+     Pestaña 1: Contador de Edad
+========================= -->
+    <section id="ingreso" class="tab-section">
+      <h2>Registro de Edad</h2>
+      <p>Usa los botones para registrar tu edad:</p>
+      <div id="contadorEdad"></div>
+    </section>
+
+    <!-- =========================
+     Pestaña 2: Validación
+========================= -->
+    <section id="aviso" class="tab-section">
+      <h2>Validación de Edad</h2>
+      <button id="btnValidar">Validar Edad</button>
+    </section>
+
+    <!-- =========================
+     Pestaña 3: Fiesta
+========================= -->
+    <section id="fiesta" class="tab-section">
+      <h2>Fiesta</h2>
+      <button id="btnFiesta">Salir de Fiesta</button>
+    </section>
+
+    <!-- Template para Modal -->
+    <template id="modalTemplate">
+      <div class="modal">
+        <div class="modal-content">
+          <h2>🎉 Invitación a la Fiesta 🎉</h2>
+          <p>¡Prepárate para divertirte!</p>
+          <button class="close">Cerrar</button>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      /* =========================
+   1. CLASE TABS
+========================= */
+      class Tabs {
+        constructor(tabNames, sectionIds) {
+          this.tabNames = tabNames;
+          this.sectionIds = sectionIds;
+          this.container = document.createElement("div");
+          this.container.className = "tabs";
+          this.btnArea = document.createElement("div");
+          this.btnArea.className = "tab-buttons";
+          this.container.appendChild(this.btnArea);
+          this.createButtons();
+          this.showTab(0);
+        }
+        createButtons() {
+          this.tabNames.forEach((name, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = name;
+            btn.onclick = () => this.showTab(index);
+            this.btnArea.appendChild(btn);
+          });
+        }
+        showTab(index) {
+          document
+            .querySelectorAll(".tab-section")
+            .forEach((sec) => (sec.style.display = "none"));
+          document.getElementById(this.sectionIds[index]).style.display =
+            "block";
+          this.setActiveButton(index);
+        }
+        setActiveButton(activeIndex) {
+          const buttons = this.btnArea.querySelectorAll("button");
+          buttons.forEach((btn, i) =>
+            btn.classList.toggle("active", i === activeIndex),
+          );
+        }
+        render(container) {
+          container.appendChild(this.container);
+        }
+      }
+
+      /* =========================
+   2. CLASE COUNTER
+========================= */
+      class Counter {
+        constructor(initialValue = 0) {
+          this.value = initialValue;
+          this.createStructure();
+          this.bindEvents();
+          this.updateDisplay();
+        }
+        createStructure() {
+          this.element = document.createElement("div");
+          this.element.className = "counter";
+          this.display = document.createElement("span");
+          this.display.textContent = this.value;
+          this.btnInc = document.createElement("button");
+          this.btnInc.textContent = "+";
+          this.btnDec = document.createElement("button");
+          this.btnDec.textContent = "-";
+          this.btnReset = document.createElement("button");
+          this.btnReset.textContent = "Reset";
+          this.element.append(
+            this.display,
+            this.btnInc,
+            this.btnDec,
+            this.btnReset,
+          );
+        }
+        bindEvents() {
+          this.btnInc.onclick = () => {
+            this.increment();
+          };
+          this.btnDec.onclick = () => {
+            this.decrement();
+          };
+          this.btnReset.onclick = () => {
+            this.reset();
+          };
+        }
+        updateDisplay() {
+          this.display.textContent = this.value;
+        }
+        increment() {
+          this.value++;
+          this.updateDisplay();
+        }
+        decrement() {
+          this.value--;
+          this.updateDisplay();
+        }
+        reset() {
+          this.value = 0;
+          this.updateDisplay();
+        }
+        render(container) {
+          container.appendChild(this.element);
+        }
+        getValue() {
+          return this.value;
+        }
+      }
+
+      /* =========================
+   3. CLASE MODAL
+========================= */
+      class Modal {
+        constructor() {
+          const tpl = document.getElementById("modalTemplate");
+          this.element = tpl.content.firstElementChild.cloneNode(true);
+          this.element.querySelector(".close").onclick = () => this.close();
+        }
+        open() {
+          document.body.appendChild(this.element);
+        }
+        close() {
+          if (document.body.contains(this.element))
+            document.body.removeChild(this.element);
+        }
+      }
+
+      /* =========================
+   4. INICIALIZACIÓN
+========================= */
+      // Crear pestañas
+      const tabsNuevo = new Tabs(
+        ["Ingreso", "Aviso", "Fiesta"],
+        ["ingreso", "aviso", "fiesta"],
+      );
+      tabsNuevo.render(document.getElementById("tabsContainer"));
+
+      // Crear contador en Pestaña 1
+      const contadorEdad = new Counter();
+      contadorEdad.render(document.getElementById("contadorEdad"));
+
+      // Validación de edad en Pestaña 2
+      document.getElementById("btnValidar").onclick = () => {
+        const edad = contadorEdad.getValue();
+        if (edad >= 0 && edad <= 14) {
+          alert("ERROR: Todavía eres muy pequeño");
+        } else if (edad >= 15 && edad <= 17) {
+          alert("WARNING: Ya te queda poco para ser mayor de edad");
+        } else if (edad >= 18) {
+          alert("SUCCESS: Ya puedes salir de fiesta");
+        } else {
+          alert("Edad inválida");
+        }
+      };
+
+      // Fiesta en Pestaña 3
+      document.getElementById("btnFiesta").onclick = () => {
+        const edad = contadorEdad.getValue();
+        if (edad >= 18) {
+          const modal = new Modal();
+          modal.open();
+        } else {
+          alert("Todavía no puedes salir de fiesta");
+        }
+      };
+    </script>
+  </body>
 </html>

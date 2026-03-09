@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<title>Pestañas Mejoradas</title>
+
+<style>
+
+/* =========================
+   1. ESTILOS GENERALES
+   ========================= */
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+/* =========================
+   2. ESTILOS DEL COMPONENTE
+   ========================= */
+
+.tabs {
+  margin-bottom: 20px;
+}
+
+.tab-buttons button {
+  padding: 10px;
+  margin-right: 5px;
+  cursor: pointer;
+  background: #ddd;
+  border: 1px solid #777;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.tab-buttons button:hover {
+  background: #ccc;
+}
+
+/* Pestaña activa */
+.tab-buttons button.active {
+  background: #a36ff0;
+  color: white;
+}
+
+/* Secciones de contenido */
+.tab-section {
+  display: none;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Pestañas Mejoradas</h1>
+
+<div id="tabsContainer"></div>
+
+<section id="inicio" class="tab-section">
+  <h2>Inicio</h2>
+  <p>Bienvenido a la sección de inicio.</p>
+</section>
+
+<section id="productos" class="tab-section">
+  <h2>Productos</h2>
+  <p>Listado de productos disponibles.</p>
+</section>
+
+<section id="contacto" class="tab-section">
+  <h2>Contacto</h2>
+  <p>Puedes contactarnos mediante el formulario.</p>
+</section>
+
+<script>
+/* ==================================================
+   3. COMPONENTE DE PESTAÑAS MEJORADO
+   ================================================== */
+class Tabs {
+
+  /* =========================
+     3.1 CONSTRUCTOR
+     ========================= */
+  constructor(tabNames, sectionIds) {
+    this.tabNames = tabNames;
+    this.sectionIds = sectionIds;
+
+    this.container = document.createElement("div");
+    this.container.className = "tabs";
+
+    this.btnArea = document.createElement("div");
+    this.btnArea.className = "tab-buttons";
+
+    this.container.appendChild(this.btnArea);
+
+    /* Crear botones y asignar eventos */
+    this.createButtons();
+
+    /* Mostrar primera pestaña por defecto */
+    this.showTab(0);
+  }
+
+  /* =========================
+     3.2 CREACIÓN DE BOTONES
+     ========================= */
+  createButtons() {
+    this.tabNames.forEach((name, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = name;
+
+      btn.onclick = () => this.showTab(index);
+
+      this.btnArea.appendChild(btn);
+    });
+  }
+
+  /* =========================
+     3.3 MOSTRAR PESTAÑA
+     ========================= */
+  showTab(index) {
+    // Ocultar todas las secciones
+    document.querySelectorAll(".tab-section")
+      .forEach(sec => sec.style.display = "none");
+
+    // Mostrar la sección correspondiente
+    const sectionId = this.sectionIds[index];
+    document.getElementById(sectionId).style.display = "block";
+
+    // Actualizar el botón activo
+    this.setActiveButton(index);
+  }
+
+  /* =========================
+     3.4 BOTÓN ACTIVO
+     ========================= */
+  setActiveButton(activeIndex) {
+    const buttons = this.btnArea.querySelectorAll("button");
+    buttons.forEach((btn, i) => {
+      btn.classList.toggle("active", i === activeIndex);
+    });
+  }
+
+  /* =========================
+     3.5 RENDERIZADO
+     ========================= */
+  render(container) {
+    container.appendChild(this.container);
+  }
+
+}
+
+/* ==================================================
+   4. INICIALIZACIÓN
+   ================================================== */
+const myTabs = new Tabs(
+  ["Inicio", "Productos", "Contacto"],
+  ["inicio", "productos", "contacto"]
+);
+
+myTabs.render(document.getElementById("tabsContainer"));
+
+</script>
+
+</body>
+</html>
