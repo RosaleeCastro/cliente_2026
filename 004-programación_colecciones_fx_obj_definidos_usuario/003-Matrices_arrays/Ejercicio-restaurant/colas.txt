@@ -1,0 +1,21 @@
+Crea 5 colas en el cliente:
+	Pedidos en espera
+	Parrilla, horno y plancha
+	Emplatar
+
+Crea una pequeña interfaz que permita añadir platos a la cola y muestre el estado de las colas. Antes de añadir a la cola de espera el plato, se tiene que hacer una petición al servidor preguntando por que tipo de plato es el introducido en interfaz. Si no es ninguno de los aceptados mostrará un mensaje por pantalla indicándolo.
+
+Añade pedidos en espera a la cola correspondiente, marcando cada pedido con un tipo en concreto (hamburguesas y bacon a la plancha, chuletas y costillas a la parrilla y cordero y arroz al horno al horno)
+
+Comprueba que el tamaño de la cola sea menor que 3 (solo camben 3 pedidos de cada en las colas de cocina)
+
+Haz que los pedidos avancen de una cola a la siguiente. Para ello:
+	- Cuando un pedido está en la cola de espera y tiene libre su cola de preparación correspondiente (indicado 	por un booleano), este pasará a la siguiente cola. Se volverá a llamar al método de avanzar a preparación 	por si hay un plato que viene detrás que puede pasar a preparación. Si no, esperará.
+	- Cuando un pedido llega a su cola de preparación, este tendrá que comprobar si ya hay un pedido siendo 	preparado en ese momento. Si lo hay, esperará. Si no, llamará a un método cocinar que:
+		- Pregunta al servidor por la información del plato (tiempo de preparación e ingredientes)
+		- Mostrará la lista de ingredientes
+		- Iniciará un timeout con el tiempo de preparación. Cuando el timeout se acabe, el plato pasará a la 		cola de emplatado, comprobará si existen mas platos en su cola de preparación y si los hay empezará 		a preparar el siguiente, cambiará el booleano de hueco libre en su respectiva cola y llamará al 		método de avanzar preparación.
+	- Cuando un pedido llega a la cola de emplatado:
+		- Se hará una llamada al servidor que devuelva el tiempo de emplatado y una descripción detallada de 		este.
+		- Se iniciará un timeout con el tiempo de emplatado. Cuando el timeout se acabe, el plato estará 		listo, comprobará si existen mas platos en su cola de emplatado y si los hay empezará a emplatar el 		siguiente y mostrará un mensaje indicando que el plato esta listo y su descripción.
+		- Se hará una segunda llamada al servidor, cuando el plato ya este listo, que enviará en una cookie 		la cantidad de platos que han sido terminados ya y este contestará con la cookie actualizada. El 		cliente actualizará el contador por pantalla de platos terminados.

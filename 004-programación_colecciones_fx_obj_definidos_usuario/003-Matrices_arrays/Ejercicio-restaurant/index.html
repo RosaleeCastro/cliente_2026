@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant</title>
+  </head>
+  <body>
+    <h1>Gestion de Pedidos de Cocina</h1>
+
+    <input type="text" id="inputPlato" placeholder="Intriduce tu plato" />
+    <button id="btnAgregar">Añadir Plato</button>
+
+    <p>Platos terminados: <span id="contadorTerminados">0</span></p>
+
+    <div id="mensajes"></div>
+    
+    <div class="zonas">
+      <div id="cola">
+        <h2>Pedidos en espera</h2>
+        <ul id="listaEspera"></ul>
+      </div>
+
+      <div id="cola">
+        <h2>Parrilla</h2>
+        <ul id="listaParrilla"></ul>
+      </div>
+
+      <div id="cola">
+        <h2>Horno</h2>
+        <ul id="listaHorno"></ul>
+      </div>
+
+      <div id="cola">
+        <h2>Plancha</h2>
+        <ul id="listaPlancha"></ul>
+      </div>
+
+      <div id="cola">
+        <h2>Emplatado</h2>
+        <ul id="listaEmplatado"></ul>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

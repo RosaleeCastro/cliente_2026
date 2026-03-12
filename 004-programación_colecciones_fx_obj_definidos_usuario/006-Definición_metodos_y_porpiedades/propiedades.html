@@ -4,68 +4,107 @@
     <meta charset="UTF-8" />
     <title>Propiedades públicas y privadas en JS</title>
   </head>
+
   <body>
     <script>
+      /* =====================================
+   1. CLASE PERSONA
+   ===================================== */
       class Persona {
-        // PROPIEDAD PRIVADA REAL (moderna)
+        /* =========================
+     1.1 PROPIEDAD PRIVADA REAL
+     ========================= */
         #dni;
 
+        /* =========================
+     1.2 CONSTRUCTOR
+     ========================= */
         constructor(nombre, edad, dni) {
-          // PROPIEDAD PÚBLICA
+          /* PROPIEDAD PÚBLICA */
           this.nombre = nombre;
 
-          // PROPIEDAD PRIVADA POR CONVENCIÓN (NO es realmente privada)
+          /* PROPIEDAD PRIVADA POR CONVENCIÓN */
           this._edad = edad;
 
-          // PRIVADA REAL
+          /* PROPIEDAD PRIVADA REAL */
           this.#dni = dni;
         }
 
-        // ============================
-        // MÉTODOS GETTERS
-        // ============================
+        /* =========================
+     1.3 MÉTODOS GETTERS
+     ========================= */
 
+        /* Getter propiedad pública */
         getPublica() {
           return this.nombre;
         }
 
+        /* Getter propiedad por convención */
         getConvencion() {
           return this._edad;
         }
 
+        /* Getter propiedad privada real */
         getPrivada() {
           return this.#dni;
         }
 
-        // Setter real del DNI
+        /* =========================
+     1.4 MÉTODOS SETTERS
+     ========================= */
+
+        /* Setter para modificar el DNI */
         setDNI(nuevoDni) {
           this.#dni = nuevoDni;
         }
       }
 
+      /* =====================================
+   2. CREACIÓN DE OBJETO
+   ===================================== */
+
       const p = new Persona("María", 25, "12345678A");
+
+      /* =====================================
+   3. PRUEBAS DE ACCESO
+   ===================================== */
 
       console.log("===== ACCESO DESDE FUERA =====");
 
-      // PROPIEDAD PÚBLICA → funciona
+      /* --- PROPIEDAD PÚBLICA --- */
+
       console.log("Accediendo a nombre:", p.getPublica());
+
       p.nombre = "Ana";
+
       console.log("Nuevo nombre:", p.getPublica());
 
-      // PROPIEDAD POR CONVENCIÓN → funciona, pero NO debería tocarse
+      /* --- PROPIEDAD POR CONVENCIÓN --- */
+
       console.log("Accediendo a _edad:", p.getConvencion());
+
       p._edad = 99;
+
       console.log("Cambiando _edad:", p.getConvencion());
 
-      // PROPIEDAD PRIVADA REAL → no se puede acceder por fuera
-      // console.log(p.#dni);  ERROR, pero sí mediante getter
+      /* --- PROPIEDAD PRIVADA REAL --- */
+
+      // console.log(p.#dni); ❌ ERROR
+
       console.log("Accediendo al DNI:", p.getPrivada());
 
-      // Modificamos el DNI con el setter
+      /* --- MODIFICAR DNI --- */
+
       p.setDNI("99999999Z");
+
       console.log("Nuevo DNI:", p.getPrivada());
 
+      /* =====================================
+   4. MOSTRAR DATOS CON GETTERS
+   ===================================== */
+
       console.log("===== MOSTRAR CON MÉTODOS GETTERS =====");
+
       console.log("Nombre:", p.getPublica());
       console.log("Edad:", p.getConvencion());
       console.log("DNI:", p.getPrivada());

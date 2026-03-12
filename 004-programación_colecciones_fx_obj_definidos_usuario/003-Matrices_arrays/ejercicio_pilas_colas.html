@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ejercicio: Pilas y Colas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      section {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      input {
+        padding: 6px;
+      }
+
+      button {
+        margin-left: 4px;
+        padding: 6px 10px;
+      }
+
+      .salida {
+        margin-top: 10px;
+        background: #f7f7f7;
+        padding: 10px;
+        border-radius: 6px;
+        min-height: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ejercicio de Pilas y Colas</h1>
+
+    <section>
+      <h2>Pila (LIFO)</h2>
+      <input id="entradaPila" placeholder="Elemento para pila" />
+      <button id="btnPush">Push</button>
+      <button id="btnPop">Pop</button>
+      <button id="btnPeek">Peek</button>
+      <div class="salida" id="estadoPila"></div>
+      <div class="salida" id="mensajePila"></div>
+    </section>
+
+    <section>
+      <h2>Cola (FIFO)</h2>
+      <input id="entradaCola" placeholder="Elemento para cola" />
+      <button id="btnEnqueue">Enqueue</button>
+      <button id="btnDequeue">Dequeue</button>
+      <button id="btnFront">Front</button>
+      <div class="salida" id="estadoCola"></div>
+      <div class="salida" id="mensajeCola"></div>
+    </section>
+
+    <script>
+      class Pila {
+        #items;
+
+        constructor() {
+          this.#items = [];
+        }
+
+        push(valor) {
+          this.#items.push(valor);
+        }
+
+        pop() {
+          if (this.isEmpty()) return null;
+          return this.#items.pop();
+        }
+
+        peek() {
+          if (this.isEmpty()) return null;
+          return this.#items[this.#items.length - 1];
+        }
+
+        isEmpty() {
+          return this.#items.length === 0;
+        }
+
+        mostrar() {
+          if (this.isEmpty()) return "(vacía)";
+          return this.#items.slice().reverse().join(" | ");
+        }
+      }
+
+      class Cola {
+        #items;
+
+        constructor() {
+          this.#items = [];
+        }
+
+        enqueue(valor) {
+          this.#items.push(valor);
+        }
+
+        dequeue() {
+          if (this.isEmpty()) return null;
+          return this.#items.shift();
+        }
+
+        front() {
+          if (this.isEmpty()) return null;
+          return this.#items[0];
+        }
+
+        isEmpty() {
+          return this.#items.length === 0;
+        }
+
+        mostrar() {
+          if (this.isEmpty()) return "(vacía)";
+          return this.#items.join(" -> ");
+        }
+      }
+
+      const pila = new Pila();
+      const cola = new Cola();
+
+      const entradaPila = document.getElementById("entradaPila");
+      const estadoPila = document.getElementById("estadoPila");
+      const mensajePila = document.getElementById("mensajePila");
+
+      const entradaCola = document.getElementById("entradaCola");
+      const estadoCola = document.getElementById("estadoCola");
+      const mensajeCola = document.getElementById("mensajeCola");
+
+      function renderPila() {
+        estadoPila.textContent = "Cima -> " + pila.mostrar() + " <- Base";
+      }
+
+      function renderCola() {
+        estadoCola.textContent = "Frente -> " + cola.mostrar() + " <- Final";
+      }
+
+      document.getElementById("btnPush").addEventListener("click", () => {
+        const valor = entradaPila.value.trim();
+        if (!valor) return;
+        pila.push(valor);
+        entradaPila.value = "";
+        mensajePila.textContent = `Push: ${valor}`;
+        renderPila();
+      });
+
+      document.getElementById("btnPop").addEventListener("click", () => {
+        const valor = pila.pop();
+        mensajePila.textContent =
+          valor === null ? "La pila está vacía" : `Pop: ${valor}`;
+        renderPila();
+      });
+
+      document.getElementById("btnPeek").addEventListener("click", () => {
+        const valor = pila.peek();
+        mensajePila.textContent =
+          valor === null ? "La pila está vacía" : `Peek: ${valor}`;
+      });
+
+      document.getElementById("btnEnqueue").addEventListener("click", () => {
+        const valor = entradaCola.value.trim();
+        if (!valor) return;
+        cola.enqueue(valor);
+        entradaCola.value = "";
+        mensajeCola.textContent = `Enqueue: ${valor}`;
+        renderCola();
+      });
+
+      document.getElementById("btnDequeue").addEventListener("click", () => {
+        const valor = cola.dequeue();
+        mensajeCola.textContent =
+          valor === null ? "La cola está vacía" : `Dequeue: ${valor}`;
+        renderCola();
+      });
+
+      document.getElementById("btnFront").addEventListener("click", () => {
+        const valor = cola.front();
+        mensajeCola.textContent =
+          valor === null ? "La cola está vacía" : `Front: ${valor}`;
+      });
+
+      renderPila();
+      renderCola();
+    </script>
+  </body>
+</html>
