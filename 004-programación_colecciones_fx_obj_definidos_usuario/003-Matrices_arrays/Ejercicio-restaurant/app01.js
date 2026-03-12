@@ -13,7 +13,6 @@ let colaEmplatado = [];
 let ultimoId = 0;
 let platosTerminados = 0;
 
-// Estaciones ocupadas o libres
 let parrillaOcupada = false;
 let hornoOcupado = false;
 let planchaOcupada = false;
@@ -36,13 +35,10 @@ const listaEmplatado = document.getElementById("listaEmplatado");
 // --------------------
 // FUNCIONES
 // --------------------
-
-// Mostrar mensajes en pantalla
 function mostrarMensaje(texto) {
   mensajes.textContent = texto;
 }
 
-// Dibujar todas las colas
 function renderColas() {
   listaEspera.innerHTML = "";
   listaParrilla.innerHTML = "";
@@ -73,33 +69,25 @@ function renderColas() {
   contadorTerminados.textContent = platosTerminados;
 }
 
-// De momento solo estructura
 async function agregarPedido() {
-  //normailizamos el texto para que coincida con lo que espera el servidor
   let nombrePlato = inputPlato.value.trim().toLowerCase();
 
-  //validamos el campo vacío
   if (nombrePlato === "") {
     mostrarMensaje("Debes escribir un plato.");
     return;
   }
 
   try {
-    // hacemos fetch  y enviamos el plato al servidor para que ejecute y nos devuleva una respuesta
     const respuesta = await fetch(
       `validar_plato.php?nombre=${encodeURIComponent(nombrePlato)}`,
     );
-
-    //Recibimos la respuesta y la convertimos en json
     const datos = await respuesta.json();
 
-    // si el plato no es válido, mostrar mensaje y terminar
     if (!datos.valido) {
       mostrarMensaje(datos.mensaje);
       return;
     }
 
-    //crear el nuevo pedido
     ultimoId++;
 
     let pedido = {
@@ -109,31 +97,19 @@ async function agregarPedido() {
       estado: "espera",
     };
 
-    //Añadir a la cola de espera
-
     colaEspera.push(pedido);
 
-    //Actualizar interfaz
     renderColas();
+    mostrarMensaje(`Pedido añadido: ${pedido.nombre} → ${pedido.tipoCoccion}`);
 
-    //Mensaje informativo
-    mostrarMensaje(`Pedido añadido : ${pedido.nombre}→ ${pedido.tipoCoccion}`);
-
-    //Limpiar input
     inputPlato.value = "";
     inputPlato.focus();
   } catch (error) {
     console.error(error);
-    mostrarMensaje(`Error al conectat con el servidor.`);
+    mostrarMensaje("Error al conectar con el servidor.");
   }
-
-  const datos = await respuesta.json();
-
-  // Aquí luego haremos fetch al servidor para validar
-  mostrarMensaje("Aquí validaremos el plato con el servidor.");
 }
 
-// Luego implementaremos esta lógica
 function avanzarAPreparacion() {
   // pendiente
 }
@@ -151,5 +127,4 @@ function iniciarEmplatado() {
 // --------------------
 btnAgregar.addEventListener("click", agregarPedido);
 
-// Pintado inicial
 renderColas();
