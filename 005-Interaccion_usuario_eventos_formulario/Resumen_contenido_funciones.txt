@@ -1,0 +1,42 @@
+Resumen de Carpetas y Archivos en 005-Interaccion_usuario_eventos_formulario
+Tema Principal: Ejercicios de JavaScript sobre interacción de usuario, manejo de eventos y gestión de formularios.
+
+Carpetas y Archivos
+001-Gestion_de_eventos (Gestión de Eventos)
+
+event.html — Propiedades del objeto evento y manejadores (tipo, target, clientX, clientY)
+eventoFormulario.html — Eventos específicos de formularios (submit, change, focus, blur)
+eventosNavegador.html — Eventos del navegador (load, unload, scroll, resize)
+eventosPortapapeles.html — Eventos del portapapeles (copy, paste, cut)
+eventosRaton.html — Eventos del ratón (click, mouseover, mouseout, mousedown, mouseup)
+eventoTeclado.html — Eventos del teclado (keydown, keyup, keypress)
+removeAdeventLisener2.html — Remover event listeners
+tiposDeAsociacionEventos1.html — Formas de asociar eventos (onclick, addEventListener, etc.)
+ejercicios/ — Archivos de ejercicios con descripciones de desafíos de eventos
+
+
+002-Utilizacion_de_formularios_desde_codigo (Manipulación de Formularios desde Código)
+
+formulario.html — Construir y manipular formularios dinámicamente con JavaScript
+banda.html — Ejemplo relacionado con formularios
+banda.txt — Notas/descripción asociada
+003-Modificación_aparicencia_comportamiento (Modificación de Apariencia y Comportamiento)
+
+comportamiento.html — Cambiar apariencia de elementos dinámicamente (agregar/quitar clases CSS)
+comportamiento_001.html - comportamiento_004.html — Ejemplos progresivos
+valores.html — Obtener y establecer valores de formularios
+index.html — Punto de entrada principal
+style.css — Estilos compartidos (clases error, correcto, oculto)
+Formularios_Didacticos/ — Ejemplos avanzados (API FormData, querySelector, forEach)
+
+
+004-Validacion_Envio (Validación y Envío)
+
+validacion.html — Validación de formularios con resaltado de errores y mensajes
+peticionFallida.html — Manejo de peticiones fallidas
+servidorFalso.php — Servidor mock para probar envíos
+
+
+005-ExpresionesRegulares (Expresiones Regulares)
+
+introduccionRegExp.html — Patrones regex para validación (email, teléfono, etc.)

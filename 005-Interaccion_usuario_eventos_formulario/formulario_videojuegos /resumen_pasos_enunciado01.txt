@@ -1,0 +1,84 @@
+Resumen de pasos realizados para resolver enunciado01
+
+1. Revisar los enunciados leerlos a detalle
+
+2. Revisé el archivo Ejemplo.html de la misma carpeta para mantener el mismo estilo:
+   - validación con JavaScript
+   - mensajes de error bajo cada campo
+   - clase CSS error
+   - foco al primer error
+   - foco inicial y también después del reset
+
+3. Revisé el dump de base de datos para ver la tabla desarrollador:
+   - nombre -> varchar(80)
+   - apellido -> varchar(120)
+   - email -> varchar(150)
+   - ciudad -> varchar(80)
+   - pais -> varchar(80)
+   - fecha_nacimiento -> date
+   - fecha_alta -> date
+   - activo -> tinyint(1)
+   - id_estudio -> int
+
+4. Revisé también la tabla estudio para sacar las opciones reales del select:
+   - Larian Studios
+   - FromSoftware
+   - CD PROJEKT RED
+   - Supergiant Games
+   - Mojang Studios
+   - MercurySteam
+
+5. Creé un archivo nuevo llamado solucion_enunciado01.html.
+
+6. Dividí el formulario en 2 bloques como pedía el ejercicio:
+   - Datos personales
+   - Datos laborales
+
+7. Añadí todos los campos de desarrollador excepto el id, porque el enunciado decía que no hacía falta.
+
+8. Puse maxlength en los inputs de texto para respetar el tamaño marcado en la base de datos.
+
+9. Preparé el select id_estudio con:
+   - una opción inicial "Sin estudio" que equivale a valor vacío
+   - las opciones reales sacadas de la tabla estudio
+
+10. Hice que el select del estudio solo se muestre cuando el checkbox activo está marcado.
+
+11. Cuando activo no está marcado:
+   - el select se oculta
+   - el valor se deja vacío
+   - eso simula mandar NULL a la base de datos
+
+12. Añadí limpieza de caracteres no permitidos:
+   - para campos de texto normales
+   - para el email con su propia limpieza
+
+13. Implementé la validación pedida en el enunciado:
+   - nombre obligatorio y mínimo 2
+   - apellido obligatorio y mínimo 2
+   - email opcional pero con @ si se rellena
+   - ciudad opcional con mínimo 2 si se rellena
+   - país opcional con mínimo 2 si se rellena
+   - fecha_nacimiento no futura
+   - si activo está marcado:
+     fecha_alta obligatoria
+     id_estudio obligatorio
+   - si activo no está marcado:
+     fecha_alta no futura si se rellena
+
+14. Añadí mensajes de error debajo del campo y color rojo con CSS para que se vea claro qué falla.
+
+15. Hice que al enviar:
+   - se valide todo
+   - el foco vaya al primer error si existe alguno
+   - si todo está bien, se muestre un resumen de los datos que se enviarían
+
+16. Añadí comportamiento al reset:
+   - limpiar errores
+   - restaurar el texto del resumen
+   - actualizar la visibilidad del select
+   - poner foco en nombre
+
+17. Añadí foco inicial al cargar la página para cumplir el enunciado.
+
+18. Dejé el código muy comentado para que se entienda cada bloque paso a paso.
