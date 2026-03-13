@@ -1,0 +1,10 @@
+Añade un botón de reset al formulario que:
+	- Resetee el formulario
+	- Avise de que se ha reseteado el formulario
+
+Añade un contador de campos que:
+	- Cuente campo por campo si se ha pasado mínimo una vez por el
+	- Habilite el botón de enviar si ya se ha pasado por todos los campos
+
+
+Extra: Para poder enviar el formulario es necesario también haber cambiado mínimo una vez el valor de cada campo.ter
