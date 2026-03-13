@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario de desarrollador</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 24px;
+        background-color: #f7f7f7;
+        color: #1f2937;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+      }
+
+      p {
+        margin-top: 0;
+      }
+
+      form {
+        max-width: 900px;
+      }
+
+      fieldset {
+        margin-bottom: 18px;
+        padding: 16px;
+        border: 1px solid #cfcfcf;
+        background-color: #ffffff;
+      }
+
+      legend {
+        font-weight: bold;
+      }
+
+      .fila {
+        margin-bottom: 12px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      .checkbox-linea {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox-linea input {
+        width: auto;
+      }
+
+      .oculto {
+        display: none;
+      }
+
+      .error {
+        border: 2px solid #c62828;
+        background-color: #ffecec;
+      }
+
+      .msg-error {
+        color: #b00020;
+        margin: 6px 0 0;
+        font-size: 13px;
+      }
+
+      .mensaje-ok {
+        color: #166534;
+      }
+
+      .mensaje-error {
+        color: #b00020;
+      }
+
+      #resumenEnvio {
+        margin-top: 18px;
+        padding: 14px;
+        border: 1px solid #cfcfcf;
+        background-color: #ffffff;
+        white-space: pre-line;
+      }
+
+      .botones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .botones button {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .tabla-contenedor {
+        margin-top: 20px;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+      }
+
+      th,
+      td {
+        border: 1px solid #d9d9d9;
+        padding: 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #eceff3;
+      }
+
+      .fila-tabla {
+        cursor: pointer;
+      }
+
+      .fila-tabla:hover {
+        background: #f4f8ff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Alta de desarrollador</h1>
+    <p>
+      Formulario del lado cliente conectado con
+      <code>transaccion.php</code> mediante <code>fetch</code>.
+    </p>
+
+    <form id="formDesarrollador" novalidate>
+      <fieldset>
+        <legend>Datos personales</legend>
+
+        <div class="fila">
+          <label for="id_desarrollador">ID del desarrollador</label>
+          <input
+            type="number"
+            id="id_desarrollador"
+            name="id_desarrollador"
+            min="1"
+            placeholder="Necesario para actualizar o eliminar"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="nombre">Nombre</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            maxlength="80"
+            placeholder="Máximo 80 caracteres"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="apellido">Apellido</label>
+          <input
+            type="text"
+            id="apellido"
+            name="apellido"
+            maxlength="120"
+            placeholder="Máximo 120 caracteres"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="email">Email</label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            maxlength="150"
+            placeholder="Máximo 150 caracteres"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="ciudad">Ciudad</label>
+          <input
+            type="text"
+            id="ciudad"
+            name="ciudad"
+            maxlength="80"
+            placeholder="Máximo 80 caracteres"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="pais">País</label>
+          <input
+            type="text"
+            id="pais"
+            name="pais"
+            maxlength="80"
+            placeholder="Máximo 80 caracteres"
+          />
+        </div>
+
+        <div class="fila">
+          <label for="fecha_nacimiento">Fecha de nacimiento</label>
+          <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Datos laborales</legend>
+
+        <div class="fila">
+          <label class="checkbox-linea" for="activo">
+            <input type="checkbox" id="activo" name="activo" />
+            <span>Activo</span>
+          </label>
+        </div>
+
+        <div class="fila">
+          <label for="fecha_alta">Fecha de alta</label>
+          <input type="date" id="fecha_alta" name="fecha_alta" />
+        </div>
+
+        <div class="fila oculto" id="filaEstudio">
+          <label for="id_estudio">Estudio</label>
+          <select id="id_estudio" name="id_estudio">
+            <option value="">Sin estudio</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <div class="botones">
+        <button type="button" id="btnInsertar">Insertar</button>
+        <button type="button" id="btnActualizar">Actualizar</button>
+        <button type="button" id="btnEliminar">Eliminar</button>
+        <button type="reset">Limpiar</button>
+      </div>
+    </form>
+
+    <div id="resumenEnvio">Aquí aparecerá el resultado del servidor.</div>
+
+    <div class="tabla-contenedor">
+      <table id="tablaDesarrolladores">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Ciudad</th>
+            <th>País</th>
+            <th>Fecha nacimiento</th>
+            <th>Fecha alta</th>
+            <th>Activo</th>
+            <th>ID estudio</th>
+            <th>Estudio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="11">Cargando datos...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      const form = document.getElementById("formDesarrollador");
+      const resumenEnvio = document.getElementById("resumenEnvio");
+      const tablaBody = document.querySelector("#tablaDesarrolladores tbody");
+
+      const idDesarrollador = document.getElementById("id_desarrollador");
+      const nombre = document.getElementById("nombre");
+      const apellido = document.getElementById("apellido");
+      const email = document.getElementById("email");
+      const ciudad = document.getElementById("ciudad");
+      const pais = document.getElementById("pais");
+      const fechaNacimiento = document.getElementById("fecha_nacimiento");
+      const activo = document.getElementById("activo");
+      const fechaAlta = document.getElementById("fecha_alta");
+      const filaEstudio = document.getElementById("filaEstudio");
+      const idEstudio = document.getElementById("id_estudio");
+
+      const btnInsertar = document.getElementById("btnInsertar");
+      const btnActualizar = document.getElementById("btnActualizar");
+      const btnEliminar = document.getElementById("btnEliminar");
+
+      const urlApi = new URL("./transaccion.php", window.location.href).href;
+      const hoy = new Date().toISOString().split("T")[0];
+
+      async function leerRespuestaComoJson(respuesta) {
+        const texto = await respuesta.text();
+
+        try {
+          return JSON.parse(texto);
+        } catch (error) {
+          throw new Error(
+            "La respuesta del servidor no es JSON. Inicio recibido: " +
+              texto.slice(0, 120),
+          );
+        }
+      }
+
+      function limpiarTextoGeneral(valor) {
+        return valor.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\s.,'-]/g, "");
+      }
+
+      function limpiarEmail(valor) {
+        return valor.replace(/[^a-zA-Z0-9@._+-]/g, "");
+      }
+
+      function limpiarErrores() {
+        form.querySelectorAll(".error").forEach(function (elemento) {
+          elemento.classList.remove("error");
+        });
+
+        form.querySelectorAll(".msg-error").forEach(function (mensaje) {
+          mensaje.remove();
+        });
+      }
+
+      function limpiarErrorDeCampo(campo) {
+        campo.classList.remove("error");
+
+        const siguiente = campo.nextElementSibling;
+        if (siguiente && siguiente.classList.contains("msg-error")) {
+          siguiente.remove();
+        }
+      }
+
+      function ponerError(campo, mensaje) {
+        limpiarErrorDeCampo(campo);
+        campo.classList.add("error");
+
+        const textoError = document.createElement("p");
+        textoError.className = "msg-error";
+        textoError.textContent = mensaje;
+
+        campo.insertAdjacentElement("afterend", textoError);
+      }
+
+      function actualizarVisibilidadEstudio() {
+        if (activo.checked) {
+          filaEstudio.classList.remove("oculto");
+        } else {
+          filaEstudio.classList.add("oculto");
+          idEstudio.value = "";
+          limpiarErrorDeCampo(idEstudio);
+        }
+      }
+
+      function textoVacio(valor) {
+        return valor.trim() === "";
+      }
+
+      function fechaEsFutura(fechaTexto) {
+        return fechaTexto > hoy;
+      }
+
+      function mostrarMensaje(texto, tipo) {
+        resumenEnvio.textContent = texto;
+        resumenEnvio.className =
+          tipo === "error" ? "mensaje-error" : "mensaje-ok";
+      }
+
+      function renderizarEstudios(estudios) {
+        idEstudio.innerHTML = '<option value="">Sin estudio</option>';
+
+        estudios.forEach(function (estudio) {
+          const opcion = document.createElement("option");
+          opcion.value = estudio.id_estudio;
+          opcion.textContent = estudio.nombre;
+          idEstudio.appendChild(opcion);
+        });
+      }
+
+      function renderizarTabla(desarrolladores) {
+        tablaBody.innerHTML = "";
+
+        if (!desarrolladores || desarrolladores.length === 0) {
+          tablaBody.innerHTML =
+            '<tr><td colspan="11">No hay desarrolladores para mostrar.</td></tr>';
+          return;
+        }
+
+        desarrolladores.forEach(function (dev) {
+          const fila = document.createElement("tr");
+          fila.className = "fila-tabla";
+          fila.innerHTML = `
+            <td>${dev.id_desarrollador ?? ""}</td>
+            <td>${dev.nombre ?? ""}</td>
+            <td>${dev.apellido ?? ""}</td>
+            <td>${dev.email ?? ""}</td>
+            <td>${dev.ciudad ?? ""}</td>
+            <td>${dev.pais ?? ""}</td>
+            <td>${dev.fecha_nacimiento ?? ""}</td>
+            <td>${dev.fecha_alta ?? ""}</td>
+            <td>${String(dev.activo) === "1" ? "Si" : "No"}</td>
+            <td>${dev.id_estudio ?? ""}</td>
+            <td>${dev.nombre_estudio ?? "Sin estudio"}</td>
+          `;
+
+          fila.addEventListener("click", function () {
+            cargarFilaEnFormulario(dev);
+          });
+
+          tablaBody.appendChild(fila);
+        });
+      }
+
+      function cargarFilaEnFormulario(dev) {
+        idDesarrollador.value = dev.id_desarrollador ?? "";
+        nombre.value = dev.nombre ?? "";
+        apellido.value = dev.apellido ?? "";
+        email.value = dev.email ?? "";
+        ciudad.value = dev.ciudad ?? "";
+        pais.value = dev.pais ?? "";
+        fechaNacimiento.value = dev.fecha_nacimiento ?? "";
+        fechaAlta.value = dev.fecha_alta ?? "";
+        activo.checked = String(dev.activo) === "1";
+        actualizarVisibilidadEstudio();
+        idEstudio.value = dev.id_estudio ?? "";
+        nombre.focus();
+      }
+
+      async function cargarDatosIniciales() {
+        try {
+          const respuesta = await fetch(urlApi);
+          const datos = await leerRespuestaComoJson(respuesta);
+
+          if (!respuesta.ok || !datos.ok) {
+            throw new Error(
+              datos.mensaje || "No se pudieron cargar los datos.",
+            );
+          }
+
+          renderizarEstudios(datos.estudios || []);
+          renderizarTabla(datos.desarrolladores || []);
+          mostrarMensaje("Datos cargados correctamente.", "ok");
+        } catch (error) {
+          mostrarMensaje(error.message, "error");
+        }
+      }
+
+      function obtenerDatosFormulario(accion) {
+        const datos = new FormData();
+        datos.append("accion", accion);
+        datos.append("id_desarrollador", idDesarrollador.value.trim());
+        datos.append("nombre", nombre.value.trim());
+        datos.append("apellido", apellido.value.trim());
+        datos.append("email", email.value.trim());
+        datos.append("ciudad", ciudad.value.trim());
+        datos.append("pais", pais.value.trim());
+        datos.append("fecha_nacimiento", fechaNacimiento.value);
+        datos.append("fecha_alta", fechaAlta.value);
+        datos.append("activo", activo.checked ? "1" : "0");
+        datos.append("id_estudio", activo.checked ? idEstudio.value : "");
+        return datos;
+      }
+
+      function validarFormulario(accion) {
+        limpiarErrores();
+
+        let formularioValido = true;
+        let primerError = null;
+
+        const valorId = idDesarrollador.value.trim();
+        const valorNombre = nombre.value.trim();
+        const valorApellido = apellido.value.trim();
+        const valorEmail = email.value.trim();
+        const valorCiudad = ciudad.value.trim();
+        const valorPais = pais.value.trim();
+        const valorFechaNacimiento = fechaNacimiento.value;
+        const valorFechaAlta = fechaAlta.value;
+
+        if (accion === "delete") {
+          if (textoVacio(valorId)) {
+            ponerError(idDesarrollador, "Para eliminar debes indicar un ID.");
+            primerError = idDesarrollador;
+            formularioValido = false;
+          }
+
+          if (!formularioValido && primerError) {
+            primerError.focus();
+          }
+
+          return formularioValido;
+        }
+
+        if (accion === "update" && textoVacio(valorId)) {
+          ponerError(idDesarrollador, "Para actualizar debes indicar un ID.");
+          primerError = idDesarrollador;
+          formularioValido = false;
+        }
+
+        if (valorNombre.length < 2) {
+          ponerError(
+            nombre,
+            "El nombre es obligatorio y debe tener mínimo 2 caracteres.",
+          );
+          if (!primerError) {
+            primerError = nombre;
+          }
+          formularioValido = false;
+        }
+
+        if (valorApellido.length < 2) {
+          ponerError(
+            apellido,
+            "El apellido es obligatorio y debe tener mínimo 2 caracteres.",
+          );
+          if (!primerError) {
+            primerError = apellido;
+          }
+          formularioValido = false;
+        }
+
+        if (!textoVacio(valorEmail) && !valorEmail.includes("@")) {
+          ponerError(email, "Si escribes un email, debe contener @.");
+          if (!primerError) {
+            primerError = email;
+          }
+          formularioValido = false;
+        }
+
+        if (!textoVacio(valorCiudad) && valorCiudad.length < 2) {
+          ponerError(ciudad, "La ciudad debe tener al menos 2 caracteres.");
+          if (!primerError) {
+            primerError = ciudad;
+          }
+          formularioValido = false;
+        }
+
+        if (!textoVacio(valorPais) && valorPais.length < 2) {
+          ponerError(pais, "El país debe tener al menos 2 caracteres.");
+          if (!primerError) {
+            primerError = pais;
+          }
+          formularioValido = false;
+        }
+
+        if (
+          valorFechaNacimiento !== "" &&
+          fechaEsFutura(valorFechaNacimiento)
+        ) {
+          ponerError(
+            fechaNacimiento,
+            "La fecha de nacimiento no puede ser futura.",
+          );
+          if (!primerError) {
+            primerError = fechaNacimiento;
+          }
+          formularioValido = false;
+        }
+
+        if (valorFechaAlta === "") {
+          ponerError(fechaAlta, "La fecha de alta es obligatoria.");
+          if (!primerError) {
+            primerError = fechaAlta;
+          }
+          formularioValido = false;
+        }
+
+        if (activo.checked && idEstudio.value === "") {
+          ponerError(
+            idEstudio,
+            "Si está activo, debes seleccionar un estudio.",
+          );
+          if (!primerError) {
+            primerError = idEstudio;
+          }
+          formularioValido = false;
+        }
+
+        if (
+          !activo.checked &&
+          valorFechaAlta !== "" &&
+          fechaEsFutura(valorFechaAlta)
+        ) {
+          ponerError(
+            fechaAlta,
+            "Si no está activo, la fecha de alta no puede ser futura.",
+          );
+          if (!primerError) {
+            primerError = fechaAlta;
+          }
+          formularioValido = false;
+        }
+
+        if (!formularioValido && primerError) {
+          primerError.focus();
+        }
+
+        return formularioValido;
+      }
+
+      function pintarErroresServidor(errores) {
+        const mapa = {
+          id_desarrollador: idDesarrollador,
+          nombre: nombre,
+          apellido: apellido,
+          email: email,
+          ciudad: ciudad,
+          pais: pais,
+          fecha_nacimiento: fechaNacimiento,
+          fecha_alta: fechaAlta,
+          id_estudio: idEstudio,
+        };
+
+        Object.keys(errores).forEach(function (clave) {
+          const campo = mapa[clave];
+          if (campo) {
+            ponerError(campo, errores[clave]);
+          }
+        });
+
+        const primerCampoConError = Object.keys(errores)
+          .map(function (clave) {
+            return mapa[clave];
+          })
+          .find(Boolean);
+
+        if (primerCampoConError) {
+          primerCampoConError.focus();
+        }
+      }
+
+      async function enviarAccion(accion) {
+        if (!validarFormulario(accion)) {
+          mostrarMensaje(
+            "El formulario tiene errores. Corrige los campos marcados en rojo.",
+            "error",
+          );
+          return;
+        }
+
+        if (accion === "delete") {
+          const confirmado = window.confirm(
+            "¿Seguro que quieres eliminar este desarrollador?",
+          );
+          if (!confirmado) {
+            return;
+          }
+        }
+
+        try {
+          mostrarMensaje("Enviando datos al servidor...", "ok");
+
+          const respuesta = await fetch(urlApi, {
+            method: "POST",
+            body: obtenerDatosFormulario(accion),
+          });
+
+          const datos = await leerRespuestaComoJson(respuesta);
+
+          if (!respuesta.ok || !datos.ok) {
+            if (datos.errores) {
+              pintarErroresServidor(datos.errores);
+            }
+            throw new Error(datos.mensaje || "Ha ocurrido un error.");
+          }
+
+          renderizarEstudios(datos.estudios || []);
+          renderizarTabla(datos.desarrolladores || []);
+          mostrarMensaje(
+            datos.mensaje || "Operación realizada correctamente.",
+            "ok",
+          );
+
+          if (accion === "insert") {
+            form.reset();
+            actualizarVisibilidadEstudio();
+            nombre.focus();
+          }
+        } catch (error) {
+          mostrarMensaje(error.message, "error");
+        }
+      }
+
+      nombre.addEventListener("input", function () {
+        nombre.value = limpiarTextoGeneral(nombre.value);
+        limpiarErrorDeCampo(nombre);
+      });
+
+      apellido.addEventListener("input", function () {
+        apellido.value = limpiarTextoGeneral(apellido.value);
+        limpiarErrorDeCampo(apellido);
+      });
+
+      email.addEventListener("input", function () {
+        email.value = limpiarEmail(email.value);
+        limpiarErrorDeCampo(email);
+      });
+
+      ciudad.addEventListener("input", function () {
+        ciudad.value = limpiarTextoGeneral(ciudad.value);
+        limpiarErrorDeCampo(ciudad);
+      });
+
+      pais.addEventListener("input", function () {
+        pais.value = limpiarTextoGeneral(pais.value);
+        limpiarErrorDeCampo(pais);
+      });
+
+      fechaNacimiento.addEventListener("change", function () {
+        limpiarErrorDeCampo(fechaNacimiento);
+      });
+
+      fechaAlta.addEventListener("change", function () {
+        limpiarErrorDeCampo(fechaAlta);
+      });
+
+      idEstudio.addEventListener("change", function () {
+        limpiarErrorDeCampo(idEstudio);
+      });
+
+      idDesarrollador.addEventListener("input", function () {
+        limpiarErrorDeCampo(idDesarrollador);
+      });
+
+      activo.addEventListener("change", function () {
+        actualizarVisibilidadEstudio();
+      });
+
+      btnInsertar.addEventListener("click", function () {
+        enviarAccion("insert");
+      });
+
+      btnActualizar.addEventListener("click", function () {
+        enviarAccion("update");
+      });
+
+      btnEliminar.addEventListener("click", function () {
+        enviarAccion("delete");
+      });
+
+      form.addEventListener("submit", function (evento) {
+        evento.preventDefault();
+        enviarAccion("insert");
+      });
+
+      form.addEventListener("reset", function () {
+        setTimeout(function () {
+          limpiarErrores();
+          actualizarVisibilidadEstudio();
+          mostrarMensaje("Aquí aparecerá el resultado del servidor.", "ok");
+          nombre.focus();
+        }, 0);
+      });
+
+      window.addEventListener("load", function () {
+        actualizarVisibilidadEstudio();
+        nombre.focus();
+        cargarDatosIniciales();
+      });
+    </script>
+  </body>
+</html>
