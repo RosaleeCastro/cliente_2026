@@ -4,43 +4,59 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Restaurant</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1>Gestion de Pedidos de Cocina</h1>
+    <main class="app-shell">
+      <section class="hero">
+        <p class="eyebrow">Gestion de cocina</p>
+        <h1>Gestion de Pedidos de Cocina</h1>
+        <p class="hero-text">
+          Organiza los platos, sigue su preparacion y visualiza el flujo de trabajo
+          en cada estacion.
+        </p>
+      </section>
 
-    <input type="text" id="inputPlato" placeholder="Intriduce tu plato" />
-    <button id="btnAgregar">Añadir Plato</button>
+      <section class="panel panel-form">
+        <div class="input-group">
+          <input type="text" id="inputPlato" placeholder="Introduce tu plato" />
+          <button id="btnAgregar">Anadir plato</button>
+        </div>
 
-    <p>Platos terminados: <span id="contadorTerminados">0</span></p>
+        <p class="counter">
+          Platos terminados: <span id="contadorTerminados">0</span>
+        </p>
+      </section>
 
-    <div id="mensajes"></div>
+      <div id="mensajes" class="panel mensajes"></div>
 
-    <div class="zonas">
-      <div id="cola">
-        <h2>Pedidos en espera</h2>
-        <ul id="listaEspera"></ul>
-      </div>
+      <section class="zonas">
+        <article class="cola-card">
+          <h2>Pedidos en espera</h2>
+          <ul id="listaEspera"></ul>
+        </article>
 
-      <div id="cola">
-        <h2>Parrilla</h2>
-        <ul id="listaParrilla"></ul>
-      </div>
+        <article class="cola-card">
+          <h2>Parrilla</h2>
+          <ul id="listaParrilla"></ul>
+        </article>
 
-      <div id="cola">
-        <h2>Horno</h2>
-        <ul id="listaHorno"></ul>
-      </div>
+        <article class="cola-card">
+          <h2>Horno</h2>
+          <ul id="listaHorno"></ul>
+        </article>
 
-      <div id="cola">
-        <h2>Plancha</h2>
-        <ul id="listaPlancha"></ul>
-      </div>
+        <article class="cola-card">
+          <h2>Plancha</h2>
+          <ul id="listaPlancha"></ul>
+        </article>
 
-      <div id="cola">
-        <h2>Emplatado</h2>
-        <ul id="listaEmplatado"></ul>
-      </div>
-    </div>
-    <script src="app01.js"></script>
+        <article class="cola-card">
+          <h2>Emplatado</h2>
+          <ul id="listaEmplatado"></ul>
+        </article>
+      </section>
+    </main>
+    <script src="app004.js"></script>
   </body>
 </html>
