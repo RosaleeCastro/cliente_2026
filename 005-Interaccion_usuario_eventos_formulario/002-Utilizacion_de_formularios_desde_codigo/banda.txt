@@ -1,0 +1,21 @@
+Crea el formulario para la creación de una banda.
+
+Habrá 4 formularios independientes para cada 4 miembros de la banda:
+	- Cada formulario tiene los campos:
+		- Nombre
+		- Apellido
+		- Edad
+		- Posición (vocalista o músico)
+		- Instrumento (guitarra, batería o bajo)
+			- Este campo solamente aparece cuando posición es músico
+	- La información de cada campo de cada formulario se obtiene de una manera distinta.
+		- El primero con forms y elements
+		- El segundo con name
+		- El tercero por id
+		- El cuarto por queryselector
+	- Hasta que no modifiques todos los campos de un formulario no puedes pasar al siguiente
+	- Muestra un titulo nombre de la banda que esté formado por las primeras 2 letras de los apellidos 	de cada miembro
+	- Muestra en un div la estructura de todos los formularios:
+		- Nombre de cada formulario
+		- Número de elementos de cada formulario
+		- Nombre y tipo de cada elemento

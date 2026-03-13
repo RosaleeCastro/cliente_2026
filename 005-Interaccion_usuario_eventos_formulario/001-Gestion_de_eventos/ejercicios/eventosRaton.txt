@@ -1,0 +1,13 @@
+Añadir un nuevo botón que active o desactive los eventos de ratón mousemove y click del área:
+	- Comprueba el estado de un boolean "eventosActivos"
+		- Si esta a true hace removeEventListener
+		- Si esta a false hace addEventListener
+	- Cambia de estado el valor de "eventosActivos"
+
+Añadir los eventos de ratón mousedown y mouseup
+
+Extra: añadir a una lista todos los eventos introducidos (en vez de que se muestre solamente el último)
+
+Extra: añadir un contador de veces que se ha detectado cada evento y que se muestren en el mensaje
+
+Extra: añadir un botón que añada y elimine un evento en específico por cada tipo de evento	

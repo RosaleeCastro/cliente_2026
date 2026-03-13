@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Creacion de una banda</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        background: #f7f7f7;
+      }
+
+      h1,
+      h2 {
+        margin-bottom: 10px;
+      }
+
+      .bloque {
+        background: white;
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .bloque.deshabilitado {
+        opacity: 0.6;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      .instrumento {
+        display: none;
+      }
+
+      .titulo-banda,
+      .estructura,
+      .estado {
+        background: #eaeaea;
+        padding: 12px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Creacion de una banda</h1>
+    <p>
+      Completa cada formulario en orden. Hasta que uno no este completo, el
+      siguiente no se podra usar.
+    </p>
+
+    <div class="bloque" id="bloque1">
+      <h2>Miembro 1 - Acceso con forms y elements</h2>
+      <form name="miembro1" id="miembro1">
+        <label>
+          Nombre:
+          <input type="text" name="nombre" />
+        </label>
+
+        <label>
+          Apellido:
+          <input type="text" name="apellido" />
+        </label>
+
+        <label>
+          Edad:
+          <input type="number" name="edad" min="1" />
+        </label>
+
+        <label>
+          Posicion:
+          <select name="posicion">
+            <option value="">Selecciona una opcion</option>
+            <option value="vocalista">Vocalista</option>
+            <option value="musico">Musico</option>
+          </select>
+        </label>
+
+        <div class="instrumento">
+          <label>
+            Instrumento:
+            <select name="instrumento">
+              <option value="">Selecciona un instrumento</option>
+              <option value="guitarra">Guitarra</option>
+              <option value="bateria">Bateria</option>
+              <option value="bajo">Bajo</option>
+            </select>
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div class="bloque deshabilitado" id="bloque2">
+      <h2>Miembro 2 - Acceso con name</h2>
+      <form name="miembro2" id="miembro2">
+        <label>
+          Nombre:
+          <input type="text" name="nombre" disabled />
+        </label>
+
+        <label>
+          Apellido:
+          <input type="text" name="apellido" disabled />
+        </label>
+
+        <label>
+          Edad:
+          <input type="number" name="edad" min="1" disabled />
+        </label>
+
+        <label>
+          Posicion:
+          <select name="posicion" disabled>
+            <option value="">Selecciona una opcion</option>
+            <option value="vocalista">Vocalista</option>
+            <option value="musico">Musico</option>
+          </select>
+        </label>
+
+        <div class="instrumento">
+          <label>
+            Instrumento:
+            <select name="instrumento" disabled>
+              <option value="">Selecciona un instrumento</option>
+              <option value="guitarra">Guitarra</option>
+              <option value="bateria">Bateria</option>
+              <option value="bajo">Bajo</option>
+            </select>
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div class="bloque deshabilitado" id="bloque3">
+      <h2>Miembro 3 - Acceso con id</h2>
+      <form name="miembro3" id="miembro3">
+        <label>
+          Nombre:
+          <input type="text" name="nombre" id="nombre3" disabled />
+        </label>
+
+        <label>
+          Apellido:
+          <input type="text" name="apellido" id="apellido3" disabled />
+        </label>
+
+        <label>
+          Edad:
+          <input type="number" name="edad" id="edad3" min="1" disabled />
+        </label>
+
+        <label>
+          Posicion:
+          <select name="posicion" id="posicion3" disabled>
+            <option value="">Selecciona una opcion</option>
+            <option value="vocalista">Vocalista</option>
+            <option value="musico">Musico</option>
+          </select>
+        </label>
+
+        <div class="instrumento" id="instrumento3Caja">
+          <label>
+            Instrumento:
+            <select name="instrumento" id="instrumento3" disabled>
+              <option value="">Selecciona un instrumento</option>
+              <option value="guitarra">Guitarra</option>
+              <option value="bateria">Bateria</option>
+              <option value="bajo">Bajo</option>
+            </select>
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div class="bloque deshabilitado" id="bloque4">
+      <h2>Miembro 4 - Acceso con querySelector</h2>
+      <form name="miembro4" id="miembro4">
+        <label>
+          Nombre:
+          <input type="text" name="nombre" disabled />
+        </label>
+
+        <label>
+          Apellido:
+          <input type="text" name="apellido" disabled />
+        </label>
+
+        <label>
+          Edad:
+          <input type="number" name="edad" min="1" disabled />
+        </label>
+
+        <label>
+          Posicion:
+          <select name="posicion" disabled>
+            <option value="">Selecciona una opcion</option>
+            <option value="vocalista">Vocalista</option>
+            <option value="musico">Musico</option>
+          </select>
+        </label>
+
+        <div class="instrumento">
+          <label>
+            Instrumento:
+            <select name="instrumento" disabled>
+              <option value="">Selecciona un instrumento</option>
+              <option value="guitarra">Guitarra</option>
+              <option value="bateria">Bateria</option>
+              <option value="bajo">Bajo</option>
+            </select>
+          </label>
+        </div>
+      </form>
+    </div>
+
+    <div class="estado" id="estado">
+      Completa el primer formulario para desbloquear el segundo.
+    </div>
+
+    <div class="titulo-banda" id="tituloBanda">
+      Nombre de la banda: aun no disponible
+    </div>
+
+    <div class="estructura" id="estructura"></div>
+
+    <script>
+      window.onload = function () {
+        const formulario1 = document.forms[0];
+        const formulario2 = document.miembro2;
+        const formulario3 = document.getElementById("miembro3");
+        const formulario4 = document.querySelector("#miembro4");
+        const estado = document.getElementById("estado");
+        const tituloBanda = document.getElementById("tituloBanda");
+        const estructura = document.getElementById("estructura");
+
+        function activarFormulario(formulario, bloque) {
+          const elementos = formulario.elements;
+
+          for (let i = 0; i < elementos.length; i++) {
+            elementos[i].disabled = false;
+          }
+
+          bloque.classList.remove("deshabilitado");
+        }
+
+        function controlarInstrumento(formulario, posicion, caja, instrumento) {
+          if (posicion.value === "musico") {
+            caja.style.display = "block";
+            instrumento.disabled = false;
+          } else {
+            caja.style.display = "none";
+            instrumento.value = "";
+          }
+        }
+
+        function formularioCompleto(
+          nombre,
+          apellido,
+          edad,
+          posicion,
+          instrumento,
+        ) {
+          if (
+            nombre.value.trim() === "" ||
+            apellido.value.trim() === "" ||
+            edad.value.trim() === "" ||
+            posicion.value === ""
+          ) {
+            return false;
+          }
+
+          if (posicion.value === "musico" && instrumento.value === "") {
+            return false;
+          }
+
+          return true;
+        }
+
+        function actualizarTituloBanda() {
+          const apellidos = [
+            formulario1.elements["apellido"].value,
+            formulario2.apellido.value,
+            document.getElementById("apellido3").value,
+            document.querySelector('#miembro4 [name="apellido"]').value,
+          ];
+
+          const completos = apellidos.every(function (apellido) {
+            return apellido.trim().length >= 2;
+          });
+
+          if (!completos) {
+            tituloBanda.innerHTML = "Nombre de la banda: aun no disponible";
+            return;
+          }
+
+          const nombre = apellidos
+            .map(function (apellido) {
+              return apellido.trim().substring(0, 2).toUpperCase();
+            })
+            .join("");
+
+          tituloBanda.innerHTML = "Nombre de la banda: " + nombre;
+        }
+
+        function mostrarEstructura() {
+          const formularios = document.forms;
+          let texto = "<strong>Estructura de los formularios:</strong><br><br>";
+
+          for (let i = 0; i < formularios.length; i++) {
+            texto += "Formulario: " + formularios[i].name + "<br>";
+            texto +=
+              "Numero de elementos: " + formularios[i].elements.length + "<br>";
+
+            for (let j = 0; j < formularios[i].elements.length; j++) {
+              texto +=
+                "Elemento: " +
+                formularios[i].elements[j].name +
+                " | Tipo: " +
+                formularios[i].elements[j].type +
+                "<br>";
+            }
+
+            texto += "<br>";
+          }
+
+          estructura.innerHTML = texto;
+        }
+
+        function revisarProgreso() {
+          const completo1 = formularioCompleto(
+            formulario1.elements[0],
+            formulario1.elements[1],
+            formulario1.elements[2],
+            formulario1.elements[3],
+            formulario1.elements[4],
+          );
+
+          const completo2 = formularioCompleto(
+            formulario2.nombre,
+            formulario2.apellido,
+            formulario2.edad,
+            formulario2.posicion,
+            formulario2.instrumento,
+          );
+
+          const completo3 = formularioCompleto(
+            document.getElementById("nombre3"),
+            document.getElementById("apellido3"),
+            document.getElementById("edad3"),
+            document.getElementById("posicion3"),
+            document.getElementById("instrumento3"),
+          );
+
+          const completo4 = formularioCompleto(
+            document.querySelector('#miembro4 [name="nombre"]'),
+            document.querySelector('#miembro4 [name="apellido"]'),
+            document.querySelector('#miembro4 [name="edad"]'),
+            document.querySelector('#miembro4 [name="posicion"]'),
+            document.querySelector('#miembro4 [name="instrumento"]'),
+          );
+
+          if (completo1) {
+            activarFormulario(formulario2, document.getElementById("bloque2"));
+            estado.innerHTML =
+              "El formulario 1 ya esta completo. Ahora puedes rellenar el formulario 2.";
+          }
+
+          if (completo2) {
+            activarFormulario(formulario3, document.getElementById("bloque3"));
+            estado.innerHTML =
+              "Los formularios 1 y 2 ya estan completos. Ahora puedes rellenar el formulario 3.";
+          }
+
+          if (completo3) {
+            activarFormulario(formulario4, document.getElementById("bloque4"));
+            estado.innerHTML =
+              "Los formularios 1, 2 y 3 ya estan completos. Ahora puedes rellenar el formulario 4.";
+          }
+
+          if (completo4) {
+            estado.innerHTML =
+              "Todos los formularios estan completos. La banda ya esta creada.";
+          }
+
+          actualizarTituloBanda();
+          mostrarEstructura();
+        }
+
+        // Formulario 1: acceso con forms y elements
+        const posicion1 = formulario1.elements[3];
+        const cajaInstrumento1 = document.querySelector(
+          "#miembro1 .instrumento",
+        );
+        const instrumento1 = formulario1.elements[4];
+
+        posicion1.addEventListener("change", function () {
+          controlarInstrumento(
+            formulario1,
+            posicion1,
+            cajaInstrumento1,
+            instrumento1,
+          );
+          revisarProgreso();
+        });
+
+        for (let i = 0; i < formulario1.elements.length; i++) {
+          formulario1.elements[i].addEventListener("input", revisarProgreso);
+          formulario1.elements[i].addEventListener("change", revisarProgreso);
+        }
+
+        // Formulario 2: acceso con name
+        const posicion2 = formulario2.posicion;
+        const cajaInstrumento2 = document.querySelector(
+          "#miembro2 .instrumento",
+        );
+        const instrumento2 = formulario2.instrumento;
+
+        posicion2.addEventListener("change", function () {
+          controlarInstrumento(
+            formulario2,
+            posicion2,
+            cajaInstrumento2,
+            instrumento2,
+          );
+          revisarProgreso();
+        });
+
+        for (let i = 0; i < formulario2.elements.length; i++) {
+          formulario2.elements[i].addEventListener("input", revisarProgreso);
+          formulario2.elements[i].addEventListener("change", revisarProgreso);
+        }
+
+        // Formulario 3: acceso con id
+        const posicion3 = document.getElementById("posicion3");
+        const instrumento3 = document.getElementById("instrumento3");
+        const cajaInstrumento3 = document.getElementById("instrumento3Caja");
+
+        posicion3.addEventListener("change", function () {
+          controlarInstrumento(
+            formulario3,
+            posicion3,
+            cajaInstrumento3,
+            instrumento3,
+          );
+          revisarProgreso();
+        });
+
+        for (let i = 0; i < formulario3.elements.length; i++) {
+          formulario3.elements[i].addEventListener("input", revisarProgreso);
+          formulario3.elements[i].addEventListener("change", revisarProgreso);
+        }
+
+        // Formulario 4: acceso con querySelector
+        const posicion4 = document.querySelector('#miembro4 [name="posicion"]');
+        const cajaInstrumento4 = document.querySelector(
+          "#miembro4 .instrumento",
+        );
+        const instrumento4 = document.querySelector(
+          '#miembro4 [name="instrumento"]',
+        );
+
+        posicion4.addEventListener("change", function () {
+          controlarInstrumento(
+            formulario4,
+            posicion4,
+            cajaInstrumento4,
+            instrumento4,
+          );
+          revisarProgreso();
+        });
+
+        for (let i = 0; i < formulario4.elements.length; i++) {
+          formulario4.elements[i].addEventListener("input", revisarProgreso);
+          formulario4.elements[i].addEventListener("change", revisarProgreso);
+        }
+
+        mostrarEstructura();
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+Añade un botón que genere un popup
+	- El popup avisará al padre cuando se cargue completamente
+	- El popup avisará al padre cuando se cierre 
+Añade un iframe
+	- Muestra una web cualquiera (Wikipedia, por ejemplo)
+	- Actualiza el tamaño del iframe en función del tamaño de ventana
+
+Extra: Contador de aperturas
+	- Guarda un contador como variable normal de veces que se ha 	abierto el popup
+	- Añade un beforeunload al padre que guarde en una cookie este 	contador (solo se guarda aqui)
+	- Añade un load que recupere el valor de la cookie almacenada
+	

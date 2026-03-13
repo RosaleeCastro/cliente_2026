@@ -1,0 +1,7 @@
+Panel con contraseña:
+
+- Al pulsar shift + enter se empieza a guardar la contraseña
+- Cada tecla pulsada es almacenada en una cola que guarda las ultimas 9 teclas presionadas.
+- Al volver a pulsar shift + enter se deja de actualizar la cola de teclas y se comprueba la contraseña. La correcta es "Yggdrasil"
+	- Se muestra un mensaje de error o acierto si la contraseña es correcta.
+- Con ctrl + z se resetea la cola
