@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeout cliente-servidor</title>
+</head>
+<body>
+
+    <h2>Petición con timeout</h2>
+
+    <button id="btnTimeout">Hacer petición al servidor</button>
+
+    <p id="resultado"></p>
+
+    <script>
+        const boton = document.getElementById("btnTimeout");
+        const resultado = document.getElementById("resultado");
+
+        boton.addEventListener("click", async () => {
+            resultado.innerText = "Enviando petición al servidor...";
+
+            const controller = new AbortController();
+            const timeoutMs = 3000; // 3 segundos
+
+            const temporizador = setTimeout(() => {
+                controller.abort();
+            }, timeoutMs);
+
+            try {
+                const respuesta = await fetch("servidorFalso.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "accion=peticion_lenta",
+                    signal: controller.signal
+                });
+
+                clearTimeout(temporizador);
+
+                const texto = await respuesta.text();
+                resultado.innerText = "Respuesta del servidor: " + texto;
+
+            } catch (error) {
+                clearTimeout(temporizador);
+
+                if (error.name === "AbortError") {
+                    resultado.innerText = "Tiempo de espera agotado: el servidor no respondió a tiempo.";
+                } else {
+                    resultado.innerText = "Error en la petición: " + error.message;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
