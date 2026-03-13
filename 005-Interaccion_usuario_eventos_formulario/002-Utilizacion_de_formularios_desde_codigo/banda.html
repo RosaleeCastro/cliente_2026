@@ -229,6 +229,7 @@
 
     <script>
       window.onload = function () {
+        // Referencias principales de los formularios y de las zonas donde mostramos informacion
         const formulario1 = document.forms[0];
         const formulario2 = document.miembro2;
         const formulario3 = document.getElementById("miembro3");
@@ -237,6 +238,8 @@
         const tituloBanda = document.getElementById("tituloBanda");
         const estructura = document.getElementById("estructura");
 
+        // Esta funcion activa todos los campos del formulario siguiente
+        // y tambien quita el aspecto visual de "deshabilitado"
         function activarFormulario(formulario, bloque) {
           const elementos = formulario.elements;
 
@@ -247,6 +250,8 @@
           bloque.classList.remove("deshabilitado");
         }
 
+        // Esta funcion enseña el campo instrumento solo cuando la posicion es musico
+        // si se elige vocalista, el instrumento se oculta y se vacia
         function controlarInstrumento(formulario, posicion, caja, instrumento) {
           if (posicion.value === "musico") {
             caja.style.display = "block";
@@ -257,6 +262,8 @@
           }
         }
 
+        // Esta funcion comprueba si un formulario esta completo
+        // revisa nombre, apellido, edad, posicion y, si es musico, tambien instrumento
         function formularioCompleto(
           nombre,
           apellido,
@@ -280,6 +287,8 @@
           return true;
         }
 
+        // Esta funcion crea el nombre de la banda
+        // coge las 2 primeras letras de cada apellido y las une en mayusculas
         function actualizarTituloBanda() {
           const apellidos = [
             formulario1.elements["apellido"].value,
@@ -306,6 +315,8 @@
           tituloBanda.innerHTML = "Nombre de la banda: " + nombre;
         }
 
+        // Esta funcion recorre todos los formularios de la pagina
+        // y muestra su nombre, cuantos elementos tienen y el tipo de cada uno
         function mostrarEstructura() {
           const formularios = document.forms;
           let texto = "<strong>Estructura de los formularios:</strong><br><br>";
@@ -330,6 +341,9 @@
           estructura.innerHTML = texto;
         }
 
+        // Esta funcion es la mas importante
+        // comprueba que formularios estan completos, desbloquea el siguiente
+        // y actualiza el nombre de la banda y la estructura
         function revisarProgreso() {
           const completo1 = formularioCompleto(
             formulario1.elements[0],
@@ -390,13 +404,15 @@
           mostrarEstructura();
         }
 
-        // Formulario 1: acceso con forms y elements
+        // FORMULARIO 1
+        // En este bloque usamos forms y elements para acceder a los campos
         const posicion1 = formulario1.elements[3];
         const cajaInstrumento1 = document.querySelector(
           "#miembro1 .instrumento",
         );
         const instrumento1 = formulario1.elements[4];
 
+        // Cuando cambia la posicion, decidimos si se muestra el instrumento
         posicion1.addEventListener("change", function () {
           controlarInstrumento(
             formulario1,
@@ -407,18 +423,21 @@
           revisarProgreso();
         });
 
+        // Escuchamos cualquier cambio para revisar si el formulario ya esta completo
         for (let i = 0; i < formulario1.elements.length; i++) {
           formulario1.elements[i].addEventListener("input", revisarProgreso);
           formulario1.elements[i].addEventListener("change", revisarProgreso);
         }
 
-        // Formulario 2: acceso con name
+        // FORMULARIO 2
+        // En este bloque usamos el acceso por name
         const posicion2 = formulario2.posicion;
         const cajaInstrumento2 = document.querySelector(
           "#miembro2 .instrumento",
         );
         const instrumento2 = formulario2.instrumento;
 
+        // Controlamos si el campo instrumento debe aparecer o no
         posicion2.addEventListener("change", function () {
           controlarInstrumento(
             formulario2,
@@ -429,16 +448,19 @@
           revisarProgreso();
         });
 
+        // Escuchamos cambios para comprobar el progreso de este formulario
         for (let i = 0; i < formulario2.elements.length; i++) {
           formulario2.elements[i].addEventListener("input", revisarProgreso);
           formulario2.elements[i].addEventListener("change", revisarProgreso);
         }
 
-        // Formulario 3: acceso con id
+        // FORMULARIO 3
+        // En este bloque usamos getElementById
         const posicion3 = document.getElementById("posicion3");
         const instrumento3 = document.getElementById("instrumento3");
         const cajaInstrumento3 = document.getElementById("instrumento3Caja");
 
+        // Si cambia la posicion, mostramos u ocultamos instrumento
         posicion3.addEventListener("change", function () {
           controlarInstrumento(
             formulario3,
@@ -449,12 +471,14 @@
           revisarProgreso();
         });
 
+        // Escuchamos cambios para saber cuando este formulario esta listo
         for (let i = 0; i < formulario3.elements.length; i++) {
           formulario3.elements[i].addEventListener("input", revisarProgreso);
           formulario3.elements[i].addEventListener("change", revisarProgreso);
         }
 
-        // Formulario 4: acceso con querySelector
+        // FORMULARIO 4
+        // En este bloque usamos querySelector
         const posicion4 = document.querySelector('#miembro4 [name="posicion"]');
         const cajaInstrumento4 = document.querySelector(
           "#miembro4 .instrumento",
@@ -463,6 +487,7 @@
           '#miembro4 [name="instrumento"]',
         );
 
+        // Comprobamos si hay que enseñar el instrumento
         posicion4.addEventListener("change", function () {
           controlarInstrumento(
             formulario4,
@@ -473,11 +498,13 @@
           revisarProgreso();
         });
 
+        // Escuchamos cambios para actualizar todo automaticamente
         for (let i = 0; i < formulario4.elements.length; i++) {
           formulario4.elements[i].addEventListener("input", revisarProgreso);
           formulario4.elements[i].addEventListener("change", revisarProgreso);
         }
 
+        // Al cargar la pagina mostramos desde el inicio la estructura de formularios
         mostrarEstructura();
       };
     </script>
