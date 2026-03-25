@@ -6,27 +6,27 @@ $nombre = trim(strtolower($nombre));
 
 $platos = [
     "hamburguesa" => [
-        "tiempoPreparacion" => 20,
+        "tiempoPreparacion" => 5,
         "ingredientes" => ["Pan", "Carne", "Queso", "Lechuga"]
     ],
     "bacon" => [
-        "tiempoPreparacion" => 14,
+        "tiempoPreparacion" => 4,
         "ingredientes" => ["Lonchas de bacon", "Aceite"]
     ],
     "chuletas" => [
-        "tiempoPreparacion" => 16,
+        "tiempoPreparacion" => 6,
         "ingredientes" => ["Chuletas", "Sal", "Pimienta"]
     ],
     "costillas" => [
-        "tiempoPreparacion" => 17,
+        "tiempoPreparacion" => 7,
         "ingredientes" => ["Costillas", "Salsa barbacoa", "Sal"]
     ],
     "cordero" => [
-        "tiempoPreparacion" => 18,
+        "tiempoPreparacion" => 8,
         "ingredientes" => ["Cordero", "Ajo", "Romero"]
     ],
     "arroz al horno" => [
-        "tiempoPreparacion" => 19,
+        "tiempoPreparacion" => 9,
         "ingredientes" => ["Arroz", "Caldo", "Tomate", "Especias"]
     ]
 ];
@@ -40,7 +40,6 @@ if (array_key_exists($nombre, $platos)) {
 } else {
     echo json_encode([
         "valido" => false,
-        "mensaje" => "No existe información de cocción para ese plato"
+        "mensaje" => "No hay informacion de coccion para ese plato."
     ]);
 }
-?>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Refactor Colas</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <p class="hero-kicker">Sistema de cocina</p>
+        <h1>Restaurant con Colas</h1>
+        <p class="hero-text"></p>
+      </header>
+
+      <section class="panel form-panel">
+        <div class="input-row">
+          <input type="text" id="inputPlato" placeholder="Escribe un plato" />
+          <button id="btnAgregar">Anadir plato</button>
+        </div>
+
+        <p class="counter-box">
+          <strong>Platos terminados:</strong>
+          <span id="contadorTerminados">0</span>
+        </p>
+
+        <p id="mensajes" class="message-box">Esperando pedidos...</p>
+      </section>
+
+      <section class="queues-grid">
+        <article class="queue-card">
+          <h2>Pedidos en espera</h2>
+          <ul id="listaEspera"></ul>
+        </article>
+
+        <article class="queue-card">
+          <h2>Parrilla</h2>
+          <ul id="listaParrilla"></ul>
+        </article>
+
+        <article class="queue-card">
+          <h2>Horno</h2>
+          <ul id="listaHorno"></ul>
+        </article>
+
+        <article class="queue-card">
+          <h2>Plancha</h2>
+          <ul id="listaPlancha"></ul>
+        </article>
+
+        <article class="queue-card queue-card-wide">
+          <h2>Emplatado</h2>
+          <ul id="listaEmplatado"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="cola.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

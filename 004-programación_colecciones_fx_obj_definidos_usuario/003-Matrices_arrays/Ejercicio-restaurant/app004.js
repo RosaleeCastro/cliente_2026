@@ -341,7 +341,7 @@ async function iniciarEmplatado(pedido) {
 
 async function actualizarContadorTerminados() {
   try {
-    const respuesta = await fetch("actualizar_terminados.php");
+    const respuesta = await fetch("platosTerminados.php");
     const datos = await respuesta.json();
 
     if (datos.ok) {
