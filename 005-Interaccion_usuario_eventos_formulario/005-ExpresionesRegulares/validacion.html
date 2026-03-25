@@ -158,62 +158,106 @@
     </div>
     <script>
       const formulario = document.getElementById("formularioValidacion");
+
       const nombre = document.getElementById("nombre");
       const dni = document.getElementById("dni");
       const nie = document.getElementById("nie");
       const matricula = document.getElementById("matricula");
       const password = document.getElementById("password");
       const confirmarPassword = document.getElementById("confirmarPassword");
+      const descripcion = document.getElementById("descripcion");
       const fechaNacimiento = document.getElementById("fechaNacimiento");
-      const descripcion = document.getElementById("descripcion"); // textarea
 
-      // -------------------------
+      const LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
+
+      // ---------------------------------------------------
       // UTILIDADES DE ERRORES
-      // -------------------------
+      // ---------------------------------------------------
+      function obtenerGrupo(elemento) {
+        return elemento.closest(".grupo") || elemento.parentElement;
+      }
+
       function limpiarErrores() {
-        formulario.querySelectorAll(".error").forEach(function (campo) {
-          campo.classList.remove("error");
+        formulario.querySelectorAll(".error").forEach(function (el) {
+          el.classList.remove("error");
         });
 
-        formulario.querySelectorAll(".msg-error").forEach(function (mensaje) {
-          mensaje.remove();
+        formulario.querySelectorAll(".msg-error").forEach(function (el) {
+          el.remove();
         });
       }
 
       function ponerError(elemento, mensaje) {
-        // Evita repetir el mismo mensaje si validas varias veces
         limpiarErrorDeCampo(elemento);
 
         elemento.classList.add("error");
 
+        const grupo = obtenerGrupo(elemento);
         const p = document.createElement("p");
         p.className = "msg-error";
         p.textContent = mensaje;
 
-        elemento.insertAdjacentElement("afterend", p);
+        grupo.appendChild(p);
       }
 
       function limpiarErrorDeCampo(elemento) {
         elemento.classList.remove("error");
 
-        const siguiente = elemento.nextElementSibling;
-        if (siguiente && siguiente.classList.contains("msg-error")) {
-          siguiente.remove();
+        const grupo = obtenerGrupo(elemento);
+        const mensaje = grupo.querySelector(".msg-error");
+
+        if (mensaje) {
+          mensaje.remove();
         }
       }
 
-      // -------------------------
-      // LIMPIAR ERROR AL ESCRIBIR
-      // -------------------------
+      // ---------------------------------------------------
+      // LIMPIAR ERRORES AL CORREGIR
+      // ---------------------------------------------------
       nombre.addEventListener("input", function () {
         limpiarErrorDeCampo(nombre);
       });
 
-      // -------------------------
+      dni.addEventListener("input", function () {
+        dni.value = dni.value.toUpperCase();
+        limpiarErrorDeCampo(dni);
+      });
+
+      nie.addEventListener("input", function () {
+        nie.value = nie.value.toUpperCase();
+        limpiarErrorDeCampo(nie);
+      });
+
+      matricula.addEventListener("input", function () {
+        matricula.value = matricula.value.toUpperCase();
+        limpiarErrorDeCampo(matricula);
+      });
+
+      password.addEventListener("input", function () {
+        limpiarErrorDeCampo(password);
+      });
+
+      confirmarPassword.addEventListener("input", function () {
+        limpiarErrorDeCampo(confirmarPassword);
+      });
+
+      descripcion.addEventListener("input", function () {
+        limpiarErrorDeCampo(descripcion);
+      });
+
+      fechaNacimiento.addEventListener("change", function () {
+        limpiarErrorDeCampo(fechaNacimiento);
+      });
+
+      // ---------------------------------------------------
       // FOCO INICIAL Y RESET
-      // -------------------------
+      // ---------------------------------------------------
       window.addEventListener("load", function () {
         nombre.focus();
+
+        const hoy = new Date().toISOString().split("T")[0];
+        fechaNacimiento.max = hoy;
+        fechaNacimiento.min = "1910-01-01";
       });
 
       formulario.addEventListener("reset", function () {
@@ -223,15 +267,275 @@
         }, 0);
       });
 
-      /**
-       * Validamos el Nombre
-       */
+      // ---------------------------------------------------
+      // FUNCIONES DE VALIDACIÓN
+      // ---------------------------------------------------
+      function validarNombre(valor) {
+        const patronNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü][A-Za-zÁÉÍÓÚáéíóúÑñÜü ]*$/;
+        return patronNombre.test(valor);
+      }
+
+      function validarDNI(valor) {
+        const patronDNI = /^[0-9]{8}[A-Z]$/;
+
+        if (!patronDNI.test(valor)) {
+          return false;
+        }
+
+        const numero = parseInt(valor.substring(0, 8), 10);
+        const letraUsuario = valor.charAt(8);
+        const resto = numero % 23;
+        const letraCorrecta = LETRAS_DNI.charAt(resto);
+
+        return letraUsuario === letraCorrecta;
+      }
+
+      function validarNIE(valor) {
+        const patronNIE = /^[XYZ][0-9]{7}[A-Z]$/;
+
+        if (!patronNIE.test(valor)) {
+          return false;
+        }
+
+        let primeraLetraConvertida = "";
+
+        if (valor.charAt(0) === "X") {
+          primeraLetraConvertida = "0";
+        } else if (valor.charAt(0) === "Y") {
+          primeraLetraConvertida = "1";
+        } else if (valor.charAt(0) === "Z") {
+          primeraLetraConvertida = "2";
+        }
+
+        const numeroCompleto = primeraLetraConvertida + valor.substring(1, 8);
+
+        const numero = parseInt(numeroCompleto, 10);
+        const letraUsuario = valor.charAt(8);
+        const resto = numero % 23;
+        const letraCorrecta = LETRAS_DNI.charAt(resto);
+
+        return letraUsuario === letraCorrecta;
+      }
+
+      function validarMatricula(valor) {
+        const patronMatricula = /^[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+        return patronMatricula.test(valor);
+      }
+
+      function validarPassword(valor) {
+        const patronPassword = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
+        return patronPassword.test(valor);
+      }
+
+      function contienePalabraProhibida(valor) {
+        const patronPalabrasProhibidas = /\b(miguel|mate|cocacola)\b/i;
+        return patronPalabrasProhibidas.test(valor);
+      }
+
+      function validarFechaNacimiento(valor) {
+        if (valor === "") {
+          return {
+            ok: false,
+            mensaje: "La fecha de nacimiento es obligatoria.",
+          };
+        }
+
+        const fechaUsuario = new Date(valor + "T00:00:00");
+        const fechaMinima = new Date("1910-01-01T00:00:00");
+
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        if (fechaUsuario < fechaMinima) {
+          return {
+            ok: false,
+            mensaje: "La fecha de nacimiento no puede ser anterior a 1910.",
+          };
+        }
+
+        if (fechaUsuario > hoy) {
+          return {
+            ok: false,
+            mensaje:
+              "La fecha de nacimiento no puede ser posterior a la actual.",
+          };
+        }
+
+        return {
+          ok: true,
+          mensaje: "",
+        };
+      }
+
+      // ---------------------------------------------------
+      // VALIDACIÓN EN SUBMIT
+      // ---------------------------------------------------
       formulario.addEventListener("submit", function (e) {
         e.preventDefault();
         limpiarErrores();
 
         let valido = true;
         let primerError = null;
+
+        // Normalización básica
+        const valorNombre = (nombre.value = nombre.value.trim());
+        const valorDNI = (dni.value = dni.value.trim().toUpperCase());
+        const valorNIE = (nie.value = nie.value.trim().toUpperCase());
+        const valorMatricula = (matricula.value = matricula.value
+          .trim()
+          .toUpperCase());
+        const valorPassword = (password.value = password.value.trim());
+        const valorConfirmarPassword = (confirmarPassword.value =
+          confirmarPassword.value.trim());
+        const valorDescripcion = (descripcion.value = descripcion.value.trim());
+        const valorFechaNacimiento = fechaNacimiento.value;
+
+        // ---------------- NOMBRE ----------------
+        if (valorNombre === "") {
+          ponerError(nombre, "El nombre es obligatorio.");
+          if (!primerError) primerError = nombre;
+          valido = false;
+        } else if (valorNombre.length < 2) {
+          ponerError(nombre, "El nombre debe tener al menos 2 caracteres.");
+          if (!primerError) primerError = nombre;
+          valido = false;
+        } else if (!validarNombre(valorNombre)) {
+          ponerError(
+            nombre,
+            "El nombre solo puede contener letras y espacios, y debe empezar por letra.",
+          );
+          if (!primerError) primerError = nombre;
+          valido = false;
+        }
+
+        // ---------------- DNI ----------------
+        if (valorDNI === "") {
+          ponerError(dni, "El DNI es obligatorio.");
+          if (!primerError) primerError = dni;
+          valido = false;
+        } else if (valorDNI.length !== 9) {
+          ponerError(dni, "El DNI debe tener 9 caracteres en total.");
+          if (!primerError) primerError = dni;
+          valido = false;
+        } else if (!/^[0-9]{8}[A-Z]$/.test(valorDNI)) {
+          ponerError(dni, "El DNI debe tener 8 números y 1 letra.");
+          if (!primerError) primerError = dni;
+          valido = false;
+        } else if (!validarDNI(valorDNI)) {
+          ponerError(dni, "La letra del DNI no es correcta.");
+          if (!primerError) primerError = dni;
+          valido = false;
+        }
+
+        // ---------------- NIE ----------------
+        if (valorNIE === "") {
+          ponerError(nie, "El NIE es obligatorio.");
+          if (!primerError) primerError = nie;
+          valido = false;
+        } else if (valorNIE.length !== 9) {
+          ponerError(nie, "El NIE debe tener 9 caracteres en total.");
+          if (!primerError) primerError = nie;
+          valido = false;
+        } else if (!/^[XYZ][0-9]{7}[A-Z]$/.test(valorNIE)) {
+          ponerError(
+            nie,
+            "El NIE debe tener 1 letra X, Y o Z, 7 números y 1 letra.",
+          );
+          if (!primerError) primerError = nie;
+          valido = false;
+        } else if (!validarNIE(valorNIE)) {
+          ponerError(nie, "La letra del NIE no es correcta.");
+          if (!primerError) primerError = nie;
+          valido = false;
+        }
+
+        // ---------------- MATRÍCULA ----------------
+        if (valorMatricula === "") {
+          ponerError(matricula, "La matrícula es obligatoria.");
+          if (!primerError) primerError = matricula;
+          valido = false;
+        } else if (valorMatricula.length !== 7) {
+          ponerError(matricula, "La matrícula debe tener 7 caracteres.");
+          if (!primerError) primerError = matricula;
+          valido = false;
+        } else if (!validarMatricula(valorMatricula)) {
+          ponerError(
+            matricula,
+            "La matrícula debe tener 4 números y 3 letras, sin vocales, ñ ni q.",
+          );
+          if (!primerError) primerError = matricula;
+          valido = false;
+        }
+
+        // ---------------- PASSWORD ----------------
+        if (valorPassword === "") {
+          ponerError(password, "La contraseña es obligatoria.");
+          if (!primerError) primerError = password;
+          valido = false;
+        } else if (!validarPassword(valorPassword)) {
+          ponerError(
+            password,
+            "La contraseña solo puede tener letras, números, guion y guion bajo, y debe empezar por letra o número.",
+          );
+          if (!primerError) primerError = password;
+          valido = false;
+        }
+
+        // ---------------- CONFIRMAR PASSWORD ----------------
+        if (valorConfirmarPassword === "") {
+          ponerError(confirmarPassword, "Debes confirmar la contraseña.");
+          if (!primerError) primerError = confirmarPassword;
+          valido = false;
+        } else if (valorConfirmarPassword !== valorPassword) {
+          ponerError(confirmarPassword, "Las contraseñas no coinciden.");
+          if (!primerError) primerError = confirmarPassword;
+          valido = false;
+        }
+
+        // ---------------- DESCRIPCIÓN ----------------
+        if (valorDescripcion === "") {
+          ponerError(descripcion, "La descripción es obligatoria.");
+          if (!primerError) primerError = descripcion;
+          valido = false;
+        } else if (valorDescripcion.length < 10) {
+          ponerError(
+            descripcion,
+            "La descripción debe tener al menos 10 caracteres.",
+          );
+          if (!primerError) primerError = descripcion;
+          valido = false;
+        } else if (valorDescripcion.length > 100) {
+          ponerError(
+            descripcion,
+            "La descripción no puede superar los 100 caracteres.",
+          );
+          if (!primerError) primerError = descripcion;
+          valido = false;
+        } else if (contienePalabraProhibida(valorDescripcion)) {
+          ponerError(
+            descripcion,
+            "La descripción contiene palabras prohibidas: Miguel, Mate o CocaCola.",
+          );
+          if (!primerError) primerError = descripcion;
+          valido = false;
+        }
+
+        // ---------------- FECHA DE NACIMIENTO ----------------
+        const resultadoFecha = validarFechaNacimiento(valorFechaNacimiento);
+
+        if (!resultadoFecha.ok) {
+          ponerError(fechaNacimiento, resultadoFecha.mensaje);
+          if (!primerError) primerError = fechaNacimiento;
+          valido = false;
+        }
+
+        // ---------------- FOCO AL PRIMER ERROR ----------------
+        if (!valido && primerError) {
+          primerError.focus();
+          return;
+        }
+
+        alert("Formulario válido");
       });
     </script>
   </body>
