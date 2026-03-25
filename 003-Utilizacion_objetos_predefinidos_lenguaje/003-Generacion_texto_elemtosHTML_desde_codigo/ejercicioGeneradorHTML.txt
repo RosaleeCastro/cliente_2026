@@ -1,0 +1,4 @@
+Amplia este ejercicio añadiendo 2 nuevos campos a cada cliente, que sean código postal y balance.
+Añade 2 nuevos botones, cada uno con una de las sintaxis anteriores, que muestre dichos campos.
+Comprueba que el cliente este activo para mostrar los botones. Si no, el cliente se muestra en la tabla pero no sus botones.
+Añade una nueva columna detrás de las de los botones que asigne automáticamente el nombre de la población en función del código postal.
