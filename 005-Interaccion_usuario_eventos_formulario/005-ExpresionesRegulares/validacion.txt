@@ -1,0 +1,34 @@
+Formulario con campos a validar:
+
+- Nombre
+	- longitud mínima, por ejemplo 2 caracteres
+	- solo letras y espacios
+	- sin espacios al principio ni al final
+	- que empiece por letra
+- DNI
+	- 8 números y 1 carácter
+	- dimensión 9 caracteres en total
+	- dividir el número entre 23 y comparar el resto con la tabla
+- NIE
+	- 1 carácter (x, y o z) 7 números y 1 carácter
+	- dimensión 9 caracteres en total
+	- convertir la primera letra a número y dividir el número entre 23 y 	comparar el resto con la tabla
+- Matrícula
+	- 4 números y 3 letras
+	- Los números van del 0000 al 9999
+	- No están permitidas las vocales ni la ñ ni la q
+- Contraseña
+	- Números, letras, - y _
+	- No se permiten espacios ni otros caracteres especiales
+	- Tiene que empezar por letra o número
+- Confirmar contraseña
+	- Que sea igual que la anterior
+- Descripción
+	- Longitud mínima de 10 caracteres y máxima de 100
+	- Palabras prohibidas
+		- Miguel
+		- Mate
+		- CocaCola
+- Fecha de nacimiento
+	- Que no sea posterior a la actual
+	- Que no sea anterior a 1910

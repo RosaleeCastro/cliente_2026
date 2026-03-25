@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejercicio de validación</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 30px;
+      }
+
+      .contenedor {
+        max-width: 700px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      h1 {
+        margin-top: 0;
+        text-align: center;
+      }
+
+      .grupo {
+        margin-bottom: 18px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .botones {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button[type="submit"] {
+        background-color: #2563eb;
+        color: white;
+      }
+
+      button[type="reset"] {
+        background-color: #e5e7eb;
+        color: #111827;
+      }
+
+      small {
+        display: block;
+        margin-top: 5px;
+        color: #555;
+      }
+
+      .error {
+        border: 2px solid red;
+        background-color: #ffecec;
+      }
+
+      .msg-error {
+        color: #b00020;
+        font-size: 13px;
+        margin: 4px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1>Formulario de validación</h1>
+
+      <form id="formularioValidacion" novalidate>
+        <div class="grupo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" />
+          <small>Introduce tu nombre completo.</small>
+        </div>
+
+        <div class="grupo">
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" name="dni" />
+          <small>Ejemplo: 12345678Z</small>
+        </div>
+
+        <div class="grupo">
+          <label for="nie">NIE</label>
+          <input type="text" id="nie" name="nie" />
+          <small>Ejemplo: X1234567L</small>
+        </div>
+
+        <div class="grupo">
+          <label for="matricula">Matrícula</label>
+          <input type="text" id="matricula" name="matricula" />
+          <small>Ejemplo: 1234BCD</small>
+        </div>
+
+        <div class="grupo">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" />
+        </div>
+
+        <div class="grupo">
+          <label for="confirmarPassword">Confirmar contraseña</label>
+          <input
+            type="password"
+            id="confirmarPassword"
+            name="confirmarPassword"
+          />
+        </div>
+
+        <div class="grupo">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion"></textarea>
+          <small>Escribe una descripción entre 10 y 100 caracteres.</small>
+        </div>
+
+        <div class="grupo">
+          <label for="fechaNacimiento">Fecha de nacimiento</label>
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento" />
+        </div>
+
+        <div class="botones">
+          <button type="submit">Enviar</button>
+          <button type="reset">Limpiar</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      const formulario = document.getElementById("formularioValidacion");
+      const nombre = document.getElementById("nombre");
+      const dni = document.getElementById("dni");
+      const nie = document.getElementById("nie");
+      const matricula = document.getElementById("matricula");
+      const password = document.getElementById("password");
+      const confirmarPassword = document.getElementById("confirmarPassword");
+      const fechaNacimiento = document.getElementById("fechaNacimiento");
+      const descripcion = document.getElementById("descripcion"); // textarea
+
+      // -------------------------
+      // UTILIDADES DE ERRORES
+      // -------------------------
+      function limpiarErrores() {
+        formulario.querySelectorAll(".error").forEach(function (campo) {
+          campo.classList.remove("error");
+        });
+
+        formulario.querySelectorAll(".msg-error").forEach(function (mensaje) {
+          mensaje.remove();
+        });
+      }
+
+      function ponerError(elemento, mensaje) {
+        // Evita repetir el mismo mensaje si validas varias veces
+        limpiarErrorDeCampo(elemento);
+
+        elemento.classList.add("error");
+
+        const p = document.createElement("p");
+        p.className = "msg-error";
+        p.textContent = mensaje;
+
+        elemento.insertAdjacentElement("afterend", p);
+      }
+
+      function limpiarErrorDeCampo(elemento) {
+        elemento.classList.remove("error");
+
+        const siguiente = elemento.nextElementSibling;
+        if (siguiente && siguiente.classList.contains("msg-error")) {
+          siguiente.remove();
+        }
+      }
+
+      // -------------------------
+      // LIMPIAR ERROR AL ESCRIBIR
+      // -------------------------
+      nombre.addEventListener("input", function () {
+        limpiarErrorDeCampo(nombre);
+      });
+
+      // -------------------------
+      // FOCO INICIAL Y RESET
+      // -------------------------
+      window.addEventListener("load", function () {
+        nombre.focus();
+      });
+
+      formulario.addEventListener("reset", function () {
+        setTimeout(function () {
+          limpiarErrores();
+          nombre.focus();
+        }, 0);
+      });
+
+      /**
+       * Validamos el Nombre
+       */
+      formulario.addEventListener("submit", function (e) {
+        e.preventDefault();
+        limpiarErrores();
+
+        let valido = true;
+        let primerError = null;
+      });
+    </script>
+  </body>
+</html>
