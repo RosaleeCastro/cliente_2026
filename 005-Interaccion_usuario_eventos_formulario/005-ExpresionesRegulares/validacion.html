@@ -25,7 +25,8 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
 
-      h1 {
+      h1,
+      h2 {
         margin-top: 0;
         text-align: center;
       }
@@ -41,7 +42,8 @@
       }
 
       input,
-      textarea {
+      textarea,
+      select {
         width: 100%;
         padding: 10px;
         border: 1px solid #bbb;
@@ -58,6 +60,7 @@
         display: flex;
         gap: 10px;
         margin-top: 20px;
+        flex-wrap: wrap;
       }
 
       button {
@@ -78,6 +81,11 @@
         color: #111827;
       }
 
+      button[type="button"] {
+        background-color: #1f2937;
+        color: white;
+      }
+
       small {
         display: block;
         margin-top: 5px;
@@ -93,6 +101,19 @@
         color: #b00020;
         font-size: 13px;
         margin: 4px 0 0;
+      }
+
+      #resultadoServidor {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f9fafb;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        min-height: 60px;
+      }
+
+      hr {
+        margin: 30px 0;
       }
     </style>
   </head>
@@ -161,9 +182,53 @@
           <button type="reset">Limpiar</button>
         </div>
       </form>
+
+      <hr />
+
+      <h2>Operaciones servidor / MySQL</h2>
+
+      <div class="grupo">
+        <label for="usuarioBusqueda">Buscar por nombre de usuario</label>
+        <input type="text" id="usuarioBusqueda" />
+      </div>
+
+      <div class="grupo">
+        <label for="nombreOperacion">Nombre para actualizar o eliminar</label>
+        <input type="text" id="nombreOperacion" />
+      </div>
+
+      <div class="grupo">
+        <label for="campoActualizar">Campo a actualizar</label>
+        <select id="campoActualizar">
+          <option value="">-- Selecciona --</option>
+          <option value="nombre_usuario">nombreUsuario</option>
+          <option value="nombre">nombre</option>
+          <option value="dni">dni</option>
+          <option value="nie">nie</option>
+          <option value="matricula">matricula</option>
+          <option value="password_hash">password</option>
+          <option value="descripcion">descripcion</option>
+          <option value="fecha_nacimiento">fechaNacimiento</option>
+        </select>
+      </div>
+
+      <div class="grupo">
+        <label for="nuevoValor">Nuevo valor</label>
+        <input type="text" id="nuevoValor" />
+      </div>
+
+      <div class="botones">
+        <button type="button" id="btnBuscar">Buscar usuario</button>
+        <button type="button" id="btnActualizar">Actualizar por nombre</button>
+        <button type="button" id="btnEliminar">Eliminar por nombre</button>
+      </div>
+
+      <div id="resultadoServidor"></div>
     </div>
+
     <script>
       const formulario = document.getElementById("formularioValidacion");
+
       const nombreUsuario = document.getElementById("nombreUsuario");
       const nombre = document.getElementById("nombre");
       const dni = document.getElementById("dni");
@@ -173,6 +238,15 @@
       const confirmarPassword = document.getElementById("confirmarPassword");
       const descripcion = document.getElementById("descripcion");
       const fechaNacimiento = document.getElementById("fechaNacimiento");
+
+      const usuarioBusqueda = document.getElementById("usuarioBusqueda");
+      const nombreOperacion = document.getElementById("nombreOperacion");
+      const campoActualizar = document.getElementById("campoActualizar");
+      const nuevoValor = document.getElementById("nuevoValor");
+      const btnBuscar = document.getElementById("btnBuscar");
+      const btnActualizar = document.getElementById("btnActualizar");
+      const btnEliminar = document.getElementById("btnEliminar");
+      const resultadoServidor = document.getElementById("resultadoServidor");
 
       const LETRAS_DNI = "TRWAGMYFPDXBNJZSQVHLCKE";
 
@@ -223,6 +297,7 @@
       nombreUsuario.addEventListener("input", function () {
         limpiarErrorDeCampo(nombreUsuario);
       });
+
       nombre.addEventListener("input", function () {
         limpiarErrorDeCampo(nombre);
       });
@@ -262,7 +337,7 @@
       // FOCO INICIAL Y RESET
       // ---------------------------------------------------
       window.addEventListener("load", function () {
-        nombre.focus();
+        nombreUsuario.focus();
 
         const hoy = new Date().toISOString().split("T")[0];
         fechaNacimiento.max = hoy;
@@ -272,14 +347,13 @@
       formulario.addEventListener("reset", function () {
         setTimeout(function () {
           limpiarErrores();
-          nombre.focus();
+          nombreUsuario.focus();
         }, 0);
       });
 
       // ---------------------------------------------------
       // FUNCIONES DE VALIDACIÓN
       // ---------------------------------------------------
-
       function validarNombreUsuario(valor) {
         const patronNombreUsuario = /^[A-Za-z][A-Za-z0-9_]*$/;
         return patronNombreUsuario.test(valor);
@@ -383,9 +457,76 @@
       }
 
       // ---------------------------------------------------
+      // FUNCIONES PARA SERVIDOR
+      // ---------------------------------------------------
+      function construirFormularioParaServidor() {
+        return {
+          nombreUsuario: nombreUsuario.value.trim(),
+          nombre: nombre.value.trim(),
+          dni: dni.value.trim().toUpperCase(),
+          nie: nie.value.trim().toUpperCase(),
+          matricula: matricula.value.trim().toUpperCase(),
+          password: password.value.trim(),
+          descripcion: descripcion.value.trim(),
+          fechaNacimiento: fechaNacimiento.value,
+        };
+      }
+
+      async function llamarAPI(payload) {
+        const respuesta = await fetch("api_validacion.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        return await respuesta.json();
+      }
+
+      function pintarFila(fila, titulo) {
+        if (!fila) {
+          resultadoServidor.innerHTML =
+            "<strong>" + titulo + "</strong><br>No hay datos.";
+          return;
+        }
+
+        resultadoServidor.innerHTML =
+          "<strong>" +
+          titulo +
+          "</strong><br><br>" +
+          "ID: " +
+          fila.id +
+          "<br>" +
+          "Nombre de usuario: " +
+          fila.nombre_usuario +
+          "<br>" +
+          "Nombre: " +
+          fila.nombre +
+          "<br>" +
+          "DNI: " +
+          fila.dni +
+          "<br>" +
+          "NIE: " +
+          fila.nie +
+          "<br>" +
+          "Matrícula: " +
+          fila.matricula +
+          "<br>" +
+          "Descripción: " +
+          fila.descripcion +
+          "<br>" +
+          "Fecha nacimiento: " +
+          fila.fecha_nacimiento +
+          "<br>" +
+          "Creado en: " +
+          fila.creado_en;
+      }
+
+      // ---------------------------------------------------
       // VALIDACIÓN EN SUBMIT
       // ---------------------------------------------------
-      formulario.addEventListener("submit", function (e) {
+      formulario.addEventListener("submit", async function (e) {
         e.preventDefault();
         limpiarErrores();
 
@@ -406,6 +547,7 @@
           confirmarPassword.value.trim());
         const valorDescripcion = (descripcion.value = descripcion.value.trim());
         const valorFechaNacimiento = fechaNacimiento.value;
+
         // ---------------- NOMBRE DE USUARIO ----------------
         if (valorNombreUsuario === "") {
           ponerError(nombreUsuario, "El nombre de usuario es obligatorio.");
@@ -426,6 +568,7 @@
           if (!primerError) primerError = nombreUsuario;
           valido = false;
         }
+
         // ---------------- NOMBRE ----------------
         if (valorNombre === "") {
           ponerError(nombre, "El nombre es obligatorio.");
@@ -571,7 +714,119 @@
           return;
         }
 
-        alert("Formulario válido");
+        try {
+          const respuesta = await llamarAPI({
+            accion: "insertar",
+            formulario: construirFormularioParaServidor(),
+          });
+
+          if (respuesta.ok) {
+            pintarFila(
+              respuesta.datos.fila,
+              "Registro insertado correctamente",
+            );
+          } else {
+            resultadoServidor.innerHTML =
+              "<strong>Error del servidor:</strong><br>" + respuesta.mensaje;
+          }
+        } catch (error) {
+          resultadoServidor.innerHTML =
+            "<strong>Error de red:</strong><br>" + error.message;
+        }
+      });
+
+      // ---------------------------------------------------
+      // EVENTOS CRUD
+      // ---------------------------------------------------
+      btnBuscar.addEventListener("click", async function () {
+        const usuario = usuarioBusqueda.value.trim();
+
+        if (usuario === "") {
+          resultadoServidor.innerHTML =
+            "<strong>Debes escribir un nombre de usuario.</strong>";
+          usuarioBusqueda.focus();
+          return;
+        }
+
+        try {
+          const respuesta = await llamarAPI({
+            accion: "buscar_por_usuario",
+            nombreUsuario: usuario,
+          });
+
+          if (respuesta.ok) {
+            pintarFila(respuesta.datos.fila, "Fila encontrada");
+          } else {
+            resultadoServidor.innerHTML =
+              "<strong>Error:</strong><br>" + respuesta.mensaje;
+          }
+        } catch (error) {
+          resultadoServidor.innerHTML =
+            "<strong>Error de red:</strong><br>" + error.message;
+        }
+      });
+
+      btnActualizar.addEventListener("click", async function () {
+        const nombreBuscado = nombreOperacion.value.trim();
+        const campo = campoActualizar.value;
+        const valor = nuevoValor.value.trim();
+
+        if (nombreBuscado === "" || campo === "" || valor === "") {
+          resultadoServidor.innerHTML =
+            "<strong>Debes indicar nombre, campo y nuevo valor.</strong>";
+          return;
+        }
+
+        try {
+          const respuesta = await llamarAPI({
+            accion: "actualizar_por_nombre",
+            nombre: nombreBuscado,
+            campo: campo,
+            valor: valor,
+          });
+
+          if (respuesta.ok) {
+            pintarFila(
+              respuesta.datos.fila,
+              "Fila modificada tras la transacción",
+            );
+          } else {
+            resultadoServidor.innerHTML =
+              "<strong>Error:</strong><br>" + respuesta.mensaje;
+          }
+        } catch (error) {
+          resultadoServidor.innerHTML =
+            "<strong>Error de red:</strong><br>" + error.message;
+        }
+      });
+
+      btnEliminar.addEventListener("click", async function () {
+        const nombreBuscado = nombreOperacion.value.trim();
+
+        if (nombreBuscado === "") {
+          resultadoServidor.innerHTML =
+            "<strong>Debes indicar el nombre a eliminar.</strong>";
+          nombreOperacion.focus();
+          return;
+        }
+
+        try {
+          const respuesta = await llamarAPI({
+            accion: "eliminar_por_nombre",
+            nombre: nombreBuscado,
+          });
+
+          if (respuesta.ok) {
+            resultadoServidor.innerHTML =
+              "<strong>Éxito:</strong><br>" + respuesta.mensaje;
+          } else {
+            resultadoServidor.innerHTML =
+              "<strong>Error:</strong><br>" + respuesta.mensaje;
+          }
+        } catch (error) {
+          resultadoServidor.innerHTML =
+            "<strong>Error de red:</strong><br>" + error.message;
+        }
       });
     </script>
   </body>
