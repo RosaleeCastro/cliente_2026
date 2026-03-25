@@ -60,9 +60,6 @@
         background-color: #c5ec43;
         color: #8a186c;
       }
-      .co {
-        display: none;
-      }
     </style>
   </head>
   <body>
@@ -154,9 +151,9 @@
             cadena += "<td>" + cliente[clave] + "</td>";
           }
         }
-        cadena += `<td><button class="btnSaluda">Saluda</button></td>`;
         if (cliente.activo) {
-          cadena += `<td><button class="btnCP" data-cp= "${cliente.codigo_postal}">Mostrar CP</button></td>`;
+          cadena += `<td><button class="btnSaluda">Saluda</button></td>`;
+          cadena += `<td><button class="btnCP" data-cp="${cliente.codigo_postal}">Mostrar CP</button></td>`;
           cadena += `<td><button class="btnBalance" data-balance=${cliente.balance}>Mostrar Balance</button></td>`;
           cadena += `<td>${obtenerPoblacion(cliente.codigo_postal)}</td>`;
         } else {
