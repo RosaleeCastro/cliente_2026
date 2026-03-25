@@ -102,6 +102,12 @@
 
       <form id="formularioValidacion" novalidate>
         <div class="grupo">
+          <label for="nombreUsuario">Nombre de usuario</label>
+          <input type="text" id="nombreUsuario" name="nombreUsuario" />
+          <small>Ejemplo: rosalee_01</small>
+        </div>
+
+        <div class="grupo">
           <label for="nombre">Nombre</label>
           <input type="text" id="nombre" name="nombre" />
           <small>Introduce tu nombre completo.</small>
@@ -158,7 +164,7 @@
     </div>
     <script>
       const formulario = document.getElementById("formularioValidacion");
-
+      const nombreUsuario = document.getElementById("nombreUsuario");
       const nombre = document.getElementById("nombre");
       const dni = document.getElementById("dni");
       const nie = document.getElementById("nie");
@@ -214,6 +220,9 @@
       // ---------------------------------------------------
       // LIMPIAR ERRORES AL CORREGIR
       // ---------------------------------------------------
+      nombreUsuario.addEventListener("input", function () {
+        limpiarErrorDeCampo(nombreUsuario);
+      });
       nombre.addEventListener("input", function () {
         limpiarErrorDeCampo(nombre);
       });
@@ -270,6 +279,12 @@
       // ---------------------------------------------------
       // FUNCIONES DE VALIDACIÓN
       // ---------------------------------------------------
+
+      function validarNombreUsuario(valor) {
+        const patronNombreUsuario = /^[A-Za-z][A-Za-z0-9_]*$/;
+        return patronNombreUsuario.test(valor);
+      }
+
       function validarNombre(valor) {
         const patronNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü][A-Za-zÁÉÍÓÚáéíóúÑñÜü ]*$/;
         return patronNombre.test(valor);
@@ -378,6 +393,8 @@
         let primerError = null;
 
         // Normalización básica
+        const valorNombreUsuario = (nombreUsuario.value =
+          nombreUsuario.value.trim());
         const valorNombre = (nombre.value = nombre.value.trim());
         const valorDNI = (dni.value = dni.value.trim().toUpperCase());
         const valorNIE = (nie.value = nie.value.trim().toUpperCase());
@@ -389,7 +406,26 @@
           confirmarPassword.value.trim());
         const valorDescripcion = (descripcion.value = descripcion.value.trim());
         const valorFechaNacimiento = fechaNacimiento.value;
-
+        // ---------------- NOMBRE DE USUARIO ----------------
+        if (valorNombreUsuario === "") {
+          ponerError(nombreUsuario, "El nombre de usuario es obligatorio.");
+          if (!primerError) primerError = nombreUsuario;
+          valido = false;
+        } else if (valorNombreUsuario.length < 3) {
+          ponerError(
+            nombreUsuario,
+            "El nombre de usuario debe tener al menos 3 caracteres.",
+          );
+          if (!primerError) primerError = nombreUsuario;
+          valido = false;
+        } else if (!validarNombreUsuario(valorNombreUsuario)) {
+          ponerError(
+            nombreUsuario,
+            "Debe empezar por letra y solo puede contener letras, números y guion bajo.",
+          );
+          if (!primerError) primerError = nombreUsuario;
+          valido = false;
+        }
         // ---------------- NOMBRE ----------------
         if (valorNombre === "") {
           ponerError(nombre, "El nombre es obligatorio.");
