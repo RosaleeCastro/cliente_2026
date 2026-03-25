@@ -11,7 +11,7 @@ header("Content-Type: application/json; charset=utf-8");
 // 2) Convierte el JSON recibido a un array asociativo llamado %data.
 // 3) Guarda en una variable $accion la accion recibida
 $raw = file_get_contents("php://input");
-$data = json_decode($rawJSON, true);
+$data = json_decode($raw, true);
 $accion = $data["accion"];
 
 
@@ -49,7 +49,7 @@ $cantidad = $data["cantidad"] ?? -1;
   $respuesta = [
     "item" => $item,
     "cantidad" => $cantidad,
-   "precio_unitario" => $precios[$item],
+   "precio_unitario" => ($precios[$item] ?? 0),
     "precio" => $precio
   ];
   echo json_encode($respuesta, JSON_PRETTY_PRINT);
