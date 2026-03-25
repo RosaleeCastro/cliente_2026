@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ejercicio de Pilas - Navegador simple</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f5f5f5;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      section {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+
+      select,
+      button {
+        padding: 8px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+      }
+
+      .salida {
+        background: #f7f7f7;
+        border-radius: 6px;
+        padding: 10px;
+        min-height: 24px;
+      }
+
+      ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simulador de navegador con pilas</h1>
+
+    <section>
+      <h2>Abrir web</h2>
+
+      <select id="selectorWeb">
+        <option value="https://www.google.com">Google</option>
+        <option value="https://www.wikipedia.org">Wikipedia</option>
+        <option value="https://developer.mozilla.org">MDN</option>
+        <option value="https://www.youtube.com">YouTube</option>
+      </select>
+
+      <button id="btnAbrir">Abrir web</button>
+      <button id="btnAtras">Retroceder</button>
+      <button id="btnAdelante">Avanzar</button>
+      <button id="btnLimpiar">Limpiar historial</button>
+    </section>
+
+    <section>
+      <h2>Estado actual</h2>
+      <p><strong>Página actual:</strong> <span id="paginaActual">Ninguna</span></p>
+      <p><strong>Saltos guardados en cookie:</strong> <span id="saltos">0</span></p>
+      <div class="salida" id="mensaje">Esperando una acción...</div>
+    </section>
+
+    <section>
+      <h2>Historial atrás</h2>
+      <ul id="listaAtras"></ul>
+    </section>
+
+    <section>
+      <h2>Historial adelante</h2>
+      <ul id="listaAdelante"></ul>
+    </section>
+
+    <script>
+      class Pila {
+        #elementos;
+
+        constructor() {
+          this.#elementos = [];
+        }
+
+        push(elemento) {
+          this.#elementos.push(elemento);
+        }
+
+        pop() {
+          if (this.isEmpty()) return null;
+          return this.#elementos.pop();
+        }
+
+        peek() {
+          if (this.isEmpty()) return null;
+          return this.#elementos[this.#elementos.length - 1];
+        }
+
+        isEmpty() {
+          return this.#elementos.length === 0;
+        }
+
+        clear() {
+          this.#elementos = [];
+        }
+
+        toArray() {
+          return [...this.#elementos];
+        }
+
+        load(datos) {
+          this.#elementos = [...datos];
+        }
+      }
+
+      const historialAtras = new Pila();
+      const historialAdelante = new Pila();
+
+      let paginaActual = null;
+
+      const selectorWeb = document.getElementById("selectorWeb");
+      const btnAbrir = document.getElementById("btnAbrir");
+      const btnAtras = document.getElementById("btnAtras");
+      const btnAdelante = document.getElementById("btnAdelante");
+      const btnLimpiar = document.getElementById("btnLimpiar");
+
+      const paginaActualTexto = document.getElementById("paginaActual");
+      const saltosTexto = document.getElementById("saltos");
+      const mensaje = document.getElementById("mensaje");
+      const listaAtras = document.getElementById("listaAtras");
+      const listaAdelante = document.getElementById("listaAdelante");
+
+      function setCookie(nombre, valor) {
+        document.cookie =
+          `${nombre}=${encodeURIComponent(valor)}; path=/; max-age=86400`;
+      }
+
+      function getCookie(nombre) {
+        const partes = document.cookie.split("; ");
+
+        for (const parte of partes) {
+          const [clave, valor] = parte.split("=");
+          if (clave === nombre) {
+            return decodeURIComponent(valor);
+          }
+        }
+
+        return null;
+      }
+
+      function borrarCookie(nombre) {
+        document.cookie = `${nombre}=; path=/; max-age=0`;
+      }
+
+      // Servidor simulado para no complicar el ejercicio.
+      const servidor = {
+        pedirUrl(url) {
+          return new Promise((resolve) => {
+            setTimeout(() => resolve(url), 200);
+          });
+        },
+
+        aumentarSaltos() {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              const actual = Number(getCookie("saltos") || 0);
+              const nuevo = actual + 1;
+              setCookie("saltos", nuevo);
+              resolve(nuevo);
+            }, 200);
+          });
+        },
+
+        guardarHistorial() {
+          const datos = {
+            paginaActual,
+            atras: historialAtras.toArray(),
+            adelante: historialAdelante.toArray(),
+          };
+
+          setCookie("historial_pilas", JSON.stringify(datos));
+        },
+
+        cargarHistorial() {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              const datos = getCookie("historial_pilas");
+              resolve(datos ? JSON.parse(datos) : null);
+            }, 200);
+          });
+        },
+
+        limpiarTodo() {
+          borrarCookie("saltos");
+          borrarCookie("historial_pilas");
+        },
+      };
+
+      function mostrarMensaje(texto) {
+        mensaje.textContent = texto;
+      }
+
+      function pintarPila(listaHtml, pila, textoVacio) {
+        listaHtml.innerHTML = "";
+
+        const elementos = pila.toArray();
+
+        if (elementos.length === 0) {
+          const li = document.createElement("li");
+          li.textContent = textoVacio;
+          listaHtml.appendChild(li);
+          return;
+        }
+
+        for (let i = elementos.length - 1; i >= 0; i--) {
+          const li = document.createElement("li");
+          li.textContent = elementos[i];
+          listaHtml.appendChild(li);
+        }
+      }
+
+      function render() {
+        paginaActualTexto.textContent = paginaActual || "Ninguna";
+        saltosTexto.textContent = getCookie("saltos") || "0";
+
+        pintarPila(listaAtras, historialAtras, "Historial vacío");
+        pintarPila(listaAdelante, historialAdelante, "Historial vacío");
+
+        btnAtras.disabled = historialAtras.isEmpty();
+        btnAdelante.disabled = historialAdelante.isEmpty();
+      }
+
+      async function abrirPagina(url, guardarEnAtras, limpiarAdelante) {
+        const urlRecibida = await servidor.pedirUrl(url);
+
+        if (guardarEnAtras && paginaActual !== null) {
+          historialAtras.push(paginaActual);
+        }
+
+        if (limpiarAdelante) {
+          historialAdelante.clear();
+        }
+
+        paginaActual = urlRecibida;
+
+        window.open(urlRecibida, "_blank");
+
+        const saltos = await servidor.aumentarSaltos();
+        servidor.guardarHistorial();
+
+        mostrarMensaje(`Web abierta: ${urlRecibida}. Saltos: ${saltos}`);
+        render();
+      }
+
+      btnAbrir.addEventListener("click", async () => {
+        const url = selectorWeb.value;
+        await abrirPagina(url, true, true);
+      });
+
+      btnAtras.addEventListener("click", async () => {
+        if (historialAtras.isEmpty()) {
+          mostrarMensaje("No hay páginas para retroceder.");
+          return;
+        }
+
+        if (paginaActual !== null) {
+          historialAdelante.push(paginaActual);
+        }
+
+        const url = historialAtras.pop();
+        await abrirPagina(url, false, false);
+      });
+
+      btnAdelante.addEventListener("click", async () => {
+        if (historialAdelante.isEmpty()) {
+          mostrarMensaje("No hay páginas para avanzar.");
+          return;
+        }
+
+        if (paginaActual !== null) {
+          historialAtras.push(paginaActual);
+        }
+
+        const url = historialAdelante.pop();
+        await abrirPagina(url, false, false);
+      });
+
+      btnLimpiar.addEventListener("click", () => {
+        paginaActual = null;
+        historialAtras.clear();
+        historialAdelante.clear();
+        servidor.limpiarTodo();
+        render();
+        mostrarMensaje("Historial y cookies limpiados.");
+      });
+
+      async function iniciar() {
+        const datos = await servidor.cargarHistorial();
+
+        if (datos) {
+          paginaActual = datos.paginaActual;
+          historialAtras.load(datos.atras || []);
+          historialAdelante.load(datos.adelante || []);
+          mostrarMensaje("Historial recuperado de la última sesión.");
+        }
+
+        render();
+      }
+
+      iniciar();
+    </script>
+  </body>
+</html>

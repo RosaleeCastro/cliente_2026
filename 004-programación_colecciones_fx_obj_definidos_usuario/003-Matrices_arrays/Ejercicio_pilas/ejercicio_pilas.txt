@@ -1,0 +1,21 @@
+Simula el funcionamiento de un navegador.
+
+Crea una lista paginas web que permita seleccionar una de ellas. 
+
+Al seleccionar una web:
+	- Se hace una petición al servidor para que este devuelva la url de la web en cuestión.
+	- El cliente abre como popup dicha web.
+	- Se hace una petición al servidor de aumentar un contador de saltos dados que este almacena en forma de cookie.
+	- El servidor devuelve la cookie y el cliente muestra por pantalla la cantidad de saltos.
+
+Mediante una pila se gestiona el historial completo de páginas web visitadas.
+	- El historial se muestra en todo momento.
+	- Existe un botón de retroceder que abre la última web añadida a la pila (misma funcionalidad que si se hubiera 		seleccionado a mano).
+		- Las web actual es enviada a una pila que gestiona el historial hacia delante.
+		- Existe un botón de avanzar que abre la primera web añadida en el historial hacia delante y la manda a la pila 		general de historial.
+		- En caso de abrir una web nueva desde seleccionar web se limpia el historial hacia delante.
+
+Ampliación:
+	- Guarda en el servidor en una cookie el estado de ambos historiales.
+	- Cuando arranques la web tendrás que hacerle una petición al servidor para que te devuelva el historial de la última 	sesión.
+	- Añade un botón para limpiar el historial tanto del cliente como del servidor.
