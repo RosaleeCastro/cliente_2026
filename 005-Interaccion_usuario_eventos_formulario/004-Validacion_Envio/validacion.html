@@ -147,7 +147,10 @@
         limpiarErrorDeCampo(satisfaccion);
       });
 
+      // --------- utilidades de errores ----------
+
       // Limpia todos los errores del formulario.
+
       function limpiarErrores() {
         form.querySelectorAll(".error").forEach(function (el) {
           el.classList.remove("error");
@@ -159,6 +162,7 @@
       }
 
       // Muestra el error de un campo individual.
+
       function ponerError(elemento, mensaje) {
         // Evita duplicar mensajes al volver a validar.
         limpiarErrorDeCampo(elemento);
@@ -171,6 +175,7 @@
       }
 
       // Muestra el error de un bloque de opciones.
+
       function ponerErrorBloque(bloque, mensaje) {
         // Evita duplicar mensajes al volver a validar.
         limpiarErrorDeBloque(bloque);
@@ -183,6 +188,7 @@
       }
 
       // Limpia el error de un campo.
+
       function limpiarErrorDeCampo(elemento) {
         elemento.classList.remove("error");
         const siguiente = elemento.nextElementSibling;
@@ -200,6 +206,7 @@
       }
 
       // Captura los campos que se van a validar.
+
       const nombre = document.getElementById("nombre");
       const comentarios = document.getElementById("comentarios");
       const edad = document.getElementById("edad");
@@ -209,10 +216,12 @@
       const color = document.getElementById("color");
 
       // Captura los bloques de radio y checkbox.
+
       const bloqueGenero = document.getElementById("bloqueGenero");
       const bloqueIntereses = document.getElementById("bloqueIntereses");
 
       // Limpia el error cuando el usuario corrige el campo.
+
       nombre.addEventListener("input", function () {
         limpiarErrorDeCampo(nombre);
       });
@@ -236,6 +245,7 @@
       });
 
       // Limpia el error del bloque de radios.
+
       Array.from(document.getElementsByName("genero")).forEach(function (r) {
         r.addEventListener("change", function () {
           limpiarErrorDeBloque(bloqueGenero);
@@ -243,6 +253,7 @@
       });
 
       // Limpia el error del bloque de checkbox.
+
       Array.from(document.getElementsByName("intereses")).forEach(function (c) {
         c.addEventListener("change", function () {
           limpiarErrorDeBloque(bloqueIntereses);
@@ -250,6 +261,7 @@
       });
 
       // Reinicia errores y devuelve el foco al inicio.
+
       form.addEventListener("reset", function () {
         setTimeout(function () {
           limpiarErrores();
@@ -259,11 +271,13 @@
       });
 
       // Coloca el foco al cargar la página.
+
       window.addEventListener("load", function () {
         nombre.focus();
       });
 
       // Valida el formulario al enviar.
+      
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         limpiarErrores();
