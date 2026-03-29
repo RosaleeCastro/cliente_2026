@@ -133,19 +133,21 @@
     <div id="resumen"></div>
 
     <script>
+      // Captura el formulario y la zona de resumen.
       const form = document.getElementById("formEncuesta");
       const resumen = document.getElementById("resumen");
 
+      // Captura el range y su texto de apoyo.
       const satisfaccion = document.getElementById("satisfaccion");
       const valorSatisfaccion = document.getElementById("valorSatisfaccion");
 
-      // Mostrar valor del range en tiempo real
+      // Muestra el valor del range en tiempo real.
       satisfaccion.addEventListener("input", function () {
         valorSatisfaccion.textContent = "Valor: " + satisfaccion.value;
         limpiarErrorDeCampo(satisfaccion);
       });
 
-      // --------- utilidades de errores ----------
+      // Limpia todos los errores del formulario.
       function limpiarErrores() {
         form.querySelectorAll(".error").forEach(function (el) {
           el.classList.remove("error");
@@ -156,8 +158,9 @@
         resumen.innerHTML = "";
       }
 
+      // Muestra el error de un campo individual.
       function ponerError(elemento, mensaje) {
-        // Evitar duplicar mensajes si se valida varias veces
+        // Evita duplicar mensajes al volver a validar.
         limpiarErrorDeCampo(elemento);
 
         elemento.classList.add("error");
@@ -167,8 +170,9 @@
         elemento.insertAdjacentElement("afterend", p);
       }
 
+      // Muestra el error de un bloque de opciones.
       function ponerErrorBloque(bloque, mensaje) {
-        // Evitar duplicar mensajes
+        // Evita duplicar mensajes al volver a validar.
         limpiarErrorDeBloque(bloque);
 
         bloque.classList.add("error");
@@ -178,6 +182,7 @@
         bloque.appendChild(p);
       }
 
+      // Limpia el error de un campo.
       function limpiarErrorDeCampo(elemento) {
         elemento.classList.remove("error");
         const siguiente = elemento.nextElementSibling;
@@ -186,6 +191,7 @@
         }
       }
 
+      // Limpia el error de un bloque.
       function limpiarErrorDeBloque(bloque) {
         bloque.classList.remove("error");
         bloque.querySelectorAll(".msg-error").forEach(function (m) {
@@ -193,7 +199,7 @@
         });
       }
 
-      // --------- limpiar error al corregir ----------
+      // Captura los campos que se van a validar.
       const nombre = document.getElementById("nombre");
       const comentarios = document.getElementById("comentarios");
       const edad = document.getElementById("edad");
@@ -202,9 +208,11 @@
       const lenguajes = document.getElementById("lenguajes");
       const color = document.getElementById("color");
 
+      // Captura los bloques de radio y checkbox.
       const bloqueGenero = document.getElementById("bloqueGenero");
       const bloqueIntereses = document.getElementById("bloqueIntereses");
 
+      // Limpia el error cuando el usuario corrige el campo.
       nombre.addEventListener("input", function () {
         limpiarErrorDeCampo(nombre);
       });
@@ -227,21 +235,21 @@
         limpiarErrorDeCampo(color);
       });
 
-      // Radio - limpiar bloque al cambiar
+      // Limpia el error del bloque de radios.
       Array.from(document.getElementsByName("genero")).forEach(function (r) {
         r.addEventListener("change", function () {
           limpiarErrorDeBloque(bloqueGenero);
         });
       });
 
-      // Checkbox - limpiar bloque al cambiar
+      // Limpia el error del bloque de checkbox.
       Array.from(document.getElementsByName("intereses")).forEach(function (c) {
         c.addEventListener("change", function () {
           limpiarErrorDeBloque(bloqueIntereses);
         });
       });
 
-      // Reset: limpiar estilos y mensajes + foco al primer campo
+      // Reinicia errores y devuelve el foco al inicio.
       form.addEventListener("reset", function () {
         setTimeout(function () {
           limpiarErrores();
@@ -250,34 +258,35 @@
         }, 0);
       });
 
-      // Foco inicial al cargar
+      // Coloca el foco al cargar la página.
       window.addEventListener("load", function () {
         nombre.focus();
       });
 
-      // --------- validación en submit + foco al primer error ----------
+      // Valida el formulario al enviar.
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         limpiarErrores();
 
+        // Controla si el formulario es válido.
         let valido = true;
         let primerError = null;
 
-        // TEXT
+        // Valida el campo de nombre.
         if (nombre.value.trim() === "") {
           ponerError(nombre, "El nombre es obligatorio.");
           if (!primerError) primerError = nombre;
           valido = false;
         }
 
-        // TEXTAREA
+        // Valida la longitud de comentarios.
         if (comentarios.value.trim().length < 10) {
           ponerError(comentarios, "Escribe al menos 10 caracteres.");
           if (!primerError) primerError = comentarios;
           valido = false;
         }
 
-        // NUMBER
+        // Valida que la edad sea numérica y mayor de edad.
         const edadNum = Number(edad.value);
         if (edad.value === "" || Number.isNaN(edadNum) || edadNum < 18) {
           ponerError(
@@ -288,14 +297,14 @@
           valido = false;
         }
 
-        // DATE
+        // Valida que la fecha esté informada.
         if (fecha.value === "") {
           ponerError(fecha, "La fecha es obligatoria.");
           if (!primerError) primerError = fecha;
           valido = false;
         }
 
-        // RADIO (sin :checked)
+        // Recorre los radios para saber cuál está marcado.
         const radiosGenero = Array.from(document.getElementsByName("genero"));
         let generoMarcado = null;
 
@@ -305,6 +314,7 @@
           }
         });
 
+        // Valida que haya un género seleccionado.
         if (generoMarcado === null) {
           ponerErrorBloque(bloqueGenero, "Selecciona un género.");
           if (!primerError && radiosGenero.length > 0)
@@ -312,7 +322,7 @@
           valido = false;
         }
 
-        // CHECKBOX (sin :checked)
+        // Recorre los checkbox y guarda los seleccionados.
         const checksIntereses = Array.from(
           document.getElementsByName("intereses"),
         );
@@ -324,6 +334,7 @@
           }
         });
 
+        // Valida que haya al menos un interés.
         if (interesesMarcados.length === 0) {
           ponerErrorBloque(bloqueIntereses, "Selecciona al menos un interés.");
           if (!primerError && checksIntereses.length > 0)
@@ -331,22 +342,24 @@
           valido = false;
         }
 
-        // SELECT
+        // Valida la selección de provincia.
         if (provincia.value === "") {
           ponerError(provincia, "Selecciona una provincia.");
           if (!primerError) primerError = provincia;
           valido = false;
         }
 
-        // SELECT MULTIPLE (mínimo 1)
+        // Obtiene las opciones marcadas del select múltiple.
         const seleccionadas = Array.from(lenguajes.selectedOptions);
+
+        // Valida que haya al menos un lenguaje.
         if (seleccionadas.length === 0) {
           ponerError(lenguajes, "Selecciona al menos un lenguaje.");
           if (!primerError) primerError = lenguajes;
           valido = false;
         }
 
-        // RANGE
+        // Valida el valor mínimo del range.
         const sat = Number(satisfaccion.value);
         if (sat < 3) {
           ponerError(satisfaccion, "La satisfacción debe ser al menos 3.");
@@ -354,27 +367,28 @@
           valido = false;
         }
 
-        // COLOR
+        // Valida que exista un color seleccionado.
         if (!color.value) {
           ponerError(color, "Selecciona un color.");
           if (!primerError) primerError = color;
           valido = false;
         }
 
-        // Foco al primer campo con error
+        // Lleva el foco al primer campo con error.
         if (!valido && primerError) {
           primerError.focus();
         }
 
-        // Si todo OK, mostrar resumen (simulación de envío)
+        // Si todo es correcto, muestra el resumen final.
         if (valido) {
-          // Construir listas sin map
+          // Construye el texto de intereses seleccionados.
           let interesesTxt = "";
           interesesMarcados.forEach(function (ch, idx) {
             if (idx > 0) interesesTxt += ", ";
             interesesTxt += ch.value;
           });
 
+          // Construye el texto de lenguajes seleccionados.
           let lenguajesTxt = "";
           seleccionadas.forEach(function (op, idx) {
             if (idx > 0) lenguajesTxt += ", ";
