@@ -13,20 +13,29 @@
     <p id="resultado"></p>
 
     <script>
+        // Captura los elementos que vamos a usar.
         const boton = document.getElementById("btnTimeout");
         const resultado = document.getElementById("resultado");
 
+
+        // Escucha el clic para lanzar la petición.
         boton.addEventListener("click", async () => {
+            // Muestra un mensaje mientras se procesa.
             resultado.innerText = "Enviando petición al servidor...";
 
+            // Crea un controlador para cancelar la petición.
             const controller = new AbortController();
+
+            // Define el tiempo máximo de espera.
             const timeoutMs = 3000; // 3 segundos
 
+            // Cancela la petición si tarda demasiado.
             const temporizador = setTimeout(() => {
                 controller.abort();
             }, timeoutMs);
 
             try {
+                // Envía la petición al servidor.
                 const respuesta = await fetch("servidorFalso.php", {
                     method: "POST",
                     headers: {
@@ -36,17 +45,22 @@
                     signal: controller.signal
                 });
 
+                // Detiene el temporizador si la respuesta llega a tiempo.
                 clearTimeout(temporizador);
 
+                // Lee y muestra la respuesta del servidor.
                 const texto = await respuesta.text();
                 resultado.innerText = "Respuesta del servidor: " + texto;
 
             } catch (error) {
+                // Limpia el temporizador también si ocurre un error.
                 clearTimeout(temporizador);
 
+                // Muestra un mensaje distinto si fue por timeout.
                 if (error.name === "AbortError") {
                     resultado.innerText = "Tiempo de espera agotado: el servidor no respondió a tiempo.";
                 } else {
+                    // Muestra cualquier otro error de la petición.
                     resultado.innerText = "Error en la petición: " + error.message;
                 }
             }
