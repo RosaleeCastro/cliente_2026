@@ -1,421 +1,138 @@
-# README · 005-Creación_Objetos
+# 🧱 Creación de objetos y componentes — Guía de referencia
+`class` · componentes UI · `render()` · `Modal` · `Tabs` · `Counter`
 
-> Guía rápida para ubicar las clases, funciones y utilidades más importantes de esta carpeta y reutilizarlas en otros ejercicios.
+Carpeta centrada en crear objetos y pequeños componentes reutilizables con JavaScript y DOM nativo.
 
-## Índice
+## 📁 Archivos de esta carpeta
 
-- [Vista rápida](#vista-rapida)
-- [Mapa de la carpeta](#mapa-de-la-carpeta)
-- [Componentes más reutilizables](#componentes-mas-reutilizables)
-- [1. Counter](#1-counter)
-- [2. MyButton](#2-mybutton)
-- [3. Modal](#3-modal)
-- [4. Tabs](#4-tabs)
-- [5. AlertBox](#5-alertbox)
-- [6. Utilidades del ejercicio final](#6-utilidades-del-ejercicio-final)
-- [Dónde mirar según lo que necesites](#donde-mirar-segun-lo-que-necesites)
-- [Patrones que conviene copiar](#patrones-que-conviene-copiar)
-- [Recomendaciones de reutilización](#recomendaciones-de-reutilizacion)
+| Archivo | Qué contiene | Cuándo consultarlo |
+|---|---|---|
+| `contador.html` | Primer contador orientado a objeto | Cuando necesites un ejemplo base de estado + DOM |
+| `contador001.html` | Versión más ordenada del contador | Mejor punto de partida para reutilizar |
+| `boton.html` | Botón con activación y desactivación | Cuando quieras encapsular un botón |
+| `boton2.html` | Variante con más control de estados | Cuando haya alternancia entre botones |
+| `modal.html` | Modal reutilizable basado en `template` | Cuando necesites una ventana emergente |
+| `pestanas.html` | Tabs básicas | Para interfaces con varias vistas |
+| `pestañas2.html` | Tabs conectadas con secciones externas | Cuando quieras separar contenido |
+| `pestañas3.html` | Tabs con botón activo | Cuando quieras una versión más completa |
+| `alertConfigurable.html` | Alertas reutilizables | Para mensajes del sistema |
+| `Ejercicio01/` | Integración de varios componentes en panel | Cuando quieras verlos trabajar juntos |
+| `Ejercicio_Componentes_modulares_interface/` | Ejercicio más modular | Cuando busques un ejemplo más cercano a mini-app |
 
-## Vista rapida
+## 🗺️ Mapa mental — qué hace cada parte
 
-En esta carpeta hay una colección muy útil de componentes base hechos con JavaScript y DOM nativo.
-
-Las piezas más importantes para reutilizar son:
-
-- `Counter`: contador básico reutilizable.
-- `MyButton`: botón personalizado con activación y desactivación.
-- `Modal`: ventana emergente reutilizable.
-- `Tabs`: navegación por pestañas.
-- `AlertBox`: aviso temporal para mensajes del sistema.
-- `crearGrupoCampo()`: mini fábrica de campos de formulario.
-
-## Mapa de la carpeta
-
-Archivos base de componentes:
-
-- [contador.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador.html)
-- [contador001.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador001.html)
-- [boton.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton.html)
-- [boton2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton2.html)
-- [modal.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/modal.html)
-- [pestanas.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestanas.html)
-- [pestañas2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas2.html)
-- [pestañas3.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas3.html)
-- [alertConfigurable.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/alertConfigurable.html)
-
-Ejercicios integradores:
-
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-- [Ejercicio01/style.css](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/style.css)
-- [Ejercicio01/enunciado.md](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/enunciado.md)
-- [Ejercicio_Componentes_modulares_interface/permiso_fiesta.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/permiso_fiesta.html)
-- [Ejercicio_Componentes_modulares_interface/README.md](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/README.md)
-
-## Componentes mas reutilizables
-
-### Nivel muy reutilizable
-
-- `class Counter`
-- `class Modal`
-- `class Tabs`
-- `class MyButton`
-- `render(container)`
-- `open()`
-- `close()`
-- `showTab(index)`
-- `getValue()`
-- `updateDisplay()`
-
-### Nivel útil como patrón
-
-- `bindEvents()`
-- `createStructure()`
-- `addButton(text, callback, isPrimary)`
-- `initSection(sectionId)`
-- `crearGrupoCampo(textoLabel, id)`
-
----
-
-## 1. Counter
-
-Archivos donde aparece:
-
-- [contador.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador.html)
-- [contador001.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador001.html)
-- [Ejercicio_Componentes_modulares_interface/permiso_fiesta.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/permiso_fiesta.html)
-
-### Qué hace
-
-Controla un valor numérico y lo muestra en pantalla.
-
-### Métodos clave
-
-- `increment()`
-- `decrement()`
-- `reset()`
-- `updateDisplay()`
-- `render(container)`
-- `getValue()`
-
-### Versión más útil para reutilizar
-
-La mejor base es la de [contador001.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador001.html) porque separa:
-
-- creación de estructura
-- eventos
-- actualización visual
-- estado interno
-
-### Dónde reutilizarlo
-
-- edades
-- stock
-- puntuaciones
-- intentos
-- cantidad de productos
-- asistentes
-
-### Patrón rápido
-
-```js
-const contador = new Counter(0);
-contador.render(document.getElementById("app"));
+```text
+¿Qué necesito hacer?
+|
+|-- Crear un componente con estado propio
+|   `-- Counter
+|
+|-- Encapsular un botón y su lógica
+|   `-- MyButton
+|
+|-- Abrir una ventana flotante
+|   `-- Modal
+|
+|-- Cambiar entre secciones
+|   `-- Tabs
+|
+`-- Montar una mini interfaz reutilizable
+    `-- Ejercicio01 / ejercicio modular
 ```
 
----
+## 📡 Los patrones que se reutilizan
 
-## 2. MyButton
-
-Archivos donde aparece:
-
-- [boton.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton.html)
-- [boton2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton2.html)
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-
-### Qué hace
-
-Crea botones personalizados con lógica encapsulada.
-
-### Métodos y patrones clave
-
-- `disable()`
-- `enable()`
-- `toggle(btnOff, btnOn)`
-- `render(container)`
-
-### Versiones útiles
-
-- [boton.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton.html): base simple para activar y desactivar un único botón.
-- [boton2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton2.html): útil para alternar estados entre dos botones.
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html): mejora la idea con un método `toggle()` más limpio.
-
-### Dónde reutilizarlo
-
-- modos A/B
-- activar/desactivar acciones
-- botones de filtro
-- selector de vista
-- botones mutuamente excluyentes
-
-### Patrón rápido
+### 1️⃣ Componente con estado y `render()`
+📄 Ver: `contador.html` · `contador001.html`
 
 ```js
-const botonesAlternos = new MyButton("Modo");
-botonesAlternos.render(document.getElementById("zona"));
+class Counter {
+  constructor() {
+    this.value = 0;
+    this.element = document.createElement("div");
+  }
+
+  increment() { this.value++; }
+  reset() { this.value = 0; }
+  render(container) { container.appendChild(this.element); }
+}
 ```
 
----
+✅ Úsalo para: contadores, stock, puntuación, cantidad de productos.
 
-## 3. Modal
-
-Archivos donde aparece:
-
-- [modal.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/modal.html)
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-- [Ejercicio_Componentes_modulares_interface/permiso_fiesta.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/permiso_fiesta.html)
-
-### Qué hace
-
-Abre una ventana flotante para pedir datos, confirmar acciones o mostrar mensajes.
-
-### Métodos clave
-
-- `open()`
-- `close()`
-- `addButton(text, callback, isPrimary)`
-
-### Versión más reutilizable
-
-La más potente está en [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html) porque permite:
-
-- título dinámico
-- acceso al input
-- acceso al label interno
-- agregar botones con callback
-- reutilizar el mismo template para varios casos
-
-### Dónde reutilizarlo
-
-- formularios pequeños
-- confirmaciones de borrado
-- mensajes de éxito
-- resúmenes antes de guardar
-- edición rápida
-
-### Patrón rápido
+### 2️⃣ Botón reutilizable como objeto
+📄 Ver: `boton.html`
 
 ```js
-const modal = new Modal("Nuevo producto");
-modal.addButton("Guardar", (valor) => {
-  console.log(valor);
-}, true);
-modal.addButton("Cancelar", () => {});
-modal.open();
+class MyButton {
+  disable() { this.enabled = false; }
+  enable() { this.enabled = true; }
+  render(container) { container.appendChild(this.button); }
+}
 ```
 
----
+✅ Úsalo para: activar/desactivar acciones y encapsular eventos.
 
-## 4. Tabs
-
-Archivos donde aparece:
-
-- [pestanas.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestanas.html)
-- [pestañas2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas2.html)
-- [pestañas3.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas3.html)
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-- [Ejercicio_Componentes_modulares_interface/permiso_fiesta.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/permiso_fiesta.html)
-
-### Qué hace
-
-Organiza una interfaz en pestañas y muestra solo la sección activa.
-
-### Métodos clave
-
-- `createButtons()`
-- `showTab(index)`
-- `setActiveButton(activeIndex)`
-- `render(container)`
-- `initSection(sectionId)`
-
-### Evolución útil
-
-- [pestanas.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestanas.html): versión mínima con contenido interno.
-- [pestañas2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas2.html): muestra secciones externas por ID.
-- [pestañas3.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas3.html): añade botón activo.
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html): conecta cada pestaña con lógica propia usando `initSection()`.
-
-### Dónde reutilizarlo
-
-- paneles de administración
-- pasos de formularios
-- zonas de una mini app
-- ejercicios con varias vistas
-
-### Patrón rápido
+### 3️⃣ Modal con `template`
+📄 Ver: `modal.html`
 
 ```js
-const tabs = new Tabs(
-  ["Inicio", "Productos", "Contacto"],
-  ["inicio", "productos", "contacto"],
-);
-tabs.render(document.getElementById("tabsContainer"));
+class Modal {
+  open() { document.body.appendChild(this.element); }
+  close() { document.body.removeChild(this.element); }
+}
 ```
 
----
+✅ Úsalo para: formularios pequeños, confirmaciones y mensajes emergentes.
 
-## 5. AlertBox
+### 4️⃣ Tabs para cambiar de sección
+📄 Ver: `pestanas.html` · `pestañas2.html` · `pestañas3.html`
 
-Archivo donde aparece:
+Idea base:
 
-- [alertConfigurable.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/alertConfigurable.html)
+- crear botones
+- asociar cada botón a una sección
+- mostrar una vista y ocultar las demás
+- marcar la pestaña activa
 
-### Qué hace
+✅ Úsalo para: paneles, formularios por pasos y apps con varias vistas.
 
-Muestra un mensaje temporal en pantalla y luego lo oculta automáticamente.
+## 🔁 Flujo típico de un componente
 
-### Métodos clave
+```text
+1. Se crea una instancia con new
+2. El objeto guarda estado interno
+3. El objeto crea o controla su DOM
+4. Se enlazan eventos
+5. render(container) lo inserta en la página
+6. Sus métodos actualizan estado + interfaz
+```
 
-- `show()`
-- `render(container)`
+## ⚠️ Reglas que no conviene olvidar
 
-### Dónde reutilizarlo
+| Regla | Por qué |
+|---|---|
+| Cada objeto debe controlar una responsabilidad clara | Hace el componente reutilizable |
+| `render(container)` es un patrón muy útil | Separa creación y montaje |
+| El estado debe vivir dentro del objeto | Evita variables sueltas por la página |
+| Si un componente cambia el DOM, conviene encapsularlo | Facilita mantenimiento y copia a otros ejercicios |
 
-- mensajes de éxito
-- errores de validación
-- avisos de guardado
-- notificaciones del sistema
-
-### Observación importante
-
-Hay un detalle a corregir si quieres reutilizarlo tal cual: en la clase aparece
+## 🔁 Plantilla reutilizable — componente básico
 
 ```js
-this.element.className = "alert ${type}";
+class Componente {
+  constructor() {
+    this.element = document.createElement("div");
+  }
+
+  render(container) {
+    container.appendChild(this.element);
+  }
+}
 ```
 
-Eso debería usar plantilla real con backticks para que aplique la clase dinámica.
+## 🧠 Resumen rápido para decirlo en examen
 
----
-
-## 6. Utilidades del ejercicio final
-
-Archivo clave:
-
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-
-Este archivo no solo integra componentes. También tiene utilidades pequeñas muy aprovechables.
-
-### `initSection(sectionId)`
-
-Sirve para disparar la lógica correcta según la pestaña activa.
-
-Muy útil cuando quieras separar comportamiento por módulos.
-
-### `initInicio()`
-
-Ejemplo sencillo de renderizado condicional para evitar duplicados:
-
-```js
-if (section.querySelector(".myButton")) return;
-```
-
-Ese patrón es muy valioso cuando una sección se vuelve a inicializar varias veces.
-
-### `initProductos()`
-
-Patrones útiles:
-
-- reconstruir una vista después de cambiar un array
-- usar `forEach()` para pintar listas
-- usar modal de confirmación para borrado
-- refrescar la interfaz llamando otra vez al mismo método
-
-### `crearGrupoCampo(textoLabel, id)`
-
-Es una mini fábrica de campos de formulario.
-
-Muy reutilizable para:
-
-- formularios de contacto
-- formularios de registro
-- formularios de edición
-
-Patrón rápido:
-
-```js
-const crearGrupoCampo = (textoLabel, id) => {
-  const contenedorFila = document.createElement("div");
-  const label = document.createElement("label");
-  const input = document.createElement("input");
-  return contenedorFila;
-};
-```
-
-### `datosContacto`
-
-Objeto preparado para almacenar información del formulario antes de enviarla a otro sistema.
-
-Es útil como patrón de:
-
-- estado local
-- borrador de formulario
-- objeto puente para enviar datos después
-
----
-
-## Dónde mirar según lo que necesites
-
-Si necesitas un contador:
-
-- mira [contador001.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador001.html)
-
-Si necesitas pestañas:
-
-- empieza en [pestañas3.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas3.html)
-- si quieres integración real, mira [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-
-Si necesitas un modal:
-
-- base simple en [modal.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/modal.html)
-- versión más útil en [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-
-Si necesitas botones de estado:
-
-- mira [boton.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton.html) y [boton2.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/boton2.html)
-
-Si necesitas una app completa como referencia:
-
-- mira [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-- mira [Ejercicio_Componentes_modulares_interface/permiso_fiesta.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio_Componentes_modulares_interface/permiso_fiesta.html)
-
-## Patrones que conviene copiar
-
-- separar `createStructure()`, `bindEvents()` y `updateDisplay()`
-- centralizar el render con `render(container)`
-- usar `template` para construir modales
-- refrescar listas reconstruyendo la vista tras cambiar datos
-- usar callbacks para personalizar acciones de botones
-- encapsular comportamiento en clases pequeñas
-- usar métodos como `initSection()` para organizar aplicaciones por secciones
-
-## Recomendaciones de reutilizacion
-
-Si quieres sacar una base limpia para futuros ejercicios, estas serían mis elecciones:
-
-- `Counter`: tomar como base la versión de `contador001.html`
-- `Tabs`: tomar como base la versión de `pestañas3.html`
-- `Modal`: tomar como base la versión de `Ejercicio01/panel.html`
-- `MyButton`: tomar como base la versión de `Ejercicio01/panel.html`
-- formularios: reaprovechar `crearGrupoCampo()`
-
-## Resumen útil
-
-Los archivos más importantes de toda la carpeta para reutilizar código son:
-
-- [contador001.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/contador001.html)
-- [pestañas3.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/pestañas3.html)
-- [modal.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/modal.html)
-- [Ejercicio01/panel.html](/mnt/c/xampp/htdocs/cliente_2026/004-programación_colecciones_fx_obj_definidos_usuario/005-Creación_Objetos/Ejercicio01/panel.html)
-
-Con esos cuatro archivos ya tienes una base muy buena para montar interfaces modulares pequeñas, con componentes claros y bastante fáciles de adaptar.
+Aquí se trabaja la orientación a objetos aplicada al DOM.
+La idea es encapsular estado, estructura HTML y eventos dentro de clases reutilizables como `Counter`, `MyButton`, `Modal` o `Tabs`.
+Es la base para montar mini componentes sin frameworks.
