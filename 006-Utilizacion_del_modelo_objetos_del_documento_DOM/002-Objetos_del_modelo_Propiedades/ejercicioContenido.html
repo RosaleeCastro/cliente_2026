@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tarjeta de juego personalizada</title>
+    <style>
+      /* Estilos generales de la pagina: fuente, color de fondo y color base. */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: #f4f6f8;
+        color: #222;
+      }
+
+      .contenedor {
+        max-width: 1180px;
+        margin: 30px auto;
+        padding: 20px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+
+      .zona-principal {
+        /* Grid principal: tarjeta a la izquierda y formulario a la derecha. */
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        /* Panel reutilizable para formulario e inspector. */
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      .tarjeta-juego {
+        /*
+          Componente principal del ejercicio.
+          JavaScript cambia sus clases y atributos para modificar aspecto y datos.
+        */
+        overflow: hidden;
+        border: 3px solid #d1d5db;
+        border-radius: 14px;
+        background-color: white;
+        color: #222;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.25s ease,
+          border-color 0.25s ease,
+          box-shadow 0.25s ease,
+          background-color 0.25s ease;
+      }
+
+      .tarjeta-juego img {
+        /* La portada ocupa todo el ancho de la tarjeta y recorta la imagen sin deformarla. */
+        display: block;
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        background-color: #e5e7eb;
+      }
+
+      .contenido-tarjeta {
+        padding: 18px;
+      }
+
+      .contenido-tarjeta p {
+        margin: 8px 0;
+      }
+
+      .etiquetas {
+        /* Contenedor flexible para estado, plataforma y favorito. */
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .etiqueta {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: bold;
+        background-color: #e5e7eb;
+        color: #374151;
+      }
+
+      .enlace-tarjeta {
+        display: inline-block;
+        margin-top: 14px;
+        color: #1d4ed8;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .enlace-tarjeta:hover {
+        text-decoration: underline;
+      }
+
+      .boton-favorito {
+        display: block;
+        width: 100%;
+        margin-top: 14px;
+        border: none;
+        background-color: #0f766e;
+        color: white;
+        padding: 11px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .boton-favorito:hover:enabled {
+        background-color: #0d5f59;
+      }
+
+      .boton-favorito:disabled {
+        /* El estado disabled tambien se controla desde JavaScript. */
+        background-color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      .plataforma-pc {
+        /* Clases visuales por plataforma. JS elimina la anterior y anade la nueva. */
+        border-color: #2563eb;
+      }
+
+      .plataforma-pc .etiqueta-plataforma {
+        background-color: #dbeafe;
+        color: #1e3a8a;
+      }
+
+      .plataforma-playstation {
+        border-color: #111827;
+        background-color: #f8fafc;
+      }
+
+      .plataforma-playstation .etiqueta-plataforma {
+        background-color: #111827;
+        color: white;
+      }
+
+      .plataforma-xbox {
+        border-color: #16a34a;
+        background-color: #f0fdf4;
+      }
+
+      .plataforma-xbox .etiqueta-plataforma {
+        background-color: #16a34a;
+        color: white;
+      }
+
+      .plataforma-switch {
+        border-color: #dc2626;
+        background-color: #fff7f7;
+      }
+
+      .plataforma-switch .etiqueta-plataforma {
+        background-color: #dc2626;
+        color: white;
+      }
+
+      .favorito {
+        /* Clase que se activa al pulsar el boton de favoritos. */
+        transform: scale(1.02);
+        box-shadow: 0 10px 24px rgba(245, 158, 11, 0.28);
+      }
+
+      .favorito .etiqueta-favorito {
+        background-color: #f59e0b;
+        color: #111827;
+      }
+
+      form {
+        /* Formulario en dos columnas para editar todos los valores de la tarjeta. */
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .campo-completo {
+        grid-column: 1 / -1;
+      }
+
+      .botones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      .boton-secundario {
+        background-color: #475569;
+      }
+
+      .boton-secundario:hover {
+        background-color: #334155;
+      }
+
+      .inspector {
+        /* Segunda zona de la pagina: botones del inspector y salida de texto. */
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      pre {
+        min-height: 330px;
+        margin: 0;
+        padding: 15px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        border-radius: 8px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+      }
+
+      .resaltado {
+        /* Clase temporal usada por el inspector para marcar el nodo inspeccionado. */
+        outline: 3px solid #2d7ff9;
+        outline-offset: 3px;
+      }
+
+      @media (max-width: 850px) {
+        /* Adaptacion movil: todo pasa a una sola columna. */
+        .zona-principal,
+        .inspector {
+          grid-template-columns: 1fr;
+        }
+
+        form {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <h1>Tarjeta de juego personalizada</h1>
+
+      <!--
+        Zona principal del ejercicio:
+        1. article#tarjetaJuego representa el elemento DOM que vamos a manipular.
+        2. section.panel contiene el formulario que permite cambiar sus valores.
+      -->
+      <div class="zona-principal">
+        <article
+          id="tarjetaJuego"
+          class="tarjeta-juego plataforma-pc"
+          title="Tarjeta del juego The Legend of JavaScript"
+          data-plataforma="PC"
+          data-puede-favorito="true"
+        >
+          <!--
+            data-plataforma y data-puede-favorito son atributos personalizados.
+            Se leen y escriben con getAttribute/setAttribute, igual que title o href.
+          -->
+          <img
+            id="portadaJuego"
+            src="pablo.png"
+            alt="Portada del juego The Legend of JavaScript"
+          />
+
+          <div class="contenido-tarjeta">
+            <h2 id="tituloJuego">The Legend of JavaScript</h2>
+            <p><strong>Genero:</strong> <span id="generoJuego">Aventura</span></p>
+            <p>
+              <strong>Plataforma:</strong>
+              <span id="plataformaJuego">PC</span>
+            </p>
+            <p><strong>PEGI:</strong> <span id="pegiJuego">12</span></p>
+
+            <div class="etiquetas">
+              <!-- Estos span cambian con textContent segun los datos del formulario. -->
+              <span id="estadoJuego" class="etiqueta">Jugando</span>
+              <span id="etiquetaPlataforma" class="etiqueta etiqueta-plataforma">
+                PC
+              </span>
+              <span id="etiquetaFavorito" class="etiqueta etiqueta-favorito">
+                No favorito
+              </span>
+            </div>
+
+            <a
+              id="enlaceJuego"
+              class="enlace-tarjeta"
+              href="https://es.wikipedia.org/wiki/JavaScript"
+              target="_blank"
+            >
+              Ver pagina en Wikipedia
+            </a>
+
+            <!--
+              El atributo disabled del boton se actualiza segun las reglas:
+              - Estado Pendiente: no se puede anadir a favoritos.
+              - PEGI 18: no se puede anadir a favoritos.
+            -->
+            <button id="btnFavorito" class="boton-favorito">
+              Anadir a favoritos
+            </button>
+          </div>
+        </article>
+
+        <section class="panel">
+          <h2>Formulario</h2>
+
+          <form id="formularioJuego">
+            <!-- Cada campo tiene id para poder leer su value desde JavaScript. -->
+            <div>
+              <label for="campoTitulo">Titulo</label>
+              <input id="campoTitulo" type="text" />
+            </div>
+
+            <div>
+              <label for="campoGenero">Genero</label>
+              <input id="campoGenero" type="text" />
+            </div>
+
+            <div>
+              <label for="campoPlataforma">Plataforma</label>
+              <select id="campoPlataforma">
+                <option value="PC">PC</option>
+                <option value="PlayStation">PlayStation</option>
+                <option value="Xbox">Xbox</option>
+                <option value="Switch">Switch</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="campoPegi">PEGI</label>
+              <select id="campoPegi">
+                <option value="3">3</option>
+                <option value="7">7</option>
+                <option value="12">12</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="campoEstado">Estado</label>
+              <select id="campoEstado">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Jugando">Jugando</option>
+                <option value="Completado">Completado</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="campoPortada">Portada</label>
+              <select id="campoPortada">
+                <option value="pablo.png">pablo.png</option>
+                <option value="hector.png">hector.png</option>
+                <option value="jose-vicente.png">jose-vicente.png</option>
+              </select>
+            </div>
+
+            <div class="campo-completo">
+              <label for="campoWikipedia">Enlace a Wikipedia</label>
+              <input id="campoWikipedia" type="url" />
+            </div>
+          </form>
+
+          <div class="botones">
+            <button id="btnAplicar">Aplicar cambios</button>
+            <button id="btnRestaurar" class="boton-secundario">Restaurar</button>
+          </div>
+        </section>
+      </div>
+
+      <!--
+        Inspector de nodos integrado en la tarjeta.
+        Los botones llaman a la misma funcion inspeccionar(nodo, nombre)
+        pasandole diferentes elementos o nodos de texto.
+      -->
+      <div class="inspector">
+        <section class="panel">
+          <h2>Inspector de nodos</h2>
+          <p>
+            Estos botones inspeccionan nodos reales de la tarjeta y muestran sus
+            propiedades principales.
+          </p>
+
+          <div class="botones">
+            <button id="btnInspeccionarTarjeta">Tarjeta</button>
+            <button id="btnInspeccionarTitulo">Titulo</button>
+            <button id="btnInspeccionarPortada">Portada</button>
+            <button id="btnInspeccionarEnlace">Enlace</button>
+            <button id="btnInspeccionarBoton">Boton favorito</button>
+            <button id="btnInspeccionarTexto">Nodo de texto</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Resultado de la inspeccion</h2>
+          <pre id="salidaInspector">Pulsa un boton para inspeccionar un nodo</pre>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      /*
+        1. Seleccion de nodos del DOM
+        Guardamos referencias en constantes para no repetir document.getElementById.
+        Cada constante apunta a un elemento real del HTML.
+      */
+      const tarjetaJuego = document.getElementById("tarjetaJuego");
+      const portadaJuego = document.getElementById("portadaJuego");
+      const tituloJuego = document.getElementById("tituloJuego");
+      const generoJuego = document.getElementById("generoJuego");
+      const plataformaJuego = document.getElementById("plataformaJuego");
+      const pegiJuego = document.getElementById("pegiJuego");
+      const estadoJuego = document.getElementById("estadoJuego");
+      const etiquetaPlataforma = document.getElementById("etiquetaPlataforma");
+      const etiquetaFavorito = document.getElementById("etiquetaFavorito");
+      const enlaceJuego = document.getElementById("enlaceJuego");
+      const btnFavorito = document.getElementById("btnFavorito");
+      const salidaInspector = document.getElementById("salidaInspector");
+
+      const campoTitulo = document.getElementById("campoTitulo");
+      const campoGenero = document.getElementById("campoGenero");
+      const campoPlataforma = document.getElementById("campoPlataforma");
+      const campoPegi = document.getElementById("campoPegi");
+      const campoEstado = document.getElementById("campoEstado");
+      const campoPortada = document.getElementById("campoPortada");
+      const campoWikipedia = document.getElementById("campoWikipedia");
+
+      /*
+        2. Datos por defecto
+        Este objeto centraliza los valores iniciales. Asi restaurar la tarjeta
+        solo consiste en volver a cargar este objeto en el formulario y la tarjeta.
+      */
+      const datosIniciales = {
+        titulo: "The Legend of JavaScript",
+        genero: "Aventura",
+        plataforma: "PC",
+        portada: "pablo.png",
+        wikipedia: "https://es.wikipedia.org/wiki/JavaScript",
+        pegi: "12",
+        estado: "Jugando",
+      };
+
+      /*
+        Devuelve el nombre de la clase CSS correspondiente a una plataforma.
+        Es un ejemplo tipico de switch:
+        - Recibe un valor.
+        - Compara varios casos.
+        - Devuelve un resultado.
+      */
+      function clasePlataforma(plataforma) {
+        switch (plataforma) {
+          case "PlayStation":
+            return "plataforma-playstation";
+          case "Xbox":
+            return "plataforma-xbox";
+          case "Switch":
+            return "plataforma-switch";
+          default:
+            return "plataforma-pc";
+        }
+      }
+
+      /*
+        Antes de anadir una nueva clase de plataforma, quitamos todas las posibles.
+        Asi evitamos que la tarjeta tenga a la vez plataforma-pc y plataforma-xbox.
+      */
+      function limpiarPlataformas() {
+        tarjetaJuego.classList.remove(
+          "plataforma-pc",
+          "plataforma-playstation",
+          "plataforma-xbox",
+          "plataforma-switch",
+        );
+      }
+
+      /*
+        Funcion de regla de negocio:
+        devuelve true si el juego puede marcarse como favorito.
+        Se deja separada para reutilizarla y para que el codigo sea mas legible.
+      */
+      function puedeAnadirseAFavoritos(estado, pegi) {
+        return estado !== "Pendiente" && pegi !== "18";
+      }
+
+      /*
+        Actualiza el boton interno y el atributo data-puede-favorito.
+        disabled es una propiedad booleana del boton:
+        - true: boton deshabilitado.
+        - false: boton habilitado.
+      */
+      function actualizarBotonFavorito(estado, pegi) {
+        const puedeFavorito = puedeAnadirseAFavoritos(estado, pegi);
+
+        // setAttribute permite escribir atributos HTML desde JavaScript.
+        tarjetaJuego.setAttribute("data-puede-favorito", String(puedeFavorito));
+        btnFavorito.disabled = !puedeFavorito;
+
+        if (!puedeFavorito) {
+          // Si no puede ser favorito, tambien quitamos la clase visual favorito.
+          tarjetaJuego.classList.remove("favorito");
+          etiquetaFavorito.textContent = "No disponible";
+          btnFavorito.textContent = "Favorito no disponible";
+          return;
+        }
+
+        etiquetaFavorito.textContent = tarjetaJuego.classList.contains("favorito")
+          ? "Favorito"
+          : "No favorito";
+        btnFavorito.textContent = tarjetaJuego.classList.contains("favorito")
+          ? "Quitar de favoritos"
+          : "Anadir a favoritos";
+      }
+
+      /*
+        Recibe un objeto con datos y los pinta en la tarjeta.
+        Aqui aparecen varias operaciones DOM importantes:
+        - textContent para cambiar texto.
+        - src, alt y href para cambiar propiedades de elementos.
+        - setAttribute para modificar atributos.
+        - classList.add/remove para cambiar apariencia.
+      */
+      function aplicarDatos(datos) {
+        tituloJuego.textContent = datos.titulo;
+        generoJuego.textContent = datos.genero;
+        plataformaJuego.textContent = datos.plataforma;
+        pegiJuego.textContent = datos.pegi;
+        estadoJuego.textContent = datos.estado;
+        etiquetaPlataforma.textContent = datos.plataforma;
+
+        portadaJuego.src = datos.portada;
+        portadaJuego.alt = "Portada del juego " + datos.titulo;
+
+        // href puede asignarse como propiedad o con setAttribute.
+        enlaceJuego.href = datos.wikipedia;
+        enlaceJuego.textContent = "Ver pagina en Wikipedia";
+
+        tarjetaJuego.setAttribute("title", "Tarjeta del juego " + datos.titulo);
+        tarjetaJuego.setAttribute("data-plataforma", datos.plataforma);
+
+        limpiarPlataformas();
+        tarjetaJuego.classList.add(clasePlataforma(datos.plataforma));
+        actualizarBotonFavorito(datos.estado, datos.pegi);
+      }
+
+      /*
+        Carga valores en el formulario.
+        En inputs y selects se usa value, no textContent.
+      */
+      function cargarFormulario(datos) {
+        campoTitulo.value = datos.titulo;
+        campoGenero.value = datos.genero;
+        campoPlataforma.value = datos.plataforma;
+        campoPegi.value = datos.pegi;
+        campoEstado.value = datos.estado;
+        campoPortada.value = datos.portada;
+        campoWikipedia.value = datos.wikipedia;
+      }
+
+      /*
+        Lee los value actuales del formulario y los agrupa en un objeto.
+        Esto permite llamar despues a aplicarDatos(leerFormulario()).
+      */
+      function leerFormulario() {
+        return {
+          titulo: campoTitulo.value,
+          genero: campoGenero.value,
+          plataforma: campoPlataforma.value,
+          portada: campoPortada.value,
+          wikipedia: campoWikipedia.value,
+          pegi: campoPegi.value,
+          estado: campoEstado.value,
+        };
+      }
+
+      /*
+        Vuelve al estado inicial:
+        - quita favorito,
+        - rellena formulario,
+        - pinta tarjeta,
+        - limpia salida y resaltado del inspector.
+      */
+      function restaurar() {
+        tarjetaJuego.classList.remove("favorito");
+        cargarFormulario(datosIniciales);
+        aplicarDatos(datosIniciales);
+        salidaInspector.textContent = "Pulsa un boton para inspeccionar un nodo";
+        limpiarResaltado();
+      }
+
+      /*
+        El inspector marca visualmente el elemento seleccionado.
+        querySelectorAll devuelve una lista de todos los elementos con esa clase.
+      */
+      function limpiarResaltado() {
+        document.querySelectorAll(".resaltado").forEach((elemento) => {
+          elemento.classList.remove("resaltado");
+        });
+      }
+
+      /*
+        Convierte el numero nodeType en un texto entendible.
+        Valores importantes:
+        1 = elemento HTML, 3 = texto, 9 = document.
+      */
+      function tipoNodoTexto(nodeType) {
+        switch (nodeType) {
+          case Node.ELEMENT_NODE:
+            return "ELEMENT_NODE (1)";
+          case Node.TEXT_NODE:
+            return "TEXT_NODE (3)";
+          case Node.COMMENT_NODE:
+            return "COMMENT_NODE (8)";
+          case Node.DOCUMENT_NODE:
+            return "DOCUMENT_NODE (9)";
+          case Node.DOCUMENT_TYPE_NODE:
+            return "DOCUMENT_TYPE_NODE (10)";
+          default:
+            return "Otro tipo (" + nodeType + ")";
+        }
+      }
+
+      /*
+        Devuelve una descripcion corta de un nodo.
+        Importante: un nodo puede ser null, por ejemplo si no tiene hermano anterior.
+      */
+      function describirNodo(nodo) {
+        if (!nodo) return "null";
+
+        if (nodo.nodeType === Node.TEXT_NODE) {
+          return (
+            nodo.nodeName +
+            " -> " +
+            tipoNodoTexto(nodo.nodeType) +
+            ' -> "' +
+            nodo.nodeValue.trim() +
+            '"'
+          );
+        }
+
+        return nodo.nodeName + " -> " + tipoNodoTexto(nodo.nodeType);
+      }
+
+      /*
+        Recorre la coleccion attributes del nodo.
+        Solo los elementos HTML suelen tener attributes; los nodos de texto no.
+      */
+      function listarAtributos(nodo) {
+        if (!nodo.attributes || nodo.attributes.length === 0) {
+          return "  No tiene atributos.\n";
+        }
+
+        let texto = "";
+        for (let i = 0; i < nodo.attributes.length; i++) {
+          texto +=
+            "  " +
+            nodo.attributes[i].name +
+            '="' +
+            nodo.attributes[i].value +
+            '"\n';
+        }
+        return texto;
+      }
+
+      /*
+        childNodes incluye todos los nodos hijos:
+        elementos, textos, espacios, saltos de linea y comentarios.
+      */
+      function listarChildNodes(nodo) {
+        let texto = "";
+        for (let i = 0; i < nodo.childNodes.length; i++) {
+          texto += "  [" + i + "] " + describirNodo(nodo.childNodes[i]) + "\n";
+        }
+        return texto || "  No tiene childNodes.\n";
+      }
+
+      /*
+        children incluye solo elementos HTML hijos.
+        Por eso normalmente children.length es menor que childNodes.length.
+      */
+      function listarChildren(nodo) {
+        if (!("children" in nodo)) {
+          return "  Este nodo no tiene propiedad children.\n";
+        }
+
+        let texto = "";
+        for (let i = 0; i < nodo.children.length; i++) {
+          texto +=
+            "  [" + i + "] " + nodo.children[i].nodeName.toLowerCase() + "\n";
+        }
+        return texto || "  No tiene children.\n";
+      }
+
+      /*
+        Funcion principal del inspector.
+        Recibe cualquier nodo y muestra sus propiedades mas importantes:
+        parentNode, firstChild, lastChild, siblings, childNodes, children y atributos.
+      */
+      function inspeccionar(nodo, nombre) {
+        limpiarResaltado();
+
+        // Solo los elementos HTML tienen classList; los nodos de texto no se resaltan.
+        if (nodo.nodeType === Node.ELEMENT_NODE) {
+          nodo.classList.add("resaltado");
+        }
+
+        let resultado = "";
+        resultado += "NODO INSPECCIONADO: " + nombre + "\n";
+        resultado += "----------------------------------------\n";
+        resultado += "nodeType: " + tipoNodoTexto(nodo.nodeType) + "\n";
+        resultado += "nodeName: " + nodo.nodeName + "\n";
+        resultado +=
+          "nodeValue: " +
+          (nodo.nodeValue === null ? "null" : '"' + nodo.nodeValue + '"') +
+          "\n";
+        resultado += "parentNode: " + describirNodo(nodo.parentNode) + "\n";
+        resultado += "firstChild: " + describirNodo(nodo.firstChild) + "\n";
+        resultado += "lastChild: " + describirNodo(nodo.lastChild) + "\n";
+        resultado +=
+          "previousSibling: " + describirNodo(nodo.previousSibling) + "\n";
+        resultado += "nextSibling: " + describirNodo(nodo.nextSibling) + "\n";
+        resultado +=
+          "childNodes.length: " +
+          (nodo.childNodes ? nodo.childNodes.length : 0) +
+          "\n";
+
+        if ("children" in nodo) {
+          resultado += "children.length: " + nodo.children.length + "\n";
+        } else {
+          resultado += "children.length: no disponible en este nodo\n";
+        }
+
+        resultado += "\nAtributos:\n";
+        resultado += listarAtributos(nodo);
+
+        if (nodo.childNodes) {
+          resultado += "\nListado de childNodes:\n";
+          resultado += listarChildNodes(nodo);
+        }
+
+        if ("children" in nodo) {
+          resultado += "\nListado de children:\n";
+          resultado += listarChildren(nodo);
+        }
+
+        salidaInspector.textContent = resultado;
+      }
+
+      /*
+        3. Eventos
+        addEventListener conecta una accion del usuario con una funcion.
+      */
+      document.getElementById("btnAplicar").addEventListener("click", function () {
+        aplicarDatos(leerFormulario());
+      });
+
+      document.getElementById("btnRestaurar").addEventListener("click", restaurar);
+
+      btnFavorito.addEventListener("click", function () {
+        // toggle anade la clase si no existe, y la quita si ya existe.
+        tarjetaJuego.classList.toggle("favorito");
+        actualizarBotonFavorito(estadoJuego.textContent, pegiJuego.textContent);
+      });
+
+      // Botones del inspector: todos reutilizan inspeccionar(nodo, nombre).
+      document
+        .getElementById("btnInspeccionarTarjeta")
+        .addEventListener("click", function () {
+          inspeccionar(tarjetaJuego, "<article id='tarjetaJuego'>");
+        });
+
+      document
+        .getElementById("btnInspeccionarTitulo")
+        .addEventListener("click", function () {
+          inspeccionar(tituloJuego, "<h2 id='tituloJuego'>");
+        });
+
+      document
+        .getElementById("btnInspeccionarPortada")
+        .addEventListener("click", function () {
+          inspeccionar(portadaJuego, "<img id='portadaJuego'>");
+        });
+
+      document
+        .getElementById("btnInspeccionarEnlace")
+        .addEventListener("click", function () {
+          inspeccionar(enlaceJuego, "<a id='enlaceJuego'>");
+        });
+
+      document
+        .getElementById("btnInspeccionarBoton")
+        .addEventListener("click", function () {
+          inspeccionar(btnFavorito, "<button id='btnFavorito'>");
+        });
+
+      document
+        .getElementById("btnInspeccionarTexto")
+        .addEventListener("click", function () {
+          inspeccionar(tituloJuego.firstChild, "Texto dentro del titulo");
+        });
+
+      // Inicializa la pagina con los valores por defecto al cargar el HTML.
+      restaurar();
+    </script>
+  </body>
+</html>

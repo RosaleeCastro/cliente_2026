@@ -1,0 +1,17 @@
+Desarrolla una tarjeta de juego personalizada:
+	- La tarjeta de juego tiene unos valores por defecto
+	- Se pueden cambiar todos sus valores mediante formulario
+	- Lista de valores:
+		- Título
+		- Género
+		- Plataforma
+		- Portada (imagen)
+		- Enlace a su página de Wikipedia
+		- Pegi
+		- Estado (Pendiente, Jugando o Completado)
+		- Apariencia visual dependiendo de la plataforma
+		- Botón de añadir a favoritos
+			- Este estará habilitado o deshabilitado en función de un atributo interno
+			- Este atributo se colocará a false en caso de ser un juego "Pendiente" o tener PEGI 18
+
+Incorpora la funcionalidad del inspector de nodos a esta tarjeta de juego.

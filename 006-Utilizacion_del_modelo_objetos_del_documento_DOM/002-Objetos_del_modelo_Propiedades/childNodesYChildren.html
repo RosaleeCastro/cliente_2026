@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diferencia entre childNodes y children</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background-color: #f4f6f8;
+        color: #222;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      .contenedor {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        background-color: white;
+        border-radius: 10px;
+        padding: 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      .zona-demo {
+        border: 2px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 16px;
+        background-color: #f8fafc;
+        margin-top: 15px;
+      }
+
+      .recuadro {
+        border: 2px dashed #94a3b8;
+        padding: 16px;
+        border-radius: 8px;
+        background-color: #ffffff;
+      }
+
+      .recuadro p,
+      .recuadro ul {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .botones {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      pre {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        padding: 14px;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        min-height: 320px;
+        overflow-x: auto;
+      }
+
+      code {
+        background-color: #eef2f7;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      .explicacion {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: #eef6ff;
+        border-left: 4px solid #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Diferencia entre <code>childNodes</code> y <code>children</code></h1>
+
+    <p>
+      Este ejemplo contiene espacios y saltos de línea dentro del HTML para que
+      se vea que <code>childNodes</code> cuenta también nodos de texto, mientras
+      que <code>children</code> solo cuenta elementos HTML.
+    </p>
+
+    <div class="contenedor">
+      <section class="panel">
+        <h2>Zona de prueba</h2>
+
+        <div class="zona-demo">
+          <div id="contenedorPrueba" class="recuadro">
+            <h3>Título de prueba</h3>
+
+            <p>Primer párrafo</p>
+
+            <p>Segundo párrafo con <strong>texto en negrita</strong></p>
+
+            <ul>
+              <li>Elemento 1</li>
+              <li>Elemento 2</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="botones">
+          <button id="btnAnalizar">Analizar contenedor</button>
+          <button id="btnResaltarChildren">Resaltar solo children</button>
+          <button id="btnLimpiar">Limpiar resaltado</button>
+        </div>
+
+        <div class="explicacion" id="explicacion">
+          Pulsa <strong>Analizar contenedor</strong> para ver qué devuelve cada
+          propiedad.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Resultado</h2>
+        <pre id="salida">Aquí aparecerá el análisis...</pre>
+      </section>
+    </div>
+
+    <script>
+      const contenedorPrueba = document.getElementById("contenedorPrueba");
+      const salida = document.getElementById("salida");
+      const explicacion = document.getElementById("explicacion");
+
+      function tipoNodoTexto(nodeType) {
+        switch (nodeType) {
+          case Node.ELEMENT_NODE:
+            return "ELEMENT_NODE (1)";
+          case Node.TEXT_NODE:
+            return "TEXT_NODE (3)";
+          case Node.COMMENT_NODE:
+            return "COMMENT_NODE (8)";
+          default:
+            return "Otro tipo (" + nodeType + ")";
+        }
+      }
+
+      function describirNodo(nodo) {
+        if (nodo.nodeType === Node.TEXT_NODE) {
+          let texto = nodo.nodeValue.replace(/\n/g, "\\n");
+          texto = texto.replace(/ /g, "·");
+          return '#text -> "' + texto + '" -> ' + tipoNodoTexto(nodo.nodeType);
+        }
+
+        return (
+          nodo.nodeName.toLowerCase() + " -> " + tipoNodoTexto(nodo.nodeType)
+        );
+      }
+
+      function limpiarResaltado() {
+        const elementosResaltados =
+          contenedorPrueba.querySelectorAll(".resaltado");
+        for (let i = 0; i < elementosResaltados.length; i++) {
+          elementosResaltados[i].classList.remove("resaltado");
+          elementosResaltados[i].style.outline = "";
+          elementosResaltados[i].style.backgroundColor = "";
+        }
+      }
+
+      function analizarContenedor() {
+        let resultado = "";
+        resultado += "ANÁLISIS DEL NODO #contenedorPrueba\n";
+        resultado += "====================================\n\n";
+
+        resultado +=
+          "childNodes.length: " + contenedorPrueba.childNodes.length + "\n";
+        resultado +=
+          "children.length: " + contenedorPrueba.children.length + "\n\n";
+
+        resultado += "LISTADO DE childNodes\n";
+        resultado += "---------------------\n";
+
+        for (let i = 0; i < contenedorPrueba.childNodes.length; i++) {
+          resultado +=
+            "[" +
+            i +
+            "] " +
+            describirNodo(contenedorPrueba.childNodes[i]) +
+            "\n";
+        }
+
+        resultado += "\nLISTADO DE children\n";
+        resultado += "-------------------\n";
+
+        for (let i = 0; i < contenedorPrueba.children.length; i++) {
+          resultado +=
+            "[" + i + "] " + describirNodo(contenedorPrueba.children[i]) + "\n";
+        }
+
+        resultado += "\nCONCLUSIÓN\n";
+        resultado += "----------\n";
+        resultado +=
+          "childNodes incluye TODO: elementos, textos, saltos de línea y espacios.\n";
+        resultado += "children incluye SOLO elementos HTML.\n";
+
+        salida.textContent = resultado;
+
+        explicacion.innerHTML =
+          "<strong>Observa:</strong> entre las etiquetas del HTML hay saltos de línea y espacios. " +
+          "Eso genera nodos de texto, por eso <code>childNodes</code> cuenta más elementos que <code>children</code>.";
+      }
+
+      function resaltarSoloChildren() {
+        limpiarResaltado();
+
+        for (let i = 0; i < contenedorPrueba.children.length; i++) {
+          contenedorPrueba.children[i].style.outline = "3px solid #2563eb";
+          contenedorPrueba.children[i].style.backgroundColor = "#eaf2ff";
+        }
+
+        explicacion.innerHTML =
+          "Se han resaltado solo los elementos devueltos por <code>children</code>. " +
+          "Los nodos de texto existen, pero no pueden resaltarse visualmente como una etiqueta HTML.";
+      }
+
+      document
+        .getElementById("btnAnalizar")
+        .addEventListener("click", analizarContenedor);
+      document
+        .getElementById("btnResaltarChildren")
+        .addEventListener("click", resaltarSoloChildren);
+      document
+        .getElementById("btnLimpiar")
+        .addEventListener("click", function () {
+          limpiarResaltado();
+          salida.textContent = "Aquí aparecerá el análisis...";
+          explicacion.innerHTML =
+            "Pulsa <strong>Analizar contenedor</strong> para ver qué devuelve cada propiedad.";
+        });
+    </script>
+  </body>
+</html>
