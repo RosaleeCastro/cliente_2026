@@ -1,0 +1,21 @@
+Crea una página que simule una tienda online. La aplicación contendrá:
+	- Un contenedor exterior que represente el bloque general de la tienda
+	- Este bloque contiene tarjetas para cada producto concreto
+		- Se puede resaltar cada producto al clicar en el
+		- El producto contiene un botón para añadirlo al carrito
+	- Una funcionalidad de carrito
+	- El objeto en el carrito tiene:
+		- Nombre
+		- Precio
+		- Cantidad
+		- Botón de incrementar cantidad
+		- Botón de disminuir cantidad
+			- Si una cantidad llega a 0 el objeto es eliminado del carrito
+	- Se puede seleccionar el objeto para resaltarlo
+	- Modificar una cantidad recalcula el precio total del carrito
+
+Características generales:
+	- Todos los listeners irán dentro de los contenedores grandes
+	- Los objetos del carrito serán creados de 0
+	- Para obtener los datos de cada componente del dom se tiene que navegar dentro de este
+	- Los botones serán identificados con una propiedad específica

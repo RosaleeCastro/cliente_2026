@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejercicio: creacion dinamica de tareas</title>
+
+    <style>
+      /*
+        ============================================================
+        ESTILOS GENERALES
+        ============================================================
+
+        El objetivo principal del ejercicio es JavaScript y DOM, pero
+        el CSS ayuda a ver claramente cuando una tarea cambia de estado,
+        prioridad o posicion dentro de la lista.
+      */
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 30px;
+      }
+
+      .contenedor {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+
+      /*
+        Un panel es una caja visual reutilizable.
+        Se usa para:
+        - formulario,
+        - lista de tareas,
+        - registro del proceso.
+      */
+      .panel {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+      }
+
+      /*
+        La zona principal usa grid:
+        - columna izquierda: controles + lista
+        - columna derecha: explicacion del ultimo proceso
+      */
+      .grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      /*
+        Fila flexible del formulario:
+        si falta espacio, los controles bajan a la siguiente linea.
+      */
+      .fila {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      input[type="text"],
+      input[type="url"],
+      select {
+        box-sizing: border-box;
+        min-width: 180px;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      #txtTarea {
+        flex: 1;
+      }
+
+      #txtEnlace {
+        flex: 1 1 280px;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      /*
+        Botones con colores distintos para que las acciones sean faciles
+        de distinguir visualmente.
+      */
+      .btn-completar {
+        background-color: #16a34a;
+      }
+
+      .btn-completar:hover {
+        background-color: #15803d;
+      }
+
+      .btn-editar {
+        background-color: #7c3aed;
+      }
+
+      .btn-editar:hover {
+        background-color: #6d28d9;
+      }
+
+      .btn-prioridad {
+        background-color: #f59e0b;
+        color: #111827;
+      }
+
+      .btn-prioridad:hover {
+        background-color: #d97706;
+      }
+
+      .btn-eliminar {
+        background-color: #dc2626;
+      }
+
+      .btn-eliminar:hover {
+        background-color: #b91c1c;
+      }
+
+      .btn-secundario {
+        background-color: #475569;
+      }
+
+      .btn-secundario:hover {
+        background-color: #334155;
+      }
+
+      .info {
+        margin-top: 15px;
+        padding: 12px;
+        background-color: #eef6ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 6px;
+      }
+
+      .vacia {
+        color: #64748b;
+        font-style: italic;
+        margin-top: 15px;
+      }
+
+      ul {
+        list-style: none;
+        margin: 20px 0 0;
+        padding: 0;
+      }
+
+      /*
+        ============================================================
+        TARJETA DE TAREA
+        ============================================================
+
+        Cada tarea se crea desde JavaScript como un <li>.
+        El <li> recibe atributos personalizados:
+        - data-id
+        - data-estado
+        - data-prioridad
+        - data-link
+      */
+      .tarea {
+        display: grid;
+        grid-template-columns: 86px 1fr;
+        gap: 14px;
+        align-items: start;
+        border: 2px solid #dbe4ee;
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+        background-color: #f8fafc;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .tarea:hover {
+        transform: translateY(-1px);
+      }
+
+      .tarea img {
+        width: 86px;
+        height: 86px;
+        border-radius: 8px;
+        object-fit: cover;
+        background-color: #e5e7eb;
+      }
+
+      .tarea h3 {
+        margin-bottom: 8px;
+      }
+
+      .tarea p {
+        margin: 6px 0;
+      }
+
+      .meta {
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      .estado {
+        display: inline-block;
+        margin-right: 6px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: bold;
+        background-color: #e5e7eb;
+        color: #374151;
+      }
+
+      .prioridad {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: bold;
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .acciones-tarea {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .acciones-tarea button {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+
+      .enlace-tarea {
+        display: inline-block;
+        margin-top: 8px;
+        color: #1d4ed8;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .enlace-tarea:hover {
+        text-decoration: underline;
+      }
+
+      /*
+        Clase visual para data-estado="pendiente".
+        Se anade/quita desde actualizarVisualTarea().
+      */
+      .tarea-pendiente {
+        border-color: #f59e0b;
+        background-color: #fffbeb;
+      }
+
+      .tarea-pendiente .estado {
+        background-color: #f59e0b;
+        color: #111827;
+      }
+
+      /*
+        Clase visual para data-estado="completada".
+        Ademas del color, se tacha el titulo para reforzar el cambio.
+      */
+      .tarea-completada {
+        border-color: #16a34a;
+        background-color: #f0fdf4;
+      }
+
+      .tarea-completada .estado {
+        background-color: #16a34a;
+        color: white;
+      }
+
+      .tarea-completada .titulo-tarea {
+        text-decoration: line-through;
+        color: #166534;
+      }
+
+      /*
+        Clases por prioridad.
+        El atributo data-prioridad guarda el dato; estas clases solo pintan.
+      */
+      .prioridad-alta {
+        box-shadow: inset 5px 0 0 #dc2626;
+      }
+
+      .prioridad-media {
+        box-shadow: inset 5px 0 0 #f59e0b;
+      }
+
+      .prioridad-baja {
+        box-shadow: inset 5px 0 0 #2563eb;
+      }
+
+      pre {
+        min-height: 440px;
+        margin: 0;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      code {
+        background-color: #eef2f7;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      @media (max-width: 850px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tarea {
+          grid-template-columns: 1fr;
+        }
+
+        .tarea img {
+          width: 100%;
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="contenedor">
+      <h1>Ejercicio: creacion dinamica de tareas</h1>
+
+      <div class="grid">
+        <main>
+          <section class="panel">
+            <h2>Nueva tarea</h2>
+
+            <p>
+              Este ejercicio crea tarjetas con <code>createElement()</code>,
+              las inserta con <code>appendChild()</code>, cambia atributos
+              personalizados y reorganiza nodos con <code>replaceChildren()</code>.
+            </p>
+
+            <!--
+              Formulario sencillo.
+              No usamos <form> para evitar que el navegador recargue la pagina
+              al pulsar Enter. El Enter se controla manualmente en JavaScript.
+            -->
+            <div class="fila">
+              <input
+                type="text"
+                id="txtTarea"
+                placeholder="Texto de la tarea"
+              />
+
+              <select id="selPrioridad" title="Prioridad inicial de la tarea">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Media</option>
+                <option value="baja">Baja</option>
+              </select>
+            </div>
+
+            <div class="fila" style="margin-top: 10px">
+              <input
+                type="url"
+                id="txtEnlace"
+                placeholder="Enlace de ayuda, por ejemplo https://developer.mozilla.org/"
+              />
+
+              <button id="btnAgregar" title="Crear una nueva tarea">
+                Anadir tarea
+              </button>
+
+              <button
+                id="btnOrdenar"
+                class="btn-secundario"
+                title="Reordenar automaticamente por prioridad"
+              >
+                Ordenar por prioridad
+              </button>
+            </div>
+
+            <div class="info">
+              <strong>Total de tareas:</strong>
+              <span id="totalTareas">0</span>
+            </div>
+
+            <p id="mensajeListaVacia" class="vacia">
+              Todavia no hay tareas en la lista.
+            </p>
+
+            <!--
+              Todas las tareas dinamicas se insertan aqui.
+              Cada tarea sera un <li class="tarea">.
+            -->
+            <ul id="listaTareas"></ul>
+          </section>
+        </main>
+
+        <aside class="panel">
+          <h2>Registro del proceso</h2>
+          <pre id="salidaProceso">Aqui se mostrara el ultimo proceso realizado...</pre>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      /*
+        ============================================================
+        REFERENCIAS A ELEMENTOS FIJOS DEL HTML
+        ============================================================
+
+        Estos elementos existen desde el principio en el documento.
+        Por eso podemos obtenerlos una vez con document.getElementById().
+      */
+      const txtTarea = document.getElementById("txtTarea");
+      const txtEnlace = document.getElementById("txtEnlace");
+      const selPrioridad = document.getElementById("selPrioridad");
+      const btnAgregar = document.getElementById("btnAgregar");
+      const btnOrdenar = document.getElementById("btnOrdenar");
+      const listaTareas = document.getElementById("listaTareas");
+      const totalTareas = document.getElementById("totalTareas");
+      const mensajeListaVacia = document.getElementById("mensajeListaVacia");
+      const salidaProceso = document.getElementById("salidaProceso");
+
+      /*
+        Contador interno para asignar data-id.
+        No depende de cuantas tareas haya en pantalla, porque si elimino una
+        tarea no quiero repetir ids anteriores.
+      */
+      let contadorTareas = 0;
+
+      /*
+        Imagenes embebidas.
+        Como la carpeta no contiene imagenes, se usan SVG dentro del propio HTML.
+        Ventajas para estudiar:
+        - no hace falta internet,
+        - no hace falta servidor,
+        - se ve claramente cuando cambia el estado.
+      */
+      const imagenPendiente =
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23fef3c7'/%3E%3Ccircle cx='80' cy='80' r='48' fill='%23f59e0b'/%3E%3Cpath d='M80 45v40l27 18' fill='none' stroke='%23111827' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
+      const imagenCompletada =
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' rx='18' fill='%23dcfce7'/%3E%3Ccircle cx='80' cy='80' r='48' fill='%2316a34a'/%3E%3Cpath d='M54 82l18 18 36-42' fill='none' stroke='white' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
+      /*
+        ============================================================
+        FUNCIONES DE APOYO GENERAL
+        ============================================================
+      */
+
+      /*
+        Actualiza contador y mensaje de lista vacia.
+        children cuenta solo elementos HTML hijos del <ul>, no textos.
+      */
+      function actualizarEstadoLista() {
+        totalTareas.textContent = listaTareas.children.length;
+
+        if (listaTareas.children.length === 0) {
+          mensajeListaVacia.style.display = "block";
+        } else {
+          mensajeListaVacia.style.display = "none";
+        }
+      }
+
+      /*
+        Escribe en el panel derecho.
+        Usamos textContent porque queremos mostrar texto plano, no HTML.
+      */
+      function mostrarProceso(texto) {
+        salidaProceso.textContent = texto;
+      }
+
+      /*
+        Normaliza el enlace.
+        Si el usuario no escribe enlace, usamos uno por defecto.
+        Si escribe "developer.mozilla.org", anadimos https:// delante.
+      */
+      function prepararEnlace(valor) {
+        const enlaceLimpio = valor.trim();
+
+        if (enlaceLimpio === "") {
+          return "https://developer.mozilla.org/es/docs/Web/API/Document_Object_Model";
+        }
+
+        if (
+          enlaceLimpio.startsWith("http://") ||
+          enlaceLimpio.startsWith("https://")
+        ) {
+          return enlaceLimpio;
+        }
+
+        return "https://" + enlaceLimpio;
+      }
+
+      /*
+        Devuelve un numero para ordenar prioridades.
+        Cuanto menor sea el numero, antes aparece en la lista.
+      */
+      function valorPrioridad(prioridad) {
+        switch (prioridad) {
+          case "alta":
+            return 1;
+          case "media":
+            return 2;
+          default:
+            return 3;
+        }
+      }
+
+      /*
+        Quita todas las clases visuales de prioridad.
+        Luego se anade solo la clase que corresponda al atributo data-prioridad.
+      */
+      function limpiarClasesPrioridad(tarea) {
+        tarea.classList.remove("prioridad-alta", "prioridad-media", "prioridad-baja");
+      }
+
+      /*
+        Quita todas las clases visuales de estado.
+        Luego se anade solo tarea-pendiente o tarea-completada.
+      */
+      function limpiarClasesEstado(tarea) {
+        tarea.classList.remove("tarea-pendiente", "tarea-completada");
+      }
+
+      /*
+        ============================================================
+        FUNCIONES QUE NAVEGAN POR LA JERARQUIA DEL DOM
+        ============================================================
+
+        La ampliacion 3 pide que los listeners NO dependan de variables
+        creadas dentro de crearTarea().
+
+        Por eso, cuando se pulsa un boton:
+        1. evento.currentTarget nos da el boton pulsado.
+        2. boton.parentElement sube a .acciones-tarea.
+        3. .parentElement vuelve a subir al contenedor de contenido.
+        4. .parentElement vuelve a subir al <li class="tarea">.
+
+        Desde esa tarea localizada buscamos sus hijos con querySelector().
+      */
+
+      function obtenerTareaDesdeBoton(boton) {
+        /*
+          Estructura de una tarea:
+
+          li.tarea
+            img.imagen-tarea
+            div.contenido-tarea
+              ...
+              div.acciones-tarea
+                button
+
+          Si estoy en el button:
+          - button.parentElement => div.acciones-tarea
+          - button.parentElement.parentElement => div.contenido-tarea
+          - button.parentElement.parentElement.parentElement => li.tarea
+        */
+        return boton.parentElement.parentElement.parentElement;
+      }
+
+      /*
+        Actualiza texto, CSS e imagen segun el atributo data-estado.
+        Esta funcion NO recibe los spans por parametro: los busca dentro de
+        la tarea usando querySelector(), que es justo lo pedido en el ejercicio.
+      */
+      function actualizarVisualTarea(tarea) {
+        const estado = tarea.getAttribute("data-estado");
+        const prioridad = tarea.getAttribute("data-prioridad");
+
+        const imagen = tarea.querySelector(".imagen-tarea");
+        const textoEstado = tarea.querySelector(".estado");
+        const textoPrioridad = tarea.querySelector(".prioridad");
+        const botonCompletar = tarea.querySelector(".btn-completar");
+
+        limpiarClasesEstado(tarea);
+        limpiarClasesPrioridad(tarea);
+
+        if (estado === "completada") {
+          tarea.classList.add("tarea-completada");
+          imagen.src = imagenCompletada;
+          imagen.alt = "Imagen de tarea completada";
+          textoEstado.textContent = "Completada";
+          botonCompletar.textContent = "Marcar pendiente";
+          botonCompletar.setAttribute("title", "Cambiar esta tarea a pendiente");
+        } else {
+          tarea.classList.add("tarea-pendiente");
+          imagen.src = imagenPendiente;
+          imagen.alt = "Imagen de tarea pendiente";
+          textoEstado.textContent = "Pendiente";
+          botonCompletar.textContent = "Completar";
+          botonCompletar.setAttribute("title", "Marcar esta tarea como completada");
+        }
+
+        tarea.classList.add("prioridad-" + prioridad);
+        textoPrioridad.textContent = "Prioridad: " + prioridad;
+      }
+
+      /*
+        ============================================================
+        LISTENERS INDEPENDIENTES
+        ============================================================
+
+        Estas funciones se asignan como listeners a los botones creados
+        dinamicamente. Estan fuera de crearTarea(), tal como pide el enunciado.
+      */
+
+      function cambiarEstadoTarea(evento) {
+        const botonPulsado = evento.currentTarget;
+        const tarea = obtenerTareaDesdeBoton(botonPulsado);
+        const estadoActual = tarea.getAttribute("data-estado");
+
+        if (estadoActual === "pendiente") {
+          tarea.setAttribute("data-estado", "completada");
+        } else {
+          tarea.setAttribute("data-estado", "pendiente");
+        }
+
+        actualizarVisualTarea(tarea);
+
+        mostrarProceso(
+          "CAMBIO DE ESTADO\n" +
+            "----------------\n" +
+            "1. Se ha pulsado el boton de completar.\n" +
+            "2. Con evento.currentTarget se ha localizado el boton.\n" +
+            "3. Se ha subido por parentElement hasta el <li class='tarea'>.\n" +
+            "4. Se ha cambiado el atributo data-estado.\n" +
+            "5. Se ha actualizado texto, CSS e imagen.\n\n" +
+            "data-id: " +
+            tarea.getAttribute("data-id") +
+            "\nNuevo data-estado: " +
+            tarea.getAttribute("data-estado"),
+        );
+      }
+
+      function editarTextoTarea(evento) {
+        const botonPulsado = evento.currentTarget;
+        const tarea = obtenerTareaDesdeBoton(botonPulsado);
+        const titulo = tarea.querySelector(".titulo-tarea");
+
+        const textoActual = titulo.textContent;
+        const nuevoTexto = prompt("Nuevo texto de la tarea:", textoActual);
+
+        /*
+          prompt puede devolver:
+          - null si se pulsa Cancelar,
+          - "" si se acepta vacio,
+          - un texto si el usuario escribe algo.
+        */
+        if (nuevoTexto === null) {
+          mostrarProceso("Edicion cancelada. No se ha modificado la tarea.");
+          return;
+        }
+
+        if (nuevoTexto.trim() === "") {
+          alert("El texto de la tarea no puede estar vacio.");
+          return;
+        }
+
+        titulo.textContent = nuevoTexto.trim();
+
+        mostrarProceso(
+          "EDICION DE TEXTO\n" +
+            "----------------\n" +
+            "Se ha localizado el titulo dentro de la tarjeta con:\n" +
+            "tarea.querySelector('.titulo-tarea')\n\n" +
+            "Texto anterior: " +
+            textoActual +
+            "\nTexto nuevo: " +
+            titulo.textContent,
+        );
+      }
+
+      function cambiarPrioridadTarea(evento) {
+        const botonPulsado = evento.currentTarget;
+        const tarea = obtenerTareaDesdeBoton(botonPulsado);
+        const prioridadActual = tarea.getAttribute("data-prioridad");
+
+        let nuevaPrioridad;
+
+        /*
+          Ciclo de prioridades:
+          alta -> media -> baja -> alta
+        */
+        if (prioridadActual === "alta") {
+          nuevaPrioridad = "media";
+        } else if (prioridadActual === "media") {
+          nuevaPrioridad = "baja";
+        } else {
+          nuevaPrioridad = "alta";
+        }
+
+        tarea.setAttribute("data-prioridad", nuevaPrioridad);
+        actualizarVisualTarea(tarea);
+
+        mostrarProceso(
+          "CAMBIO DE PRIORIDAD\n" +
+            "-------------------\n" +
+            "La prioridad se guarda en data-prioridad.\n" +
+            "Despues se actualiza el texto y la clase CSS.\n\n" +
+            "data-id: " +
+            tarea.getAttribute("data-id") +
+            "\nPrioridad anterior: " +
+            prioridadActual +
+            "\nNueva prioridad: " +
+            nuevaPrioridad,
+        );
+      }
+
+      function eliminarTarea(evento) {
+        const botonPulsado = evento.currentTarget;
+        const tarea = obtenerTareaDesdeBoton(botonPulsado);
+        const texto = tarea.querySelector(".titulo-tarea").textContent;
+
+        /*
+          removeChild se llama desde el padre.
+          El padre de cada <li> es el <ul id="listaTareas">.
+        */
+        listaTareas.removeChild(tarea);
+        actualizarEstadoLista();
+
+        mostrarProceso(
+          "ELIMINACION DE TAREA\n" +
+            "--------------------\n" +
+            "Se ha usado listaTareas.removeChild(tarea).\n\n" +
+            "Texto eliminado: " +
+            texto +
+            "\nTareas restantes: " +
+            listaTareas.children.length,
+        );
+      }
+
+      /*
+        ============================================================
+        CREACION DINAMICA DE TAREAS
+        ============================================================
+
+        Esta funcion crea todos los nodos necesarios con createElement().
+        Despues los monta usando appendChild().
+      */
+      function crearTarea(textoTarea, enlaceTarea, prioridadInicial) {
+        contadorTareas++;
+
+        /*
+          1. Crear el <li> principal.
+          Aqui guardamos los atributos pedidos por el ejercicio.
+        */
+        const li = document.createElement("li");
+        li.classList.add("tarea");
+        li.setAttribute("data-id", contadorTareas);
+        li.setAttribute("data-estado", "pendiente");
+        li.setAttribute("data-prioridad", prioridadInicial);
+        li.setAttribute("data-link", enlaceTarea);
+
+        /*
+          2. Crear imagen de la tarea.
+          El src inicial corresponde a pendiente.
+          Si luego se completa la tarea, actualizarVisualTarea() cambia la imagen.
+        */
+        const imagen = document.createElement("img");
+        imagen.classList.add("imagen-tarea");
+        imagen.src = imagenPendiente;
+        imagen.alt = "Imagen de tarea pendiente";
+
+        /*
+          3. Crear contenedor de contenido.
+          Dentro iran titulo, metadatos, enlace y botones.
+        */
+        const contenido = document.createElement("div");
+        contenido.classList.add("contenido-tarea");
+
+        /*
+          4. Crear titulo.
+          Usamos textContent para evitar que el texto escrito por el usuario
+          sea interpretado como HTML.
+        */
+        const titulo = document.createElement("h3");
+        titulo.classList.add("titulo-tarea");
+        titulo.textContent = textoTarea;
+
+        /*
+          5. Crear linea de metadatos.
+          Esta linea muestra el id interno de la tarea.
+        */
+        const meta = document.createElement("p");
+        meta.classList.add("meta");
+        meta.textContent = "Tarea numero " + contadorTareas;
+
+        /*
+          6. Crear etiquetas de estado y prioridad.
+          Sus textos se actualizan desde actualizarVisualTarea().
+        */
+        const lineaEtiquetas = document.createElement("p");
+
+        const estado = document.createElement("span");
+        estado.classList.add("estado");
+
+        const prioridad = document.createElement("span");
+        prioridad.classList.add("prioridad");
+
+        lineaEtiquetas.appendChild(estado);
+        lineaEtiquetas.appendChild(prioridad);
+
+        /*
+          7. Crear enlace.
+          El href visible del enlace se guarda tambien en data-link del <li>.
+          target="_blank" abre el enlace en una pestana nueva.
+        */
+        const enlace = document.createElement("a");
+        enlace.classList.add("enlace-tarea");
+        enlace.href = enlaceTarea;
+        enlace.target = "_blank";
+        enlace.textContent = "Abrir enlace de la tarea";
+        enlace.setAttribute("title", "Abrir el enlace guardado en data-link");
+
+        /*
+          8. Crear contenedor de botones.
+          Agrupar los botones en una caja facilita navegar por el DOM:
+          boton -> acciones -> contenido -> tarea.
+        */
+        const acciones = document.createElement("div");
+        acciones.classList.add("acciones-tarea");
+
+        /*
+          9. Boton completar.
+          El listener es una funcion independiente: cambiarEstadoTarea.
+        */
+        const btnCompletar = document.createElement("button");
+        btnCompletar.classList.add("btn-completar");
+        btnCompletar.setAttribute("title", "Marcar esta tarea como completada");
+        btnCompletar.addEventListener("click", cambiarEstadoTarea);
+
+        /*
+          10. Boton editar.
+          Permite cambiar el texto del titulo de la tarea.
+        */
+        const btnEditar = document.createElement("button");
+        btnEditar.classList.add("btn-editar");
+        btnEditar.textContent = "Editar";
+        btnEditar.setAttribute("title", "Editar el texto de esta tarea");
+        btnEditar.addEventListener("click", editarTextoTarea);
+
+        /*
+          11. Boton prioridad.
+          Cambia el atributo data-prioridad de la tarea.
+        */
+        const btnPrioridad = document.createElement("button");
+        btnPrioridad.classList.add("btn-prioridad");
+        btnPrioridad.textContent = "Prioridad";
+        btnPrioridad.setAttribute("title", "Cambiar prioridad: alta, media o baja");
+        btnPrioridad.addEventListener("click", cambiarPrioridadTarea);
+
+        /*
+          12. Boton eliminar.
+          No lo pedia expresamente el enunciado, pero se mantiene del ejemplo
+          base de creacion y permite practicar removeChild().
+        */
+        const btnEliminar = document.createElement("button");
+        btnEliminar.classList.add("btn-eliminar");
+        btnEliminar.textContent = "Eliminar";
+        btnEliminar.setAttribute("title", "Eliminar esta tarea");
+        btnEliminar.addEventListener("click", eliminarTarea);
+
+        /*
+          13. Montar botones dentro de su contenedor.
+        */
+        acciones.appendChild(btnCompletar);
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnPrioridad);
+        acciones.appendChild(btnEliminar);
+
+        /*
+          14. Montar el contenido interno de la tarea.
+        */
+        contenido.appendChild(titulo);
+        contenido.appendChild(meta);
+        contenido.appendChild(lineaEtiquetas);
+        contenido.appendChild(enlace);
+        contenido.appendChild(acciones);
+
+        /*
+          15. Montar la tarjeta completa.
+        */
+        li.appendChild(imagen);
+        li.appendChild(contenido);
+
+        /*
+          16. Aplicar estado visual inicial.
+          Esto rellena textos, clases, imagen y texto del boton completar.
+        */
+        actualizarVisualTarea(li);
+
+        /*
+          17. Insertar la tarea en el DOM.
+          Hasta este punto el <li> existia en memoria. Al hacer appendChild()
+          aparece en pantalla dentro del <ul>.
+        */
+        listaTareas.appendChild(li);
+
+        mostrarProceso(
+          "CREACION DE TAREA\n" +
+            "-----------------\n" +
+            "Se ha creado una nueva tarea dinamicamente.\n\n" +
+            "Pasos principales:\n" +
+            "1. document.createElement('li')\n" +
+            "2. setAttribute('data-id', ...)\n" +
+            "3. setAttribute('data-estado', 'pendiente')\n" +
+            "4. setAttribute('data-prioridad', ...)\n" +
+            "5. setAttribute('data-link', ...)\n" +
+            "6. createElement() para img, h3, span, a y botones\n" +
+            "7. appendChild() para montar la tarjeta\n" +
+            "8. listaTareas.appendChild(li) para insertarla\n\n" +
+            "Texto: " +
+            textoTarea +
+            "\nEnlace: " +
+            enlaceTarea +
+            "\nPrioridad: " +
+            prioridadInicial,
+        );
+      }
+
+      /*
+        Lee el formulario, valida datos y llama a crearTarea().
+      */
+      function agregarTarea() {
+        const texto = txtTarea.value.trim();
+        const enlace = prepararEnlace(txtEnlace.value);
+        const prioridad = selPrioridad.value;
+
+        if (texto === "") {
+          alert("Debes escribir una tarea.");
+          txtTarea.focus();
+          return;
+        }
+
+        crearTarea(texto, enlace, prioridad);
+
+        txtTarea.value = "";
+        txtEnlace.value = "";
+        selPrioridad.value = "media";
+        txtTarea.focus();
+        actualizarEstadoLista();
+      }
+
+      /*
+        ============================================================
+        REORGANIZAR POR PRIORIDAD
+        ============================================================
+
+        El enunciado pide reorganizar sustituyendo en pantalla unas tareas
+        por otras.
+
+        Aqui se hace asi:
+        1. Convertimos listaTareas.children en array.
+        2. Ordenamos ese array por data-prioridad.
+        3. Creamos clones de las tareas ordenadas.
+        4. Volvemos a conectar listeners a los botones de cada clon.
+        5. Sustituimos todo el contenido del <ul> con replaceChildren().
+
+        replaceChildren() reemplaza los hijos actuales por los nuevos nodos.
+      */
+      function reconectarListenersTarea(tarea) {
+        tarea
+          .querySelector(".btn-completar")
+          .addEventListener("click", cambiarEstadoTarea);
+        tarea.querySelector(".btn-editar").addEventListener("click", editarTextoTarea);
+        tarea
+          .querySelector(".btn-prioridad")
+          .addEventListener("click", cambiarPrioridadTarea);
+        tarea.querySelector(".btn-eliminar").addEventListener("click", eliminarTarea);
+      }
+
+      function ordenarPorPrioridad() {
+        if (listaTareas.children.length < 2) {
+          mostrarProceso(
+            "ORDENAR POR PRIORIDAD\n" +
+              "---------------------\n" +
+              "No hay suficientes tareas para reorganizar.",
+          );
+          return;
+        }
+
+        const tareasActuales = Array.from(listaTareas.children);
+
+        tareasActuales.sort(function (tareaA, tareaB) {
+          const prioridadA = tareaA.getAttribute("data-prioridad");
+          const prioridadB = tareaB.getAttribute("data-prioridad");
+
+          return valorPrioridad(prioridadA) - valorPrioridad(prioridadB);
+        });
+
+        /*
+          cloneNode(true) clona el elemento y todos sus hijos.
+          Importante: los listeners NO se clonan.
+          Por eso despues llamamos a reconectarListenersTarea().
+        */
+        const tareasClonadas = tareasActuales.map(function (tarea) {
+          const clon = tarea.cloneNode(true);
+          reconectarListenersTarea(clon);
+          actualizarVisualTarea(clon);
+          return clon;
+        });
+
+        listaTareas.replaceChildren(...tareasClonadas);
+
+        mostrarProceso(
+          "ORDENAR POR PRIORIDAD\n" +
+            "---------------------\n" +
+            "Se han reorganizado las tareas por prioridad.\n\n" +
+            "Orden aplicado:\n" +
+            "1. alta\n" +
+            "2. media\n" +
+            "3. baja\n\n" +
+            "Tecnica usada:\n" +
+            "- Array.from(listaTareas.children)\n" +
+            "- sort() mirando data-prioridad\n" +
+            "- cloneNode(true)\n" +
+            "- reconectar listeners\n" +
+            "- listaTareas.replaceChildren(...tareasClonadas)\n\n" +
+            "Esto sustituye los nodos visibles por otros nodos ya ordenados.",
+        );
+      }
+
+      /*
+        ============================================================
+        EVENTOS DE ELEMENTOS FIJOS
+        ============================================================
+      */
+      btnAgregar.addEventListener("click", agregarTarea);
+      btnOrdenar.addEventListener("click", ordenarPorPrioridad);
+
+      /*
+        Permite crear una tarea pulsando Enter cuando el cursor esta
+        en el campo de texto principal.
+      */
+      txtTarea.addEventListener("keydown", function (evento) {
+        if (evento.key === "Enter") {
+          agregarTarea();
+        }
+      });
+
+      /*
+        Estado inicial de la interfaz.
+      */
+      actualizarEstadoLista();
+    </script>
+  </body>
+</html>

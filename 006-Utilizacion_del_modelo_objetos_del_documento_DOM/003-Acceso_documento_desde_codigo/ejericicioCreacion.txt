@@ -1,0 +1,23 @@
+A partir del ejemplo de creación:
+	- Añade un botón para marcar tareas como completadas
+		- Las tareas guardarán un atributo "data-estado" que 			puede ser pendiente o completada
+		- El botón cambiará ese estado
+		- En función del estado se cambiará un texto en la tarea 		y el css de esta
+	- Añade un segundo botón para poder editar el texto de la tarea
+
+Ampliación:
+	- Añade title a los botones
+	- Añade una imagen a la tarea
+		- Las tareas pendientes tienen una imagen y las 			completadas otra
+	- Añade un enlace a la tarea
+		- El link de la web se guarda en un atributo
+
+Ampliación 2:
+	- Añade un botón para asignar una prioridad a cada tarea
+		- La prioridad se guarda como atributo
+	- Añade un botón que reorganice automáticamente las tareas por 	prioridad
+		- Esta reorganización se hará sustituyendo en pantalla 			unas tareas por otras
+
+Ampliación 3:
+	- Refactoriza los listeners de los botones para que existan como funciones independientes a la función crear tarea
+		- Estas funciones tienen que acceder a los elementos de la tarjeta navegando por la jerarquía del DOM y no directamente accediendo a las variables de la función anterior

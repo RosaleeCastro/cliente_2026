@@ -1,0 +1,15 @@
+Crea una tabla de videojuegos:
+	- Cada juego tendrá:
+		- id
+		- Nombre
+		- Estudio
+		- PEGI
+	- Junto con la información del juego, en cada fila habrá:
+		- Un botón de editar
+		- Un botón de eliminar
+		- Estos botones no resaltarán a su propia fila
+	- Cada fila podrá ser resaltada al clicar
+		- Solo una a la vez
+		- El listener para esta acción estará en la propia tabla
+			- Se tendrá que comprobar que el elemento clicado es una fila
+	- Añade un formulario para añadir tareas

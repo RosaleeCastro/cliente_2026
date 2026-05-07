@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tabla de videojuegos con delegacion de eventos</title>
+
+    <style>
+      /*
+        ============================================================
+        ESTILOS GENERALES
+        ============================================================
+
+        Este ejercicio se centra en propagacion y delegacion de eventos.
+        El CSS solo ayuda a distinguir visualmente:
+        - fila seleccionada,
+        - botones de accion,
+        - panel de registro.
+      */
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 30px;
+      }
+
+      .contenedor {
+        max-width: 1150px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2 {
+        margin-top: 0;
+      }
+
+      /*
+        Usamos una composicion parecida a los ejemplos de la carpeta:
+        zona principal a la izquierda y registro del proceso a la derecha.
+      */
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+      }
+
+      code {
+        background-color: #eef2f7;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      /*
+        ============================================================
+        FORMULARIO
+        ============================================================
+      */
+
+      .formulario {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(120px, 1fr)) auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      .btn-editar {
+        background-color: #7c3aed;
+      }
+
+      .btn-editar:hover {
+        background-color: #6d28d9;
+      }
+
+      .btn-eliminar {
+        background-color: #dc2626;
+      }
+
+      .btn-eliminar:hover {
+        background-color: #b91c1c;
+      }
+
+      .btn-secundario {
+        background-color: #475569;
+      }
+
+      .btn-secundario:hover {
+        background-color: #334155;
+      }
+
+      /*
+        ============================================================
+        TABLA
+        ============================================================
+      */
+
+      .tabla-contenedor {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        background-color: white;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #dbe4ee;
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f8fafc;
+        color: #334155;
+      }
+
+      /*
+        Solo las filas del tbody son clicables.
+        El listener no esta en cada fila: esta en la tabla.
+      */
+      tbody tr {
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      tbody tr:hover {
+        background-color: #f8fbff;
+      }
+
+      /*
+        Clase que se aplica a la unica fila seleccionada.
+        Antes de seleccionar una nueva fila, se quita esta clase de todas.
+      */
+      .fila-seleccionada {
+        background-color: #dbeafe;
+        box-shadow: inset 4px 0 0 #2563eb;
+      }
+
+      .acciones {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .vacio {
+        color: #64748b;
+        font-style: italic;
+        margin-top: 12px;
+      }
+
+      .resumen {
+        margin-top: 14px;
+        padding: 12px;
+        border-left: 4px solid #2563eb;
+        background-color: #eef6ff;
+        border-radius: 6px;
+        line-height: 1.6;
+      }
+
+      pre {
+        min-height: 460px;
+        margin: 0;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        font-family: Consolas, monospace;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .formulario {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="contenedor">
+      <h1>Tabla de videojuegos</h1>
+
+      <div class="grid">
+        <main>
+          <section class="panel">
+            <h2>Anadir videojuego</h2>
+
+            <p>
+              La tabla usa <strong>delegacion de eventos</strong>: el listener
+              de seleccion esta colocado en la propia <code>&lt;table&gt;</code>,
+              no en cada fila.
+            </p>
+
+            <!--
+              El formulario permite crear filas nuevas.
+              No usamos action ni submit real; JavaScript controla el boton.
+            -->
+            <div class="formulario">
+              <div>
+                <label for="txtNombre">Nombre</label>
+                <input
+                  type="text"
+                  id="txtNombre"
+                  placeholder="Ej. Hollow Knight"
+                />
+              </div>
+
+              <div>
+                <label for="txtEstudio">Estudio</label>
+                <input type="text" id="txtEstudio" placeholder="Ej. Team Cherry" />
+              </div>
+
+              <div>
+                <label for="selPegi">PEGI</label>
+                <select id="selPegi">
+                  <option value="3">3</option>
+                  <option value="7">7</option>
+                  <option value="12" selected>12</option>
+                  <option value="16">16</option>
+                  <option value="18">18</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="txtIdManual">ID opcional</label>
+                <input
+                  type="text"
+                  id="txtIdManual"
+                  placeholder="Vacio = automatico"
+                />
+              </div>
+
+              <button id="btnAgregar" title="Anadir videojuego a la tabla">
+                Anadir
+              </button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Listado</h2>
+
+            <div>
+              <strong>Total de juegos:</strong>
+              <span id="totalJuegos">0</span>
+            </div>
+
+            <p id="mensajeVacio" class="vacio">No hay videojuegos en la tabla.</p>
+
+            <div class="tabla-contenedor">
+              <!--
+                IMPORTANTE:
+                El listener de click se coloca en esta tabla.
+                Gracias a la propagacion, los clicks que ocurren dentro de
+                celdas, filas o botones llegan hasta la tabla.
+              -->
+              <table id="tablaJuegos">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Estudio</th>
+                    <th>PEGI</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <!--
+                  Las filas dinamicas se insertan en el tbody.
+                  Cada fila tendra data-id para guardar su identificador.
+                -->
+                <tbody id="cuerpoTabla"></tbody>
+              </table>
+            </div>
+
+            <div class="resumen">
+              <strong>Idea clave:</strong><br />
+              Si haces click en una celda normal, se resalta su fila. Si haces
+              click en editar o eliminar, se ejecuta la accion del boton y la
+              fila no se resalta.
+            </div>
+          </section>
+        </main>
+
+        <aside class="panel">
+          <h2>Registro del proceso</h2>
+          <pre id="salida">Haz click en una fila, edita o elimina un juego...</pre>
+
+          <button
+            id="btnLimpiarLog"
+            class="btn-secundario"
+            style="margin-top: 12px"
+            title="Limpiar el registro de acciones"
+          >
+            Limpiar registro
+          </button>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      /*
+        ============================================================
+        REFERENCIAS A ELEMENTOS FIJOS DEL DOCUMENTO
+        ============================================================
+
+        Estos elementos existen desde que carga la pagina.
+        Las filas, en cambio, se crean dinamicamente con JavaScript.
+      */
+      const txtNombre = document.getElementById("txtNombre");
+      const txtEstudio = document.getElementById("txtEstudio");
+      const selPegi = document.getElementById("selPegi");
+      const txtIdManual = document.getElementById("txtIdManual");
+      const btnAgregar = document.getElementById("btnAgregar");
+      const tablaJuegos = document.getElementById("tablaJuegos");
+      const cuerpoTabla = document.getElementById("cuerpoTabla");
+      const totalJuegos = document.getElementById("totalJuegos");
+      const mensajeVacio = document.getElementById("mensajeVacio");
+      const salida = document.getElementById("salida");
+      const btnLimpiarLog = document.getElementById("btnLimpiarLog");
+
+      /*
+        siguienteId se usa cuando el usuario no escribe un ID manual.
+        Asi cada juego nuevo puede tener un identificador unico.
+      */
+      let siguienteId = 1;
+      let lineasLog = 0;
+
+      /*
+        ============================================================
+        FUNCIONES DE APOYO
+        ============================================================
+      */
+
+      /*
+        Escribe una linea en el panel de registro.
+        Sirve para estudiar que listener se ha ejecutado y por que.
+      */
+      function escribirLog(texto) {
+        if (lineasLog === 0) {
+          salida.textContent = "";
+        }
+
+        lineasLog++;
+        salida.textContent += lineasLog + ". " + texto + "\n\n";
+        salida.scrollTop = salida.scrollHeight;
+      }
+
+      /*
+        Devuelve una descripcion corta de un elemento.
+        Se usa para comparar event.target y event.currentTarget.
+      */
+      function describirElemento(elemento) {
+        if (!elemento) {
+          return "null";
+        }
+
+        let descripcion = elemento.tagName.toLowerCase();
+
+        if (elemento.id) {
+          descripcion += "#" + elemento.id;
+        }
+
+        if (elemento.className) {
+          descripcion += "." + String(elemento.className).replaceAll(" ", ".");
+        }
+
+        return descripcion;
+      }
+
+      /*
+        Actualiza el contador y el mensaje de tabla vacia.
+        children cuenta solo filas <tr> dentro del <tbody>.
+      */
+      function actualizarResumen() {
+        totalJuegos.textContent = cuerpoTabla.children.length;
+
+        if (cuerpoTabla.children.length === 0) {
+          mensajeVacio.style.display = "block";
+        } else {
+          mensajeVacio.style.display = "none";
+        }
+      }
+
+      /*
+        Borra la seleccion previa.
+        El requisito dice que solo puede haber una fila resaltada a la vez.
+      */
+      function limpiarSeleccion() {
+        const filasSeleccionadas = cuerpoTabla.querySelectorAll(".fila-seleccionada");
+
+        filasSeleccionadas.forEach(function (fila) {
+          fila.classList.remove("fila-seleccionada");
+        });
+      }
+
+      /*
+        Comprueba si un id ya existe en la tabla.
+        Lo usamos para evitar duplicados al introducir ID manual.
+      */
+      function existeId(id) {
+        return cuerpoTabla.querySelector('tr[data-id="' + id + '"]') !== null;
+      }
+
+      /*
+        Obtiene el siguiente ID automatico y avanza el contador.
+      */
+      function obtenerIdAutomatico() {
+        while (existeId(String(siguienteId))) {
+          siguienteId++;
+        }
+
+        const id = siguienteId;
+        siguienteId++;
+        return String(id);
+      }
+
+      /*
+        ============================================================
+        CREACION DINAMICA DE FILAS
+        ============================================================
+
+        Cada fila tiene:
+        - id,
+        - nombre,
+        - estudio,
+        - pegi,
+        - boton editar,
+        - boton eliminar.
+      */
+      function crearFilaJuego(id, nombre, estudio, pegi) {
+        /*
+          tr representa una fila.
+          Guardamos el id tambien en data-id para practicar atributos data-*.
+        */
+        const fila = document.createElement("tr");
+        fila.setAttribute("data-id", id);
+
+        /*
+          Creamos cada celda por separado.
+          Esto evita montar HTML como string y deja claro el uso del DOM.
+        */
+        const celdaId = document.createElement("td");
+        celdaId.classList.add("celda-id");
+        celdaId.textContent = id;
+
+        const celdaNombre = document.createElement("td");
+        celdaNombre.classList.add("celda-nombre");
+        celdaNombre.textContent = nombre;
+
+        const celdaEstudio = document.createElement("td");
+        celdaEstudio.classList.add("celda-estudio");
+        celdaEstudio.textContent = estudio;
+
+        const celdaPegi = document.createElement("td");
+        celdaPegi.classList.add("celda-pegi");
+        celdaPegi.textContent = pegi;
+
+        const celdaAcciones = document.createElement("td");
+
+        const acciones = document.createElement("div");
+        acciones.classList.add("acciones");
+
+        /*
+          data-accion permite saber que boton se ha pulsado desde el listener
+          general de la tabla.
+        */
+        const btnEditar = document.createElement("button");
+        btnEditar.classList.add("btn-editar");
+        btnEditar.setAttribute("data-accion", "editar");
+        btnEditar.setAttribute("title", "Editar este videojuego");
+        btnEditar.textContent = "Editar";
+
+        const btnEliminar = document.createElement("button");
+        btnEliminar.classList.add("btn-eliminar");
+        btnEliminar.setAttribute("data-accion", "eliminar");
+        btnEliminar.setAttribute("title", "Eliminar este videojuego");
+        btnEliminar.textContent = "Eliminar";
+
+        acciones.appendChild(btnEditar);
+        acciones.appendChild(btnEliminar);
+        celdaAcciones.appendChild(acciones);
+
+        fila.appendChild(celdaId);
+        fila.appendChild(celdaNombre);
+        fila.appendChild(celdaEstudio);
+        fila.appendChild(celdaPegi);
+        fila.appendChild(celdaAcciones);
+
+        return fila;
+      }
+
+      /*
+        Inserta un juego en la tabla y actualiza la interfaz.
+      */
+      function anadirJuego(id, nombre, estudio, pegi) {
+        const fila = crearFilaJuego(id, nombre, estudio, pegi);
+        cuerpoTabla.appendChild(fila);
+        actualizarResumen();
+
+        escribirLog(
+          "JUEGO ANADIDO\n" +
+            "Se ha creado una fila con createElement('tr') y varias celdas <td>.\n" +
+            "Despues se ha insertado con cuerpoTabla.appendChild(fila).\n\n" +
+            "data-id: " +
+            id +
+            "\nNombre: " +
+            nombre +
+            "\nEstudio: " +
+            estudio +
+            "\nPEGI: " +
+            pegi,
+        );
+      }
+
+      /*
+        Lee el formulario y crea una fila nueva.
+      */
+      function agregarDesdeFormulario() {
+        const nombre = txtNombre.value.trim();
+        const estudio = txtEstudio.value.trim();
+        const pegi = selPegi.value;
+        const idManual = txtIdManual.value.trim();
+
+        if (nombre === "" || estudio === "") {
+          alert("Debes escribir nombre y estudio.");
+          return;
+        }
+
+        let id;
+
+        if (idManual === "") {
+          id = obtenerIdAutomatico();
+        } else {
+          id = idManual;
+        }
+
+        if (existeId(id)) {
+          alert("Ya existe un videojuego con ese ID.");
+          return;
+        }
+
+        anadirJuego(id, nombre, estudio, pegi);
+
+        txtNombre.value = "";
+        txtEstudio.value = "";
+        txtIdManual.value = "";
+        selPegi.value = "12";
+        txtNombre.focus();
+      }
+
+      /*
+        ============================================================
+        ACCIONES DE FILA
+        ============================================================
+      */
+
+      /*
+        Edita los datos de la fila.
+        La fila se localiza desde el boton pulsado usando closest('tr').
+      */
+      function editarJuego(fila) {
+        const celdaNombre = fila.querySelector(".celda-nombre");
+        const celdaEstudio = fila.querySelector(".celda-estudio");
+        const celdaPegi = fila.querySelector(".celda-pegi");
+
+        const nuevoNombre = prompt("Nuevo nombre:", celdaNombre.textContent);
+
+        if (nuevoNombre === null) {
+          escribirLog("Edicion cancelada. No se ha modificado la fila.");
+          return;
+        }
+
+        if (nuevoNombre.trim() === "") {
+          alert("El nombre no puede estar vacio.");
+          return;
+        }
+
+        const nuevoEstudio = prompt("Nuevo estudio:", celdaEstudio.textContent);
+
+        if (nuevoEstudio === null) {
+          escribirLog("Edicion cancelada. No se ha modificado el estudio.");
+          return;
+        }
+
+        if (nuevoEstudio.trim() === "") {
+          alert("El estudio no puede estar vacio.");
+          return;
+        }
+
+        const nuevoPegi = prompt("Nuevo PEGI (3, 7, 12, 16 o 18):", celdaPegi.textContent);
+        const pegisValidos = ["3", "7", "12", "16", "18"];
+
+        if (nuevoPegi === null) {
+          escribirLog("Edicion cancelada. No se ha modificado el PEGI.");
+          return;
+        }
+
+        if (!pegisValidos.includes(nuevoPegi.trim())) {
+          alert("PEGI no valido. Usa 3, 7, 12, 16 o 18.");
+          return;
+        }
+
+        celdaNombre.textContent = nuevoNombre.trim();
+        celdaEstudio.textContent = nuevoEstudio.trim();
+        celdaPegi.textContent = nuevoPegi.trim();
+
+        escribirLog(
+          "BOTON EDITAR\n" +
+            "El click se ha originado en un boton, pero NO se ha resaltado la fila.\n" +
+            "Se ha usado event.target.closest('tr') para encontrar la fila afectada.\n\n" +
+            "ID editado: " +
+            fila.getAttribute("data-id"),
+        );
+      }
+
+      /*
+        Elimina la fila de la tabla.
+      */
+      function eliminarJuego(fila) {
+        const nombre = fila.querySelector(".celda-nombre").textContent;
+        const id = fila.getAttribute("data-id");
+
+        cuerpoTabla.removeChild(fila);
+        actualizarResumen();
+
+        escribirLog(
+          "BOTON ELIMINAR\n" +
+            "El click se ha originado en un boton, por eso la fila no se resalta.\n" +
+            "Se ha eliminado la fila con cuerpoTabla.removeChild(fila).\n\n" +
+            "ID eliminado: " +
+            id +
+            "\nNombre eliminado: " +
+            nombre,
+        );
+      }
+
+      /*
+        Resalta una fila.
+        Primero limpia cualquier seleccion anterior para cumplir:
+        "Solo una a la vez".
+      */
+      function resaltarFila(fila) {
+        limpiarSeleccion();
+        fila.classList.add("fila-seleccionada");
+
+        escribirLog(
+          "FILA RESALTADA\n" +
+            "El listener esta en la tabla, pero el click ocurrio dentro de una fila.\n" +
+            "Se ha comprobado con event.target.closest('tr[data-id]').\n\n" +
+            "ID: " +
+            fila.getAttribute("data-id") +
+            "\nNombre: " +
+            fila.querySelector(".celda-nombre").textContent,
+        );
+      }
+
+      /*
+        ============================================================
+        LISTENER PRINCIPAL DE LA TABLA
+        ============================================================
+
+        Este es el punto mas importante del ejercicio.
+
+        La tabla recibe clicks de:
+        - celdas,
+        - filas,
+        - botones interiores,
+        - cabecera.
+
+        Por eso hay que filtrar muy bien que se ha pulsado.
+      */
+      tablaJuegos.addEventListener("click", function (event) {
+        /*
+          event.target:
+          elemento exacto donde empezo el click.
+
+          event.currentTarget:
+          elemento que tiene el listener.
+          Aqui siempre sera table#tablaJuegos.
+        */
+        const elementoPulsado = event.target;
+        const tablaConListener = event.currentTarget;
+
+        /*
+          Primero comprobamos si se ha pulsado un boton de accion.
+          Si es asi, gestionamos editar/eliminar y salimos con return.
+          Eso evita que despues se ejecute el resaltado de fila.
+        */
+        const botonAccion = elementoPulsado.closest("button[data-accion]");
+
+        if (botonAccion) {
+          const accion = botonAccion.getAttribute("data-accion");
+          const filaDelBoton = botonAccion.closest("tr[data-id]");
+
+          escribirLog(
+            "CLICK EN BOTON\n" +
+              "event.target: " +
+              describirElemento(elementoPulsado) +
+              "\n" +
+              "event.currentTarget: " +
+              describirElemento(tablaConListener) +
+              "\n" +
+              "Accion detectada: " +
+              accion +
+              "\n\n" +
+              "Como el click fue en un boton, NO se llama a resaltarFila().",
+          );
+
+          if (accion === "editar") {
+            editarJuego(filaDelBoton);
+          }
+
+          if (accion === "eliminar") {
+            eliminarJuego(filaDelBoton);
+          }
+
+          return;
+        }
+
+        /*
+          Si no es boton, intentamos localizar una fila de videojuego.
+          closest('tr[data-id]') sube desde la celda pulsada hasta su <tr>.
+        */
+        const filaPulsada = elementoPulsado.closest("tr[data-id]");
+
+        /*
+          Esta comprobacion evita errores si se pulsa en:
+          - thead,
+          - borde de tabla,
+          - cualquier zona que no pertenezca a una fila de datos.
+        */
+        if (!filaPulsada || !tablaJuegos.contains(filaPulsada)) {
+          escribirLog(
+            "CLICK IGNORADO\n" +
+              "Se ha hecho click dentro de la tabla, pero no sobre una fila de datos.\n\n" +
+              "event.target: " +
+              describirElemento(elementoPulsado),
+          );
+          return;
+        }
+
+        /*
+          Si llegamos aqui, se ha pulsado una fila o una celda normal.
+          Entonces si se permite resaltar.
+        */
+        resaltarFila(filaPulsada);
+      });
+
+      /*
+        ============================================================
+        EVENTOS DEL FORMULARIO Y DEL REGISTRO
+        ============================================================
+      */
+      btnAgregar.addEventListener("click", agregarDesdeFormulario);
+
+      /*
+        Permite anadir pulsando Enter desde los campos de texto.
+      */
+      txtNombre.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          agregarDesdeFormulario();
+        }
+      });
+
+      txtEstudio.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          agregarDesdeFormulario();
+        }
+      });
+
+      txtIdManual.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          agregarDesdeFormulario();
+        }
+      });
+
+      btnLimpiarLog.addEventListener("click", function () {
+        lineasLog = 0;
+        salida.textContent = "Registro limpio. Prueba otra accion...";
+      });
+
+      /*
+        ============================================================
+        DATOS INICIALES
+        ============================================================
+
+        Se cargan algunos videojuegos para poder probar la propagacion
+        sin tener que rellenar primero el formulario.
+      */
+      anadirJuego(obtenerIdAutomatico(), "The Legend of Zelda: Breath of the Wild", "Nintendo", "12");
+      anadirJuego(obtenerIdAutomatico(), "Hollow Knight", "Team Cherry", "7");
+      anadirJuego(obtenerIdAutomatico(), "Celeste", "Maddy Makes Games", "7");
+      anadirJuego(obtenerIdAutomatico(), "God of War", "Santa Monica Studio", "18");
+
+      actualizarResumen();
+    </script>
+  </body>
+</html>

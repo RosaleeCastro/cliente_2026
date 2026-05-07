@@ -1,0 +1,25 @@
+Crea una página que simule una zona de promociones de una tienda online
+
+Dentro del documento debe haber:
+	- Un contenedor exterior que represente el bloque general de promociones
+	- Una sección intermedia que represente una oferta concreta
+	- Un enlace interior con el texto “Ver oferta”
+
+Asocia listeners de click en fase de captura y en fase de burbujeo a los tres elementos
+Cuando el usuario pulse el enlace interior, se deberá mostrar en una zona de resultado:
+	- El orden en que se ejecutan los listeners
+	- La fase actual del evento
+	- El identificador del target
+	- Un contador de quien ha recibido cada click
+
+Ampliación:
+	- Añade una funcionalidad de carrito
+	- Se puede clicar en un objeto para añadirlo al carrito
+	- El objeto tiene:
+		- Nombre
+		- Precio
+		- Cantidad
+		- Botón de incrementar cantidad
+		- Botón de disminuir cantidad
+	- Se puede seleccionar el objeto para resaltarlo
+	- Modificar una cantidad recalcula el precio total del carrito
