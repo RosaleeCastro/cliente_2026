@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tienda online con delegacion de eventos</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 30px;
+      }
+
+      .contenedor {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      .bloque-tienda {
+        border: 2px solid #dbe4ee;
+        border-radius: 10px;
+        padding: 16px;
+        background-color: #f8fafc;
+      }
+
+      .productos {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(170px, 1fr));
+        gap: 14px;
+      }
+
+      .producto {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 190px;
+        border: 1px solid #dbe4ee;
+        border-radius: 8px;
+        padding: 14px;
+        background-color: white;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .producto:hover {
+        background-color: #f8fbff;
+        border-color: #93c5fd;
+      }
+
+      .producto.seleccionado {
+        background-color: #dbeafe;
+        border-color: #2563eb;
+        box-shadow: inset 4px 0 0 #2563eb;
+      }
+
+      .producto h3 {
+        margin-bottom: 0;
+      }
+
+      .descripcion {
+        flex: 1;
+        color: #475569;
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      .precio {
+        color: #0f766e;
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      .btn-cantidad {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 8px;
+        background-color: #475569;
+      }
+
+      .btn-cantidad:hover {
+        background-color: #334155;
+      }
+
+      .btn-disminuir {
+        background-color: #dc2626;
+      }
+
+      .btn-disminuir:hover {
+        background-color: #b91c1c;
+      }
+
+      .carrito {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 220px;
+      }
+
+      .item-carrito {
+        border: 1px solid #dbe4ee;
+        border-radius: 8px;
+        padding: 12px;
+        background-color: #fff;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .item-carrito:hover {
+        background-color: #f8fbff;
+      }
+
+      .item-carrito.seleccionado {
+        background-color: #dcfce7;
+        border-color: #16a34a;
+        box-shadow: inset 4px 0 0 #16a34a;
+      }
+
+      .cabecera-item,
+      .controles-item,
+      .total-carrito {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .cabecera-item {
+        margin-bottom: 10px;
+      }
+
+      .nombre-item {
+        font-weight: bold;
+      }
+
+      .precio-item,
+      .subtotal-item {
+        color: #0f766e;
+        font-weight: bold;
+      }
+
+      .cantidad-item {
+        min-width: 34px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .total-carrito {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #eef6ff;
+        border-left: 4px solid #2563eb;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .mensaje-vacio {
+        color: #64748b;
+        font-style: italic;
+        padding: 14px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        background-color: #f8fafc;
+      }
+
+      pre {
+        min-height: 190px;
+        margin: 20px 0 0;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        font-family: Consolas, monospace;
+      }
+
+      @media (max-width: 950px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .productos {
+          grid-template-columns: repeat(2, minmax(160px, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        body {
+          padding: 16px;
+        }
+
+        .productos {
+          grid-template-columns: 1fr;
+        }
+
+        .cabecera-item,
+        .controles-item,
+        .total-carrito {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="contenedor">
+      <h1>Tienda online con carrito</h1>
+
+      <div class="grid">
+        <main class="panel">
+          <h2>Productos</h2>
+
+          <section id="bloqueTienda" class="bloque-tienda">
+            <div id="listaProductos" class="productos">
+              <article class="producto" data-id="teclado">
+                <h3 class="nombre-producto">Teclado mecanico</h3>
+                <p class="descripcion">
+                  Interruptores tactiles y retroiluminacion blanca.
+                </p>
+                <span class="precio" data-precio="59.9">59.90 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="raton">
+                <h3 class="nombre-producto">Raton inalambrico</h3>
+                <p class="descripcion">
+                  Sensor preciso, bateria recargable y agarre comodo.
+                </p>
+                <span class="precio" data-precio="34.5">34.50 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="auriculares">
+                <h3 class="nombre-producto">Auriculares USB</h3>
+                <p class="descripcion">
+                  Microfono integrado y sonido claro para videollamadas.
+                </p>
+                <span class="precio" data-precio="44.99">44.99 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="monitor">
+                <h3 class="nombre-producto">Monitor 24 pulgadas</h3>
+                <p class="descripcion">
+                  Panel IPS Full HD con peana regulable.
+                </p>
+                <span class="precio" data-precio="129">129.00 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="webcam">
+                <h3 class="nombre-producto">Webcam HD</h3>
+                <p class="descripcion">
+                  Imagen nitida, enfoque automatico y tapa de privacidad.
+                </p>
+                <span class="precio" data-precio="27.75">27.75 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="soporte">
+                <h3 class="nombre-producto">Soporte portatil</h3>
+                <p class="descripcion">
+                  Estructura plegable de aluminio con varias alturas.
+                </p>
+                <span class="precio" data-precio="22.25">22.25 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+            </div>
+          </section>
+
+          <pre id="salida">Pulsa un producto o un boton para ver la delegacion de eventos.</pre>
+        </main>
+
+        <aside class="panel">
+          <h2>Carrito</h2>
+          <section id="contenedorCarrito" class="carrito">
+            <p id="mensajeVacio" class="mensaje-vacio">
+              Todavia no hay productos en el carrito.
+            </p>
+          </section>
+
+          <div class="total-carrito">
+            <span>Total</span>
+            <span id="totalCarrito">0.00 EUR</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      const bloqueTienda = document.getElementById("bloqueTienda");
+      const listaProductos = document.getElementById("listaProductos");
+      const contenedorCarrito = document.getElementById("contenedorCarrito");
+      const mensajeVacio = document.getElementById("mensajeVacio");
+      const totalCarrito = document.getElementById("totalCarrito");
+      const salida = document.getElementById("salida");
+
+      let lineasLog = 0;
+
+      function formatearPrecio(numero) {
+        return numero.toFixed(2) + " EUR";
+      }
+
+      function escribirLog(texto) {
+        if (lineasLog === 0) {
+          salida.textContent = "";
+        }
+
+        lineasLog++;
+        salida.textContent += lineasLog + ". " + texto + "\n";
+        salida.scrollTop = salida.scrollHeight;
+      }
+
+      function limpiarSeleccionProductos() {
+        const productos = listaProductos.querySelectorAll(".producto");
+
+        productos.forEach(function (producto) {
+          producto.classList.remove("seleccionado");
+        });
+      }
+
+      function limpiarSeleccionCarrito() {
+        const items = contenedorCarrito.querySelectorAll(".item-carrito");
+
+        items.forEach(function (item) {
+          item.classList.remove("seleccionado");
+        });
+      }
+
+      function leerDatosProducto(producto) {
+        const nombre = producto.querySelector(".nombre-producto").textContent;
+        const precio = Number(
+          producto.querySelector(".precio").getAttribute("data-precio"),
+        );
+
+        return {
+          id: producto.getAttribute("data-id"),
+          nombre: nombre,
+          precio: precio,
+        };
+      }
+
+      function buscarItemCarrito(idProducto) {
+        return contenedorCarrito.querySelector(
+          '.item-carrito[data-id="' + idProducto + '"]',
+        );
+      }
+
+      function crearItemCarrito(datosProducto) {
+        const item = document.createElement("article");
+        item.classList.add("item-carrito");
+        item.setAttribute("data-id", datosProducto.id);
+
+        const cabecera = document.createElement("div");
+        cabecera.classList.add("cabecera-item");
+
+        const nombre = document.createElement("span");
+        nombre.classList.add("nombre-item");
+        nombre.textContent = datosProducto.nombre;
+
+        const precio = document.createElement("span");
+        precio.classList.add("precio-item");
+        precio.setAttribute("data-precio", datosProducto.precio);
+        precio.textContent = formatearPrecio(datosProducto.precio);
+
+        const controles = document.createElement("div");
+        controles.classList.add("controles-item");
+
+        const btnDisminuir = document.createElement("button");
+        btnDisminuir.classList.add("btn-cantidad", "btn-disminuir");
+        btnDisminuir.setAttribute("data-accion", "disminuir");
+        btnDisminuir.textContent = "-";
+
+        const cantidad = document.createElement("span");
+        cantidad.classList.add("cantidad-item");
+        cantidad.textContent = "1";
+
+        const btnIncrementar = document.createElement("button");
+        btnIncrementar.classList.add("btn-cantidad");
+        btnIncrementar.setAttribute("data-accion", "incrementar");
+        btnIncrementar.textContent = "+";
+
+        const subtotal = document.createElement("span");
+        subtotal.classList.add("subtotal-item");
+        subtotal.textContent = formatearPrecio(datosProducto.precio);
+
+        cabecera.appendChild(nombre);
+        cabecera.appendChild(precio);
+        controles.appendChild(btnDisminuir);
+        controles.appendChild(cantidad);
+        controles.appendChild(btnIncrementar);
+        controles.appendChild(subtotal);
+        item.appendChild(cabecera);
+        item.appendChild(controles);
+
+        return item;
+      }
+
+      function actualizarSubtotalItem(item) {
+        const precio = Number(
+          item.querySelector(".precio-item").getAttribute("data-precio"),
+        );
+        const cantidad = Number(item.querySelector(".cantidad-item").textContent);
+        const subtotal = item.querySelector(".subtotal-item");
+
+        subtotal.textContent = formatearPrecio(precio * cantidad);
+      }
+
+      function actualizarTotalCarrito() {
+        const items = contenedorCarrito.querySelectorAll(".item-carrito");
+        let total = 0;
+
+        items.forEach(function (item) {
+          const precio = Number(
+            item.querySelector(".precio-item").getAttribute("data-precio"),
+          );
+          const cantidad = Number(
+            item.querySelector(".cantidad-item").textContent,
+          );
+
+          total += precio * cantidad;
+        });
+
+        totalCarrito.textContent = formatearPrecio(total);
+        mensajeVacio.style.display = items.length === 0 ? "block" : "none";
+      }
+
+      function anadirAlCarrito(producto) {
+        const datosProducto = leerDatosProducto(producto);
+        const itemExistente = buscarItemCarrito(datosProducto.id);
+
+        if (itemExistente !== null) {
+          const cantidad = itemExistente.querySelector(".cantidad-item");
+          cantidad.textContent = Number(cantidad.textContent) + 1;
+          actualizarSubtotalItem(itemExistente);
+          escribirLog(
+            "Producto ya existente: se incrementa la cantidad navegando desde el item del carrito.",
+          );
+        } else {
+          const nuevoItem = crearItemCarrito(datosProducto);
+          contenedorCarrito.appendChild(nuevoItem);
+          escribirLog(
+            "Producto anadido: el objeto del carrito se ha creado desde cero con createElement.",
+          );
+        }
+
+        actualizarTotalCarrito();
+      }
+
+      bloqueTienda.addEventListener("click", function (event) {
+        const producto = event.target.closest(".producto");
+
+        if (producto === null || !bloqueTienda.contains(producto)) {
+          return;
+        }
+
+        limpiarSeleccionProductos();
+        producto.classList.add("seleccionado");
+
+        escribirLog(
+          "Listener del bloque general de tienda. Producto seleccionado: " +
+            producto.querySelector(".nombre-producto").textContent,
+        );
+
+        const boton = event.target.closest("button[data-accion]");
+
+        if (boton === null) {
+          return;
+        }
+
+        const accion = boton.getAttribute("data-accion");
+
+        if (accion === "anadir") {
+          anadirAlCarrito(producto);
+        }
+      });
+
+      contenedorCarrito.addEventListener("click", function (event) {
+        const item = event.target.closest(".item-carrito");
+
+        if (item === null || !contenedorCarrito.contains(item)) {
+          return;
+        }
+
+        limpiarSeleccionCarrito();
+        item.classList.add("seleccionado");
+
+        const nombre = item.querySelector(".nombre-item").textContent;
+        const boton = event.target.closest("button[data-accion]");
+
+        escribirLog(
+          "Listener del contenedor del carrito. Item seleccionado: " + nombre,
+        );
+
+        if (boton === null) {
+          return;
+        }
+
+        const accion = boton.getAttribute("data-accion");
+        const cantidad = item.querySelector(".cantidad-item");
+        let nuevaCantidad = Number(cantidad.textContent);
+
+        if (accion === "incrementar") {
+          nuevaCantidad++;
+          cantidad.textContent = nuevaCantidad;
+          actualizarSubtotalItem(item);
+          escribirLog("Cantidad incrementada. Nuevo valor: " + nuevaCantidad);
+        }
+
+        if (accion === "disminuir") {
+          nuevaCantidad--;
+
+          if (nuevaCantidad === 0) {
+            contenedorCarrito.removeChild(item);
+            escribirLog("Cantidad reducida a 0. Item eliminado del carrito.");
+          } else {
+            cantidad.textContent = nuevaCantidad;
+            actualizarSubtotalItem(item);
+            escribirLog("Cantidad disminuida. Nuevo valor: " + nuevaCantidad);
+          }
+        }
+
+        actualizarTotalCarrito();
+      });
+
+      actualizarTotalCarrito();
+    </script>
+  </body>
+</html>

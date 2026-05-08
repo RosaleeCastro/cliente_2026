@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen DOM: tienda con delegacion</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 30px;
+      }
+
+      .contenedor {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 390px;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      .bloque-tienda {
+        border: 2px solid #dbe4ee;
+        border-radius: 10px;
+        padding: 16px;
+        background-color: #f8fafc;
+      }
+
+      .productos {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(170px, 1fr));
+        gap: 14px;
+      }
+
+      .producto,
+      .item-carrito {
+        border: 1px solid #dbe4ee;
+        border-radius: 8px;
+        padding: 14px;
+        background-color: white;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .producto {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 190px;
+      }
+
+      .producto:hover,
+      .item-carrito:hover {
+        background-color: #f8fbff;
+        border-color: #93c5fd;
+      }
+
+      .seleccionado-producto {
+        background-color: #dbeafe;
+        border-color: #2563eb;
+        box-shadow: inset 4px 0 0 #2563eb;
+      }
+
+      .seleccionado-carrito {
+        background-color: #dcfce7;
+        border-color: #16a34a;
+        box-shadow: inset 4px 0 0 #16a34a;
+      }
+
+      .descripcion {
+        flex: 1;
+        color: #475569;
+        line-height: 1.4;
+        margin: 0;
+      }
+
+      .precio,
+      .precio-item,
+      .subtotal-item {
+        color: #0f766e;
+        font-weight: bold;
+      }
+
+      .precio {
+        font-size: 20px;
+      }
+
+      button {
+        border: none;
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #1d4ed8;
+      }
+
+      .btn-cantidad {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        background-color: #475569;
+      }
+
+      .btn-cantidad:hover {
+        background-color: #334155;
+      }
+
+      .btn-disminuir {
+        background-color: #dc2626;
+      }
+
+      .btn-disminuir:hover {
+        background-color: #b91c1c;
+      }
+
+      .carrito {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 220px;
+      }
+
+      .cabecera-item,
+      .controles-item,
+      .total-carrito {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .cabecera-item {
+        margin-bottom: 10px;
+      }
+
+      .nombre-item,
+      .cantidad-item {
+        font-weight: bold;
+      }
+
+      .cantidad-item {
+        min-width: 34px;
+        text-align: center;
+      }
+
+      .mensaje-vacio {
+        color: #64748b;
+        font-style: italic;
+        padding: 14px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        background-color: #f8fafc;
+      }
+
+      .total-carrito {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #eef6ff;
+        border-left: 4px solid #2563eb;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .zona-inspector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      pre {
+        min-height: 190px;
+        margin: 0;
+        padding: 14px;
+        border-radius: 8px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        font-family: Consolas, monospace;
+      }
+
+      @media (max-width: 950px) {
+        .grid,
+        .zona-inspector {
+          grid-template-columns: 1fr;
+        }
+
+        .productos {
+          grid-template-columns: repeat(2, minmax(160px, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        body {
+          padding: 16px;
+        }
+
+        .productos {
+          grid-template-columns: 1fr;
+        }
+
+        .cabecera-item,
+        .controles-item,
+        .total-carrito {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="contenedor">
+      <h1>Examen DOM: tienda online</h1>
+
+      <div class="grid">
+        <main class="panel">
+          <h2>Productos</h2>
+
+          <section id="bloqueTienda" class="bloque-tienda">
+            <div id="listaProductos" class="productos">
+              <article class="producto" data-id="teclado">
+                <h3 class="nombre-producto">Teclado mecanico</h3>
+                <p class="descripcion">
+                  Interruptores tactiles y retroiluminacion blanca.
+                </p>
+                <span class="precio" data-precio="59.9">59.90 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="raton">
+                <h3 class="nombre-producto">Raton inalambrico</h3>
+                <p class="descripcion">
+                  Sensor preciso, bateria recargable y agarre comodo.
+                </p>
+                <span class="precio" data-precio="34.5">34.50 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="auriculares">
+                <h3 class="nombre-producto">Auriculares USB</h3>
+                <p class="descripcion">
+                  Microfono integrado y sonido claro para videollamadas.
+                </p>
+                <span class="precio" data-precio="44.99">44.99 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="monitor">
+                <h3 class="nombre-producto">Monitor 24 pulgadas</h3>
+                <p class="descripcion">
+                  Panel IPS Full HD con peana regulable.
+                </p>
+                <span class="precio" data-precio="129">129.00 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="webcam">
+                <h3 class="nombre-producto">Webcam HD</h3>
+                <p class="descripcion">
+                  Imagen nitida, enfoque automatico y tapa de privacidad.
+                </p>
+                <span class="precio" data-precio="27.75">27.75 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+
+              <article class="producto" data-id="soporte">
+                <h3 class="nombre-producto">Soporte portatil</h3>
+                <p class="descripcion">
+                  Estructura plegable de aluminio con varias alturas.
+                </p>
+                <span class="precio" data-precio="22.25">22.25 EUR</span>
+                <button data-accion="anadir">Anadir al carrito</button>
+              </article>
+            </div>
+          </section>
+
+          <div class="zona-inspector">
+            <pre id="salida">Completa las funciones TODO del script.</pre>
+            <pre id="inspector">Aqui debe aparecer informacion del nodo seleccionado.</pre>
+          </div>
+        </main>
+
+        <aside class="panel">
+          <h2>Carrito</h2>
+          <section id="contenedorCarrito" class="carrito">
+            <p id="mensajeVacio" class="mensaje-vacio">
+              Todavia no hay productos en el carrito.
+            </p>
+          </section>
+
+          <div class="total-carrito">
+            <span>Total</span>
+            <span id="totalCarrito">0.00 EUR</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      const bloqueTienda = document.getElementById("bloqueTienda");
+      const listaProductos = document.getElementById("listaProductos");
+      const contenedorCarrito = document.getElementById("contenedorCarrito");
+      const mensajeVacio = document.getElementById("mensajeVacio");
+      const totalCarrito = document.getElementById("totalCarrito");
+      const salida = document.getElementById("salida");
+      const inspector = document.getElementById("inspector");
+
+      let lineasLog = 0;
+
+      function formatearPrecio(numero) {
+        return numero.toFixed(2) + " EUR";
+      }
+
+      function escribirLog(texto) {
+        if (lineasLog === 0) {
+          salida.textContent = "";
+        }
+
+        lineasLog++;
+        salida.textContent += lineasLog + ". " + texto + "\n";
+        salida.scrollTop = salida.scrollHeight;
+      }
+
+      function tipoNodoTexto(nodeType) {
+        /*
+          TODO 1:
+          Completa esta funcion usando switch.
+
+          Debe devolver:
+          - "ELEMENT_NODE (1)" si nodeType es Node.ELEMENT_NODE
+          - "TEXT_NODE (3)" si nodeType es Node.TEXT_NODE
+          - "COMMENT_NODE (8)" si nodeType es Node.COMMENT_NODE
+          - "DOCUMENT_NODE (9)" si nodeType es Node.DOCUMENT_NODE
+          - "DOCUMENT_TYPE_NODE (10)" si nodeType es Node.DOCUMENT_TYPE_NODE
+          - "Otro tipo (...)" para cualquier otro valor
+        */
+        return "TODO tipoNodoTexto";
+      }
+
+      function describirNodo(nodo) {
+        /*
+          TODO 2:
+          Completa esta funcion.
+
+          Debe:
+          1. Si nodo es null, devolver "null".
+          2. Si es nodo de texto, devolver nodeName + " -> " + nodeValue.trim().
+          3. Si es elemento u otro nodo, devolver nodeName + " -> " + tipoNodoTexto(nodo.nodeType).
+        */
+        return "TODO describirNodo";
+      }
+
+      function listarAtributos(nodo) {
+        /*
+          TODO 3:
+          Completa esta funcion.
+
+          Debe:
+          1. Comprobar si el nodo no tiene attributes o si attributes.length es 0.
+             En ese caso devuelve "No tiene atributos".
+          2. Recorrer nodo.attributes con un for.
+          3. Montar un texto con formato:
+             nombre="valor"
+             un atributo por linea.
+        */
+        return "TODO listarAtributos";
+      }
+
+      function mostrarInspector(nodo) {
+        /*
+          TODO 4:
+          Completa esta funcion para escribir en inspector.textContent.
+
+          Debe mostrar:
+          - Nodo seleccionado usando describirNodo(nodo)
+          - Padre usando describirNodo(nodo.parentNode)
+          - Primer hijo usando describirNodo(nodo.firstChild)
+          - Ultimo hijo usando describirNodo(nodo.lastChild)
+          - Numero de childNodes
+          - Numero de children si existe la propiedad children
+          - Atributos usando listarAtributos(nodo)
+        */
+        inspector.textContent = "TODO mostrarInspector";
+      }
+
+      function limpiarSeleccion(contenedor, claseSeleccion) {
+        /*
+          TODO 5:
+          Completa esta funcion.
+
+          Debe:
+          1. Buscar dentro del contenedor todos los elementos que tengan la clase indicada.
+          2. Recorrerlos con forEach.
+          3. Quitarles la clase con classList.remove.
+
+          Pista:
+          contenedor.querySelectorAll("." + claseSeleccion)
+        */
+      }
+
+      function leerDatosProducto(producto) {
+        /*
+          TODO 6:
+          Completa esta funcion navegando dentro del producto.
+
+          Debe devolver un objeto con:
+          {
+            id: valor del atributo data-id del producto,
+            nombre: texto de .nombre-producto,
+            precio: numero obtenido desde data-precio de .precio
+          }
+
+          Pista:
+          producto.querySelector(".precio").getAttribute("data-precio")
+        */
+        return {
+          id: "",
+          nombre: "",
+          precio: 0,
+        };
+      }
+
+      function buscarItemCarrito(idProducto) {
+        /*
+          TODO 7:
+          Completa esta funcion.
+
+          Debe devolver el item del carrito que tenga:
+          class="item-carrito"
+          data-id igual a idProducto
+
+          Si no existe, querySelector devolvera null.
+        */
+        return null;
+      }
+
+      function crearItemCarrito(datosProducto) {
+        /*
+          TODO 8:
+          Completa esta funcion creando todos los nodos con createElement.
+
+          Estructura esperada:
+
+          article.item-carrito[data-id]
+            div.cabecera-item
+              span.nombre-item
+              span.precio-item[data-precio]
+            div.controles-item
+              button.btn-cantidad.btn-disminuir[data-accion="disminuir"] con texto "-"
+              span.cantidad-item con texto "1"
+              button.btn-cantidad[data-accion="incrementar"] con texto "+"
+              span.subtotal-item
+
+          Recuerda:
+          - Usa classList.add.
+          - Usa setAttribute para data-id, data-precio y data-accion.
+          - Usa textContent para los textos.
+          - Monta todo con appendChild.
+          - Devuelve el article final.
+        */
+        const item = document.createElement("article");
+        item.classList.add("item-carrito");
+        item.setAttribute("data-id", datosProducto.id);
+        return item;
+      }
+
+      function actualizarSubtotalItem(item) {
+        /*
+          TODO 9:
+          Completa esta funcion.
+
+          Debe:
+          1. Leer el precio desde .precio-item[data-precio].
+          2. Leer la cantidad desde .cantidad-item.
+          3. Calcular precio * cantidad.
+          4. Escribir el resultado en .subtotal-item usando formatearPrecio.
+        */
+      }
+
+      function actualizarTotalCarrito() {
+        /*
+          TODO 10:
+          Completa esta funcion.
+
+          Debe:
+          1. Obtener todos los .item-carrito dentro de contenedorCarrito.
+          2. Recorrerlos y sumar precio * cantidad.
+          3. Escribir el total en totalCarrito.textContent usando formatearPrecio.
+          4. Mostrar mensajeVacio si no hay items y ocultarlo si hay items.
+        */
+      }
+
+      function anadirAlCarrito(producto) {
+        /*
+          TODO 11:
+          Completa esta funcion.
+
+          Debe:
+          1. Obtener datos del producto con leerDatosProducto(producto).
+          2. Buscar si ya existe en carrito con buscarItemCarrito(datos.id).
+          3. Si existe:
+             - Navegar hasta .cantidad-item.
+             - Incrementar su texto numerico en 1.
+             - Actualizar su subtotal.
+          4. Si no existe:
+             - Crear item con crearItemCarrito(datos).
+             - Insertarlo en contenedorCarrito con appendChild.
+          5. Recalcular total.
+        */
+      }
+
+      bloqueTienda.addEventListener("click", function (event) {
+        /*
+          TODO 12:
+          Completa el listener delegado de productos.
+
+          Debe:
+          1. Localizar el producto pulsado con event.target.closest(".producto").
+          2. Si no hay producto o no pertenece a bloqueTienda, hacer return.
+          3. Limpiar seleccion previa de productos.
+          4. Anadir clase "seleccionado-producto" al producto.
+          5. Mostrar datos del producto en el inspector con mostrarInspector(producto).
+          6. Buscar si se pulso un button[data-accion].
+          7. Si accion es "anadir", llamar a anadirAlCarrito(producto).
+        */
+      });
+
+      contenedorCarrito.addEventListener("click", function (event) {
+        /*
+          TODO 13:
+          Completa el listener delegado del carrito.
+
+          Debe:
+          1. Localizar el item con event.target.closest(".item-carrito").
+          2. Si no hay item o no pertenece a contenedorCarrito, hacer return.
+          3. Limpiar seleccion previa del carrito.
+          4. Anadir clase "seleccionado-carrito" al item.
+          5. Mostrar datos del item en el inspector con mostrarInspector(item).
+          6. Buscar si se pulso un button[data-accion].
+          7. Si no se pulso boton, terminar.
+          8. Si accion es "incrementar":
+             - aumentar cantidad
+             - actualizar subtotal
+          9. Si accion es "disminuir":
+             - bajar cantidad
+             - si llega a 0, eliminar el item con removeChild
+             - si no llega a 0, escribir la nueva cantidad y actualizar subtotal
+          10. Recalcular el total.
+        */
+      });
+
+      actualizarTotalCarrito();
+    </script>
+  </body>
+</html>
