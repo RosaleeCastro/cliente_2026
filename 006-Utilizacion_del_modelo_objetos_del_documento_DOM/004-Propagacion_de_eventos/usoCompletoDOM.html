@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tienda online con delegacion de eventos</title>
+    <title>Tienda de mascotas con delegacion de eventos</title>
 
     <style>
       body {
@@ -251,7 +251,7 @@
 
   <body>
     <div class="contenedor">
-      <h1>Tienda online con carrito</h1>
+      <h1>Tienda de mascotas con carrito</h1>
 
       <div class="grid">
         <main class="panel">
@@ -259,57 +259,57 @@
 
           <section id="bloqueTienda" class="bloque-tienda">
             <div id="listaProductos" class="productos">
-              <article class="producto" data-id="teclado">
-                <h3 class="nombre-producto">Teclado mecanico</h3>
+              <article class="producto" data-id="pienso-perro">
+                <h3 class="nombre-producto">Pienso para perro adulto</h3>
                 <p class="descripcion">
-                  Interruptores tactiles y retroiluminacion blanca.
+                  Saco de comida seca con pollo y arroz, formato de 12 kg.
                 </p>
-                <span class="precio" data-precio="59.9">59.90 EUR</span>
+                <span class="precio" data-precio="42.9">42.90 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
 
-              <article class="producto" data-id="raton">
-                <h3 class="nombre-producto">Raton inalambrico</h3>
+              <article class="producto" data-id="arena-gato">
+                <h3 class="nombre-producto">Arena aglomerante para gato</h3>
                 <p class="descripcion">
-                  Sensor preciso, bateria recargable y agarre comodo.
+                  Arena perfumada de alta absorcion para bandejas sanitarias.
                 </p>
-                <span class="precio" data-precio="34.5">34.50 EUR</span>
+                <span class="precio" data-precio="13.5">13.50 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
 
-              <article class="producto" data-id="auriculares">
-                <h3 class="nombre-producto">Auriculares USB</h3>
+              <article class="producto" data-id="collar">
+                <h3 class="nombre-producto">Collar ajustable</h3>
                 <p class="descripcion">
-                  Microfono integrado y sonido claro para videollamadas.
+                  Collar resistente con cierre seguro para paseos diarios.
                 </p>
-                <span class="precio" data-precio="44.99">44.99 EUR</span>
+                <span class="precio" data-precio="9.99">9.99 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
 
-              <article class="producto" data-id="monitor">
-                <h3 class="nombre-producto">Monitor 24 pulgadas</h3>
+              <article class="producto" data-id="cama">
+                <h3 class="nombre-producto">Cama acolchada</h3>
                 <p class="descripcion">
-                  Panel IPS Full HD con peana regulable.
+                  Cama suave con borde elevado para perros y gatos.
                 </p>
-                <span class="precio" data-precio="129">129.00 EUR</span>
+                <span class="precio" data-precio="28.75">28.75 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
 
-              <article class="producto" data-id="webcam">
-                <h3 class="nombre-producto">Webcam HD</h3>
+              <article class="producto" data-id="juguete-cuerda">
+                <h3 class="nombre-producto">Juguete de cuerda</h3>
                 <p class="descripcion">
-                  Imagen nitida, enfoque automatico y tapa de privacidad.
+                  Cuerda trenzada para morder, tirar y jugar en casa.
                 </p>
-                <span class="precio" data-precio="27.75">27.75 EUR</span>
+                <span class="precio" data-precio="6.25">6.25 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
 
-              <article class="producto" data-id="soporte">
-                <h3 class="nombre-producto">Soporte portatil</h3>
+              <article class="producto" data-id="champu">
+                <h3 class="nombre-producto">Champu para mascotas</h3>
                 <p class="descripcion">
-                  Estructura plegable de aluminio con varias alturas.
+                  Champu suave para pelo sensible con aroma fresco.
                 </p>
-                <span class="precio" data-precio="22.25">22.25 EUR</span>
+                <span class="precio" data-precio="8.4">8.40 EUR</span>
                 <button data-accion="anadir">Anadir al carrito</button>
               </article>
             </div>
@@ -344,10 +344,12 @@
 
       let lineasLog = 0;
 
+      // Recibe un numero y lo convierte al formato de precio que se muestra en pantalla.
       function formatearPrecio(numero) {
         return numero.toFixed(2) + " EUR";
       }
 
+      // Escribe mensajes en el panel oscuro para ver que hace cada accion.
       function escribirLog(texto) {
         if (lineasLog === 0) {
           salida.textContent = "";
@@ -358,22 +360,27 @@
         salida.scrollTop = salida.scrollHeight;
       }
 
+      // Quita la clase de seleccion de todos los productos antes de marcar uno nuevo.
       function limpiarSeleccionProductos() {
         const productos = listaProductos.querySelectorAll(".producto");
 
+        // Recorre cada tarjeta de producto y elimina el resaltado.
         productos.forEach(function (producto) {
           producto.classList.remove("seleccionado");
         });
       }
 
+      // Quita la clase de seleccion de todos los articulos del carrito.
       function limpiarSeleccionCarrito() {
         const items = contenedorCarrito.querySelectorAll(".item-carrito");
 
+        // Recorre cada item del carrito y elimina el resaltado.
         items.forEach(function (item) {
           item.classList.remove("seleccionado");
         });
       }
 
+      // Lee los datos de un producto navegando dentro de su propia tarjeta.
       function leerDatosProducto(producto) {
         const nombre = producto.querySelector(".nombre-producto").textContent;
         const precio = Number(
@@ -387,12 +394,14 @@
         };
       }
 
+      // Busca si el producto ya existe dentro del carrito usando su data-id.
       function buscarItemCarrito(idProducto) {
         return contenedorCarrito.querySelector(
           '.item-carrito[data-id="' + idProducto + '"]',
         );
       }
 
+      // Crea desde cero el articulo del carrito con nombre, precio, cantidad y botones.
       function crearItemCarrito(datosProducto) {
         const item = document.createElement("article");
         item.classList.add("item-carrito");
@@ -443,6 +452,7 @@
         return item;
       }
 
+      // Recalcula el subtotal de un unico item cuando cambia su cantidad.
       function actualizarSubtotalItem(item) {
         const precio = Number(
           item.querySelector(".precio-item").getAttribute("data-precio"),
@@ -453,10 +463,12 @@
         subtotal.textContent = formatearPrecio(precio * cantidad);
       }
 
+      // Recorre todo el carrito y calcula el precio total de la compra.
       function actualizarTotalCarrito() {
         const items = contenedorCarrito.querySelectorAll(".item-carrito");
         let total = 0;
 
+        // Cada item aporta precio por cantidad al total final.
         items.forEach(function (item) {
           const precio = Number(
             item.querySelector(".precio-item").getAttribute("data-precio"),
@@ -472,6 +484,7 @@
         mensajeVacio.style.display = items.length === 0 ? "block" : "none";
       }
 
+      // Anade un producto al carrito o aumenta su cantidad si ya estaba dentro.
       function anadirAlCarrito(producto) {
         const datosProducto = leerDatosProducto(producto);
         const itemExistente = buscarItemCarrito(datosProducto.id);
@@ -494,6 +507,7 @@
         actualizarTotalCarrito();
       }
 
+      // Listener delegado de la tienda: un solo listener controla todos los productos.
       bloqueTienda.addEventListener("click", function (event) {
         const producto = event.target.closest(".producto");
 
@@ -522,6 +536,7 @@
         }
       });
 
+      // Listener delegado del carrito: un solo listener controla todos los botones + y -.
       contenedorCarrito.addEventListener("click", function (event) {
         const item = event.target.closest(".item-carrito");
 
