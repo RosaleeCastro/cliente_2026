@@ -1,0 +1,18 @@
+{
+  "name": "formularioup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "formularioRegistro.bottomup.test.js",
+  "scripts": {
+    "test": "jest",
+    "test:integracion": "jest calculadora.bottomup.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1"
+  }
+}

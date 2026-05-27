@@ -521,6 +521,9 @@
       // Implementa la función obtenerPrecioSeleccionado().
       // Debe obtener la opción actualmente seleccionada del select de productos,
       // leer su atributo data-precio y devolverlo como número.z
+      // SOLUCION TODO 1:
+      // Se toma la option seleccionada con selectedIndex, se lee dataset.precio
+      // y se convierte a Number para poder calcular importes.
 
       function obtenerPrecioSeleccionado() {
         const opcionSeleccionada =
@@ -552,6 +555,9 @@
         // Añádele la clase "pedido".
         // Guarda en atributos data-* los datos del pedido:
         // id, cliente, producto, precio, cantidad, prioridad, estado y observaciones.
+        // SOLUCION TODO 2:
+        // Se crea un article, se marca con la clase pedido y se copian los datos
+        // del objeto Pedido a dataset para poder leerlos despues desde el DOM.
         const article = document.createElement("article");
         article.classList.add("pedido");
         article.dataset.id = pedido.getId();
@@ -567,6 +573,8 @@
         // Crea el título de la tarjeta con un h3.
         // Debe mostrar el número de pedido y el nombre del cliente.
         // Crea también un párrafo con la cantidad y el producto.
+        // SOLUCION TODO 3:
+        // Se generan el h3 y el parrafo del producto usando los getters del pedido.
         const h3 = document.createElement("h3");
         h3.textContent = `Pedido #${pedido.getId()} - ${pedido.getCliente()}`;
         const p = document.createElement("p");
@@ -578,6 +586,9 @@
         // - una para el estado del pedido
         // - otra para la prioridad
         // Ambas deben tener clases CSS adecuadas para que cambie su apariencia.
+        // SOLUCION TODO 4:
+        // Se crean dos span con clase etiqueta y clases dinamicas:
+        // estado-{estado} y prioridad-{prioridad}.
         const spanEstadoPedido = document.createElement("span");
         const spanPrioridad = document.createElement("span");
         spanEstadoPedido.classList.add(
@@ -597,6 +608,9 @@
         // Cada botón debe tener una clase CSS, un atributo data-accion,
         // un atributo title y un texto visible.
         // Acciones necesarias: cambiar-estado, editar, cancelar y eliminar.
+        // SOLUCION TODO 5:
+        // Cada boton declara su accion en data-accion para que la delegacion
+        // de eventos pueda saber que funcion ejecutar.
         const btnCambiarEstado = document.createElement("button");
         const btnEditar = document.createElement("button");
         const btnCancelar = document.createElement("button");
@@ -631,6 +645,9 @@
         // cabecera, etiquetas, observaciones y acciones.
         // Aplica la clase visual correspondiente al estado del pedido.
         // Devuelve la tarjeta creada.
+        // SOLUCION TODO 6:
+        // Se monta la estructura completa de la tarjeta, se llama a
+        // aplicarClaseEstado() y se devuelve el article listo para insertar.
         const cabecera = document.createElement("div");
         cabecera.classList.add("cabecera-pedido");
         cabecera.appendChild(h3);
@@ -677,6 +694,9 @@
       // - preparando -> pedido-preparando
       // - preparado -> pedido-preparado
       // - cancelado -> pedido-cancelado
+      // SOLUCION TODO 7:
+      // Primero se eliminan todas las clases de estado y luego se anade
+      // solo la clase que corresponde al valor actual de data-estado.
       function aplicarClaseEstado(tarjeta) {
         tarjeta.classList.remove(
           "pedido-preparando",
@@ -705,6 +725,9 @@
       // - actualizar el importe (utiliza formatearEuros())
       // - actualizar las observaciones
       // - volver a aplicar la clase visual del estado
+      // SOLUCION TODO 8:
+      // Se leen los dataset actuales, se actualizan los nodos internos
+      // de la tarjeta y finalmente se recalcula la clase visual del estado.
       function actualizarTarjetaTrasCambio(tarjeta) {
         const dataEstado = tarjeta.getAttribute("data-estado");
         const dataCantidad = tarjeta.getAttribute("data-cantidad");
@@ -776,6 +799,9 @@
       // - número de pedidos pendientes o preparando
       // - importe total de los pedidos que no estén cancelados
       // Además, debe mostrar u ocultar el mensaje de lista vacía.
+      // SOLUCION TODO 9:
+      // Se recorren todas las tarjetas .pedido para acumular contadores e importe,
+      // se vuelcan los resultados al resumen y se gestiona el mensaje vacio.
       function actualizarResumen() {
         // Recorre todas las tarjetas para calcular los totales del panel resumen.
         const pedidos = listaPedidos.querySelectorAll(".pedido");
@@ -816,6 +842,8 @@
       // Solo puede haber un pedido seleccionado a la vez.
       // Primero elimina la clase "seleccionado" de todos los pedidos.
       // Después añade esa clase a la tarjeta recibida.
+      // SOLUCION TODO 10:
+      // Se limpia la seleccion en todas las tarjetas y se marca solo la recibida.
       function seleccionarPedido(tarjeta) {
         // Limpia cualquier selección previa para que solo quede una activa.
         const pedidos = listaPedidos.querySelectorAll(".pedido");
@@ -839,6 +867,9 @@
       // - guarda el nuevo estado en data-estado
       // - actualiza la tarjeta visualmente
       // - actualiza el resumen
+      // SOLUCION TODO 11:
+      // Si no esta cancelado, se calcula el siguiente estado, se guarda
+      // en data-estado y se refrescan tarjeta y resumen.
       function cambiarEstadoPedido(tarjeta) {
         // No permite cambiar el estado de pedidos ya cancelados.
         const estadoActual = tarjeta.getAttribute("data-estado");
@@ -859,6 +890,9 @@
       // pedir el nuevo texto con prompt() y guardar el resultado.
       // Si el usuario cancela, no se debe modificar nada.
       // Si el texto queda vacío, se guardará "Sin observaciones".
+      // SOLUCION TODO 12:
+      // prompt() recibe el texto actual; si devuelve null se sale, y si
+      // queda vacio se sustituye por "Sin observaciones".
       function editarObservacionesPedido(tarjeta) {
         // Toma las observaciones actuales para mostrarlas como valor inicial.
         const observacionesActuales = tarjeta.getAttribute("data-observaciones");
@@ -883,6 +917,8 @@
       // Implementa la cancelación de un pedido.
       // Debe cambiar su data-estado a "cancelado",
       // actualizar la tarjeta visualmente y actualizar el resumen.
+      // SOLUCION TODO 13:
+      // Se fuerza data-estado a cancelado y se actualizan tarjeta y resumen.
       function cancelarPedido(tarjeta) {
         // Fuerza el estado cancelado en la tarjeta seleccionada.
         tarjeta.setAttribute("data-estado", "cancelado");
@@ -896,6 +932,8 @@
       // Elimina la tarjeta del pedido
       // sobre su contenedor padre.
       // Después actualiza el resumen.
+      // SOLUCION TODO 14:
+      // Se elimina el article del DOM y se recalculan los totales.
       function eliminarPedido(tarjeta) {
         // Borra el artículo del contenedor principal de pedidos.
         tarjeta.parentElement.removeChild(tarjeta);
@@ -914,6 +952,7 @@
         // Recoge los datos introducidos en el formulario:
         // cliente, producto, precio, cantidad, prioridad y observaciones.
         // El precio debe obtenerse llamando a obtenerPrecioSeleccionado().
+        // SOLUCION TODO 15:
         // Lee y normaliza todos los valores del formulario.
         const cliente = inpCliente.value.trim();
         const producto = selProducto.value;
@@ -925,6 +964,7 @@
         // TODO 16:
         // Crea un nuevo objeto Pedido usando los datos recogidos
         // y el valor actual de siguienteId.
+        // SOLUCION TODO 16:
         // Construye el objeto pedido con el identificador actual.
         const nuevoPedido = new Pedido(
           siguienteId,
@@ -939,6 +979,7 @@
         // TODO 17:
         // Crea la tarjeta HTML del pedido
         // e insértala dentro del contenedor listaPedidos.
+        // SOLUCION TODO 17:
         // Genera el HTML del pedido y lo añade a la lista visible.
         const tarjetaPedido = crearTarjetaPedido(nuevoPedido);
         listaPedidos.appendChild(tarjetaPedido);
@@ -951,6 +992,7 @@
         // - vuelve a dejar la prioridad en "media"
         // - coloca el foco en el campo cliente
         // - actualiza el resumen
+        // SOLUCION TODO 18:
         // Prepara el formulario para la siguiente alta y refresca el resumen.
         siguienteId += 1;
         formPedido.reset();
@@ -978,6 +1020,10 @@
       //    - salir de la función
       // 5. Si no se ha pulsado un botón interno,
       //    seleccionar la tarjeta del pedido.
+      // SOLUCION TODO 19:
+      // Un unico listener en listaPedidos detecta la tarjeta y, si el click
+      // viene de un boton con data-accion, ejecuta la accion correspondiente.
+      // Si no hay boton, selecciona la tarjeta.
       listaPedidos.addEventListener("click", function (event) {
         // Detecta el nodo real pulsado y la tarjeta asociada.
         const elementoPulsado = event.target;
@@ -1017,6 +1063,9 @@
       // Debe localizar todos los pedidos con estado "preparado" o "cancelado"
       // y eliminarlos del contenedor.
       // Después debe actualizar el resumen.
+      // SOLUCION TODO 20:
+      // Se recorren las tarjetas, se eliminan las finalizadas y se recalcula
+      // el resumen para dejar la interfaz consistente.
       btnLimpiarPreparados.addEventListener("click", function () {
         // Recorre las tarjetas finalizadas y las elimina de la lista.
         const pedidos = listaPedidos.querySelectorAll(".pedido");
