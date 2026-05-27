@@ -2,6 +2,36 @@
 // ESTADO INICIAL DE LA APLICACIÓN
 // =====================================================
 
+/**
+ * Representa una opcion disponible dentro de la encuesta.
+ *
+ * @typedef {Object} OpcionEncuesta
+ * @property {string} id - Identificador unico de la opcion.
+ * @property {string} texto - Texto visible de la opcion.
+ * @property {number} votos - Cantidad de votos recibidos.
+ */
+
+/**
+ * Representa el estado completo de la encuesta.
+ *
+ * @typedef {Object} Encuesta
+ * @property {string} pregunta - Pregunta que se muestra al usuario.
+ * @property {OpcionEncuesta[]} opciones - Lista de opciones disponibles.
+ */
+
+/**
+ * Representa el resultado de intentar registrar un voto.
+ *
+ * @typedef {Object} ResultadoVoto
+ * @property {boolean} correcto - Indica si el voto se registro correctamente.
+ * @property {string} mensaje - Mensaje informativo para mostrar al usuario.
+ */
+
+/**
+ * Datos base usados para crear una encuesta limpia.
+ *
+ * @type {Encuesta}
+ */
 const datosIniciales = {
   pregunta: "¿Qué tecnología te gustaría practicar más?",
   opciones: [
@@ -34,6 +64,11 @@ let estadoEncuesta = crearEstadoInicial();
 // FUNCIONES DE LÓGICA
 // =====================================================
 
+/**
+ * Crea un nuevo estado inicial de la encuesta a partir de los datos base.
+ *
+ * @returns {Encuesta} Nueva encuesta con todas las opciones a cero votos.
+ */
 function crearEstadoInicial() {
   const opcionesIniciales = [];
 
@@ -53,6 +88,12 @@ function crearEstadoInicial() {
   };
 }
 
+/**
+ * Calcula el numero total de votos registrados en una encuesta.
+ *
+ * @param {Encuesta} encuesta - Encuesta de la que se quieren contar los votos.
+ * @returns {number} Total de votos de todas las opciones.
+ */
 function calcularTotalVotos(encuesta) {
   let total = 0;
 
@@ -63,6 +104,13 @@ function calcularTotalVotos(encuesta) {
   return total;
 }
 
+/**
+ * Calcula el porcentaje que representa una cantidad de votos respecto al total.
+ *
+ * @param {number} votos - Numero de votos de una opcion.
+ * @param {number} total - Numero total de votos de la encuesta.
+ * @returns {number} Porcentaje redondeado. Devuelve 0 si el total es 0.
+ */
 function calcularPorcentaje(votos, total) {
   if (total === 0) {
     return 0;
@@ -71,6 +119,13 @@ function calcularPorcentaje(votos, total) {
   return Math.round((votos / total) * 100);
 }
 
+/**
+ * Busca una opcion dentro de una encuesta usando su identificador.
+ *
+ * @param {Encuesta} encuesta - Encuesta en la que se realiza la busqueda.
+ * @param {string} idOpcion - Identificador de la opcion buscada.
+ * @returns {OpcionEncuesta|null} Opcion encontrada o null si no existe.
+ */
 function buscarOpcionPorId(encuesta, idOpcion) {
   for (let i = 0; i < encuesta.opciones.length; i++) {
     if (encuesta.opciones[i].id === idOpcion) {
@@ -81,6 +136,13 @@ function buscarOpcionPorId(encuesta, idOpcion) {
   return null;
 }
 
+/**
+ * Registra un voto en la opcion indicada de una encuesta.
+ *
+ * @param {Encuesta} encuesta - Encuesta que se va a modificar.
+ * @param {string|null} idOpcion - Identificador de la opcion seleccionada.
+ * @returns {ResultadoVoto} Resultado de la operacion con un mensaje asociado.
+ */
 function registrarVoto(encuesta, idOpcion) {
   if (!idOpcion) {
     return {
@@ -106,6 +168,12 @@ function registrarVoto(encuesta, idOpcion) {
   };
 }
 
+/**
+ * Genera los resultados actuales de la encuesta con votos y porcentajes.
+ *
+ * @param {Encuesta} encuesta - Encuesta de la que se obtienen los resultados.
+ * @returns {Array<Object>} Lista de resultados calculados por opcion.
+ */
 function obtenerResultados(encuesta) {
   const total = calcularTotalVotos(encuesta);
   const resultados = [];
@@ -124,6 +192,11 @@ function obtenerResultados(encuesta) {
   return resultados;
 }
 
+/**
+ * Reinicia la encuesta global a su estado inicial.
+ *
+ * @returns {void}
+ */
 function reiniciarEncuesta() {
   estadoEncuesta = crearEstadoInicial();
 }
@@ -132,11 +205,21 @@ function reiniciarEncuesta() {
 // FUNCIONES DE INTERFAZ
 // =====================================================
 
+/**
+ * Muestra la pregunta de la encuesta en el elemento HTML correspondiente.
+ *
+ * @returns {void}
+ */
 function pintarPregunta() {
   const elementoPregunta = document.getElementById("pregunta");
   elementoPregunta.textContent = estadoEncuesta.pregunta;
 }
 
+/**
+ * Crea y muestra en el DOM los botones de opcion de la encuesta.
+ *
+ * @returns {void}
+ */
 function pintarOpciones() {
   const contenedorOpciones = document.getElementById("contenedorOpciones");
   contenedorOpciones.innerHTML = "";
@@ -159,6 +242,11 @@ function pintarOpciones() {
   }
 }
 
+/**
+ * Muestra en el DOM los votos, porcentajes y barras de resultado.
+ *
+ * @returns {void}
+ */
 function pintarResultados() {
   const contenedorResultados = document.getElementById("contenedorResultados");
   const totalVotos = document.getElementById("totalVotos");
@@ -201,6 +289,13 @@ function pintarResultados() {
   totalVotos.textContent = "Total de votos: " + total;
 }
 
+/**
+ * Muestra un mensaje de estado al usuario.
+ *
+ * @param {string} texto - Texto del mensaje.
+ * @param {string} tipo - Tipo de mensaje. Puede ser "error" o "exito".
+ * @returns {void}
+ */
 function mostrarMensaje(texto, tipo) {
   const mensaje = document.getElementById("mensaje");
 
@@ -216,6 +311,11 @@ function mostrarMensaje(texto, tipo) {
   }
 }
 
+/**
+ * Obtiene el valor de la opcion seleccionada por el usuario.
+ *
+ * @returns {string|null} Identificador de la opcion seleccionada o null.
+ */
 function obtenerOpcionSeleccionada() {
   const opcionSeleccionada = document.querySelector(
     "input[name='opcionEncuesta']:checked",
@@ -228,6 +328,11 @@ function obtenerOpcionSeleccionada() {
   return opcionSeleccionada.value;
 }
 
+/**
+ * Desmarca todas las opciones de la encuesta en el formulario.
+ *
+ * @returns {void}
+ */
 function limpiarSeleccion() {
   const opciones = document.querySelectorAll("input[name='opcionEncuesta']");
 
@@ -236,6 +341,11 @@ function limpiarSeleccion() {
   }
 }
 
+/**
+ * Actualiza toda la interfaz de la encuesta.
+ *
+ * @returns {void}
+ */
 function actualizarInterfaz() {
   pintarPregunta();
   pintarOpciones();
@@ -245,6 +355,11 @@ function actualizarInterfaz() {
 // =====================================================
 // EVENTOS
 // =====================================================
+/**
+ * Configura los eventos principales del formulario y del boton de reinicio.
+ *
+ * @returns {void}
+ */
 function configurarEventos() {
   const formulario = document.getElementById("formEncuesta");
   const botonReiniciar = document.getElementById("btnReiniciar");
@@ -275,6 +390,11 @@ function configurarEventos() {
 // INICIO DE LA APLICACIÓN
 // =====================================================
 
+/**
+ * Inicializa la aplicacion pintando la interfaz y configurando los eventos.
+ *
+ * @returns {void}
+ */
 function iniciarAplicacion() {
   actualizarInterfaz();
   configurarEventos();
